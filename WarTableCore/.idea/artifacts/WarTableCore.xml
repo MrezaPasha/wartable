@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" build-on-make="true" name="WarTableCore">
+    <output-path>$PROJECT_DIR$/../_out/artifacts/WarTableCore</output-path>
+    <root id="root">
+      <element id="module-output" name="WarTableCore" />
+    </root>
+  </artifact>
+</component>

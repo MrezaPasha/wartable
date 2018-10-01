@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/WarTableCore.iml" filepath="$PROJECT_DIR$/WarTableCore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../WarTableDataShare/WarTableDataShare.iml" filepath="$PROJECT_DIR$/../WarTableDataShare/WarTableDataShare.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../WarTableManager/WarTableManager.iml" filepath="$PROJECT_DIR$/../WarTableManager/WarTableManager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../WarTableWeb/WarTableWeb.iml" filepath="$PROJECT_DIR$/../WarTableWeb/WarTableWeb.iml" />
+    </modules>
+  </component>
+</project>

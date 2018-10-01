@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="_libs-captcha">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../_libs-captcha" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/../_libs-captcha" recursive="false" />
+  </library>
+</component>
