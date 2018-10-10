@@ -14,7 +14,6 @@
     <facet type="hibernate" name="Hibernate">
       <configuration>
         <datasource-map>
-          <unit-entry name="sessionFactory" />
           <unit-entry name="sessionFactoryLog" />
           <unit-entry name="sessionFactoryRest" />
           <unit-entry name="web:WEB-INF:conf:system:hibernate.cfg.xml" />
@@ -26,23 +25,25 @@
     <facet type="Spring" name="Spring">
       <configuration>
         <fileset id="fileset" name="Spring Application Context" removed="false">
-          <file>file://$MODULE_DIR$/web/WEB-INF/conf/system/applicationContext.xml</file>
           <file>file://$MODULE_DIR$/web/WEB-INF/conf/system/dispatcher-servlet.xml</file>
+          <file>file://$MODULE_DIR$/web/WEB-INF/conf/system/applicationContext.xml</file>
           <file>file://$MODULE_DIR$/src/org/sadr/web/config/Config.java</file>
         </fileset>
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/../out/production/WarTableWeb" />
+    <output-test url="file://$MODULE_DIR$/../out/test/WarTableWeb" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="libs" level="project" />
-    <orderEntry type="module" module-name="WarTableDataShare" exported="" />
-    <orderEntry type="library" exported="" name="lib_tomcat" level="application" />
-    <orderEntry type="library" exported="" name="_libs-captcha" level="project" />
+    <orderEntry type="library" name="_libs" level="project" />
+    <orderEntry type="module" module-name="WarTableDataShare" />
+    <orderEntry type="library" name="Tomcat 9.0.2" level="application_server_libraries" />
+    <orderEntry type="module" module-name="WarTableCore" />
   </component>
 </module>

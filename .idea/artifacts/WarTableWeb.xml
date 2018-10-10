@@ -1,0 +1,18 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" build-on-make="true" name="WarTableWeb">
+    <output-path>$PROJECT_DIR$/_out/artifacts/WarTableWeb</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="WarTableWeb" />
+          <element id="module-output" name="WarTableDataShare" />
+          <element id="module-output" name="WarTableCore" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="_libs" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="WarTableWeb/web/Web" />
+    </root>
+  </artifact>
+</component>
