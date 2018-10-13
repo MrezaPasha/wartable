@@ -51,7 +51,19 @@
                                 <span class="symbol required"></span>
                                 <form:errors cssClass="form-validation-error" path="${varName}"/>
                             </form:label>
-                            <form:input path="${varName}" cssClass="form-control string-required string-max-30"/>
+                            <c:choose>
+                                <c:when test="${user.isLogManager or user.isSuperAdmin}">
+                                    <c:set var="dis" value="true"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:set var="dis" value="false"/>
+
+                                </c:otherwise>
+                            </c:choose>
+                            <c:if test="${user.isLogManager}">
+                                <c:set var="dis" value="true"/>
+                            </c:if>
+                            <form:input disabled="${dis}" path="${varName}" cssClass="form-control string-required string-max-30"/>
                             <button type="button" id="randomButton" class="btn-username-refresh">
                                 <i class="clip-refresh"></i>
                             </button>
@@ -115,7 +127,7 @@
                                 <span class="symbol required"></span>
                             </form:label>
                             <form:errors cssClass="form-validation-error" path="${varName}"/>
-                            <form:select path="${varName}" data-visible-src="dv0" data-visible-value="Master" cssClass="form-control search-select dropdown-required">
+                            <form:select  disabled="${dis}" path="${varName}" data-visible-src="dv0" data-visible-value="Master" cssClass="form-control search-select dropdown-required">
                                 <option value=""></option>
                                 <form:options itemLabel="title"/>
                             </form:select>

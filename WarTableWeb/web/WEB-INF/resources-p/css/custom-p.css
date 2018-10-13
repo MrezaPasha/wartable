@@ -1,8 +1,29 @@
 /*--------------------------------
+    Note Sync
+----------------------------------*/
+.note-sync-table {
+    width: 100%;
+    font-size: 12px;
+}
+
+.note-sync-details {
+    height: 300px;
+    text-align: right;
+    color: #777777;
+    width: 100%;
+    padding: 20px;
+    font-size: 0.9em;
+    overflow-x: scroll;
+    line-height: 1.5;
+    background-color: rgba(238, 238, 238, 0.89);
+    margin: auto;
+}
+
+/*--------------------------------
     Dashboard
 ----------------------------------*/
 .panel-dashboard {
-    background-image: url("../images/bg-dashboard.jpg");
+    background-image: url("../images/bg-dashboard-6.jpg");
     height: 100%;
 }
 
@@ -10,26 +31,35 @@
     border: none;
 }
 
-.panel-dashboard .btn-box {
-    margin: 30px 10px;
+.panel-dashboard .dashboard-info-box {
+    margin-top: 40px;
+}
+
+.panel-dashboard .note-sync-container {
     padding: 10px;
+    background-color: rgba(250, 243, 213, 0.66);
 }
 
-.panel-dashboard .btn-box .btn-item {
-    border: #ffffff solid 1px;
-    height: 180px;
-    width: 180px;
-    margin: auto;
-    background-color: #ffffff6b;
-    display: block;
-}
-
-.panel-dashboard .btn-box .btn-item .title {
+.panel-dashboard .note-sync-container > h1 {
+    font-size: 19px;
     text-align: center;
-    color: white;
-    display: block;
-    font-size: 29px;
-    margin-top: 20px;
+    margin-top: 0px;
+    color: #ff2323;
+}
+
+.panel-dashboard .note-sync-container table {
+    color: #000000;
+    width: 100%;
+    font-size: 13px;
+}
+
+.panel-dashboard .note-sync-container table thead > tr {
+    border-bottom: #ff6900 solid 2px;
+}
+
+.panel-dashboard .note-sync-container table tbody > tr {
+    border-bottom: #515151 dotted 1px;;
+
 }
 
 .panel-dashboard .signin-log {
@@ -1014,6 +1044,7 @@ a.btn-p-act.btn-p-basket {
 .module-list .task-item-log .task-title {
     font-weight: bold;
 }
+
 .module-list .task-item-log .task-action {
     float: left;
     color: #979797;

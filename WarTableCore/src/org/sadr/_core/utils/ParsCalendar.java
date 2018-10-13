@@ -485,6 +485,14 @@ public class ParsCalendar {
         return persCal.get(Calendar.DAY_OF_MONTH);
     }
 
+    public int getHoursI() {
+        return LocalTime.now().getHour();
+    }
+
+    public int getMinutesI() {
+        return LocalTime.now().getMinute();
+    }
+
     public TtCompareResult compareDateTime(String firstDateTime, String secondDateTime) {
         firstDateTime = firstDateTime.trim();
         secondDateTime = secondDateTime.trim();

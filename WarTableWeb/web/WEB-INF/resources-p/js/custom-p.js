@@ -166,11 +166,50 @@ var CustomPanelJs = function () {
             }
         })
     };
+    var runNoteSync = function () {
+        var syncNotes = function () {
+            var un;
+            $.ajax({
+                url: $("#cpId").val() + "/panel/note/sync",
+                Type: 'json',
+                type: 'POST',
+                success: function (data) {
+                    console.log(data);
+                    if (data.status === "ok") {
+                        $('#noteSyncModal').modal('show');
+                        console.log("ookk");
+                        var hx = "<table class='note-sync-table'><thead><tr><th>عنوان</th><th>زمان</th><th>اهمیت</th><th></th></tr></thead><tbody>";
+                        $.each(data.result.notes, function (i, v) {
+                            console.log(v);
+                            hx +=
+                                '<tr><td class="note-title">' + v.title + '</td>'
+                                + '<td class="note-time">' + v.dateTime + '</td>'
+                                + '<td class="note-importance">' + v.importance + '</td>'
+                                + '<td class="note-show"><a href="' + $('#cpId').val() + '/panel/note/details/' + v.id + '">مشاهده</a> </td></tr>'
+                        });
+                        hx += "</tbody></table>"
+                        $("#noteSyncTitle").html(data.result.header);
+                        $("#noteSyncBody").html(hx);
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                },
+                async: false
+            });
+            return un;
+        }
+        syncNotes();
+        setInterval(syncNotes, 3000);
+
+    };
+
 
     return {
         init: function () {
             runNotice();
             runRightMenu();
+            runNoteSync();
         },
         initPropertor: function (prop) {
             runPropertor(prop);
@@ -178,8 +217,8 @@ var CustomPanelJs = function () {
         intPwLength: function () {
             runPwLength();
         },
-        initRandomUsername: function () {
-            runRandomUsername();
+        initNoteSync: function () {
+            runNoteSync();
         }
     };
 }();

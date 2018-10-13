@@ -304,12 +304,16 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                 dbuser.setLevel(fuser.getLevel());
             }
         }
-        dbuser.setUsername(fuser.getUsername());
+        if (dbuser.getLevel() != TtUserLevel.Administrator && !dbuser.getIsLogManager()) {
+            dbuser.setUsername(fuser.getUsername());
+        }
+        if (dbuser.getLevel() != TtUserLevel.Administrator && !dbuser.getIsLogManager()) {
+            dbuser.setUsername(fuser.getUsername());
+        }
         dbuser.setFirstName(fuser.getFirstName());
         dbuser.setGender(fuser.getGender());
         dbuser.setLastName(fuser.getLastName());
         dbuser.setStatus(fuser.getStatus());
-        dbuser.setLevel(fuser.getLevel());
         dbuser.setUserGroups(fuser.getUserGroups());
         dbuser.setIsBlocked(fuser.getIsBlocked());
         dbuser.setUserCode(fuser.getUserCode());

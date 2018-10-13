@@ -8,7 +8,7 @@ public enum TtNoteImportance {
     Low("کم"),
     Medium("متوسط"),
     High("زیاد"),
-   ;
+    ;
 
     private final String title;
 

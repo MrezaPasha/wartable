@@ -1,17 +1,19 @@
 package org.sadr.web.main.note.note;
 
 import org.hibernate.criterion.Restrictions;
+import org.sadr._core._type.TtCompareResult;
 import org.sadr._core._type.TtDataType;
 import org.sadr._core._type.TtRestrictionOperator;
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GB;
 import org.sadr._core.meta.generic.GenericControllerImpl;
 import org.sadr._core.meta.generic.JB;
-import org.sadr._core.utils.JsonBuilder;
-import org.sadr._core.utils.Searchee;
+import org.sadr._core.utils.*;
 import org.sadr.web.main._core._type.TtTile___;
+import org.sadr.web.main._core.utils.Ison;
 import org.sadr.web.main._core.utils.Notice2;
 import org.sadr.web.main._core.utils.Referer;
+import org.sadr.web.main._core.utils._type.TtIsonStatus;
 import org.sadr.web.main._core.utils._type.TtNotice;
 import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.system._type.TtIrrorLevel;
@@ -30,6 +32,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author masoud
@@ -67,28 +70,57 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
 
     @RequestMapping(value = _PANEL_URL + "/create", method = RequestMethod.POST)
     public ModelAndView pCreate(Model model,
-                                    @ModelAttribute("note") @Valid Note fnote,
-                                    BindingResult noteBindingResult,
-                                    HttpServletRequest request,
-                                    HttpSession session,
-                                    final RedirectAttributes redirectAttributes) {
+                                @ModelAttribute("note") @Valid Note fnote,
+                                BindingResult noteBindingResult,
+                                HttpServletRequest request,
+                                HttpSession session,
+                                final RedirectAttributes redirectAttributes) {
         if (noteBindingResult.hasErrors()) {
             return Referer.redirectBindingError(request, redirectAttributes, noteBindingResult, fnote);
         }
         fnote.setUser((User) session.getAttribute("sUser"));
+        fnote.setIsNotified(false);
+        fnote.setIsVisited(false);
         this.service.save(fnote);
         Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.note.register.success", fnote.getSecretNote(), TtNotice.Success)));
         return Referer.redirect(_PANEL_URL + "/edit/" + fnote.getIdi());
     }
+
+    @PersianName("مشاهده")
+    @RequestMapping(value = _PANEL_URL + "/details/{uid}")
+    public ModelAndView pDetails(Model model, @PathVariable("uid") long uid,
+                                 HttpSession session,
+                                 HttpServletRequest request,
+                                 RedirectAttributes redirectAttributes) {
+        User sUser = (User) session.getAttribute("sUser");
+        Note dbnote;
+        dbnote = this.service.findBy(
+                Restrictions.and(
+                        Restrictions.eq(Note.ID, uid),
+                        Restrictions.eq(Note._USER, sUser)
+                )
+        );
+
+        if (dbnote == null) {
+            Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.note.not.found", JsonBuilder.toJson("noteId", "" + uid), TtNotice.Warning));
+            return Referer.redirect(_PANEL_URL + "/list", request);
+        }
+
+        dbnote.setIsVisited(true);
+        this.service.update(dbnote);
+        model.addAttribute("note", dbnote);
+        return TtTile___.p_note_details.___getDisModel();
+    }
+
 
     //=========================== edit
 
     @PersianName("ویرایش")
     @RequestMapping(value = _PANEL_URL + "/edit/{uid}")
     public ModelAndView pEdit(Model model, @PathVariable("uid") long uid,
-                                  HttpSession session,
-                                  HttpServletRequest request,
-                                  RedirectAttributes redirectAttributes) {
+                              HttpSession session,
+                              HttpServletRequest request,
+                              RedirectAttributes redirectAttributes) {
         User sUser = (User) session.getAttribute("sUser");
         Note dbnote = (Note) model.asMap().get("note");
         if (dbnote == null) {
@@ -139,6 +171,12 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
         dbnote.setTitle(fnote.getTitle());
         dbnote.setMessage(fnote.getMessage());
         dbnote.setImportance(fnote.getImportance());
+
+        if (ParsCalendar.getInstance().compareDateTime(fnote.getDateTime(), ParsCalendar.getInstance().getShortDateTime()) == TtCompareResult.FirstIsBigger) {
+            dbnote.setIsNotified(false);
+            dbnote.setIsVisited(false);
+        }
+
         this.service.update(dbnote);
 
         Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.edit.success", fnote.getSecretNote(), TtNotice.Success, dbnote.getTitle())));
@@ -232,6 +270,51 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
         this.service.trash(id);
         Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.trash.success", dbus.getSecretNote(), TtNotice.Success, dbus.getTitle())));
         return Referer.redirect(_PANEL_URL + "/list");
+    }
+
+    @PersianName("بروزرسانی هشدار")
+    @RequestMapping(value = _PANEL_URL + "/sync", method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseEntity<String> pSync(HttpSession session) {
+        User sUser = (User) session.getAttribute("sUser");
+
+        if (sUser == null) {
+            return Ison.init()
+                    .setStatus(TtIsonStatus.Nok)
+                    .toResponse();
+        }
+
+        List<Note> list = this.service.findAllBy(
+                Restrictions.and(
+                        Restrictions.eq(Note._USER, sUser),
+                        Restrictions.eq(Note.IS_NOTIFIED, false),
+                        Restrictions.le(Note.DATE_TIME, ParsCalendar.getInstance().getShortDateTime())
+                )
+        );
+        if (list.isEmpty()) {
+            return Ison.init()
+                    .setStatus(TtIsonStatus.Nok)
+                    .toResponse();
+        }
+        String json = "";
+        for (Note note : list) {
+            json += ",{";
+            json += "\"id\":" + note.getId() + "";
+            json += ",\"title\":\"" + note.getTitle() + "\"";
+            json += ",\"dateTime\":\"" + note.getDateTime() + "\"";
+            json += ",\"importance\":\"" + note.getImportance().getTitle() + "\"";
+            note.setIsNotified(true);
+            this.service.update(note);
+            json += "}";
+        }
+
+        json = "[" + json.substring(1) + "]";
+        OutLog.pl(json);
+        return Ison.init()
+                .setStatus(TtIsonStatus.Ok)
+                .setProperty("header", SpringMessager.get("N1.note.you.have.note"))
+                .setPropertyJson("notes", json)
+                .toResponse();
     }
 
 }

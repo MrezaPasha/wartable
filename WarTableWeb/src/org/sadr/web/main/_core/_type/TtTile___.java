@@ -56,6 +56,7 @@ public enum TtTile___ {
     p_setting_init(TtSystemTileLayout.Panel, null),
     p_note_create(TtSystemTileLayout.Panel, a_note_cred),
     p_note_edit(TtSystemTileLayout.Panel, a_note_cred),
+    p_note_details(TtSystemTileLayout.Panel,null),
     p_note_list(TtSystemTileLayout.Panel, null),
     p_propertor_control(TtSystemTileLayout.Panel, null),
     p_propertor_web(TtSystemTileLayout.Panel, null),
