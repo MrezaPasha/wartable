@@ -24,7 +24,7 @@
             <i class="clip-plus-circle"></i>
         </button>
         <c:if test="${userGroup.id!=0}">
-            <a class="btn btn-p-cansel btn-p-act btn-animated btn-animated-right"  href="${cp}/panel/user/group/desk">
+            <a class="btn btn-p-cancel btn-p-act btn-animated btn-animated-right"  href="${cp}/panel/user/group/desk">
                 <spring:message code="all.cancel"/>
                 <i class="clip-close-4"></i>
             </a>

@@ -9,9 +9,11 @@ import org.sadr._core.utils.RePa;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.meta.annotation.SuperAdminTask;
 import org.sadr.web.main._core.utils.Notice2;
+import org.sadr.web.main._core.utils.Referer;
 import org.sadr.web.main._core.utils._type.TtNotice;
 import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.admin.user.user.UserService;
+import org.sadr.web.main.system._type.TtTaskActionStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,8 +58,9 @@ public class UserPorterController extends GenericControllerImpl<UserPorter, User
 
         User u = this.userService.findById(uid);
         if (u == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + uid), TtNotice.Success)));
-            return new ModelAndView("redirect:/panel/user/list");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + uid), TtNotice.Success)));
+            return Referer.redirect(_PANEL_URL + "/list", null, TtTaskActionStatus.Failure, notice2s);
+
         }
 
         List<UserPorter> ups = this.service.findAllBy(Restrictions.eq(UserPorter._USER, u));
@@ -66,7 +69,7 @@ public class UserPorterController extends GenericControllerImpl<UserPorter, User
             for (UserPorter up : ups) {
                 OutLog.p(up.getUuid());
                 if (u.getPorterUuid() != null && !u.getPorterUuid().isEmpty()
-                    && u.getPorterUuid().contains(up.getUuid())) {
+                        && u.getPorterUuid().contains(up.getUuid())) {
                     if (up.getIsActiveTwoStepConfirm() != Boolean.TRUE) {
                         up.setIsActiveTwoStepConfirm(true);
                         this.service.update(up);
@@ -81,7 +84,7 @@ public class UserPorterController extends GenericControllerImpl<UserPorter, User
         }
         model.addAttribute("user", u);
         model.addAttribute("uplist", ups);
-        return TtTile___.p_user_porter_list.___getDisModel();
+        return TtTile___.p_user_porter_list.___getDisModel(null, TtTaskActionStatus.Success);
     }
 
     @SuperAdminTask
@@ -91,18 +94,19 @@ public class UserPorterController extends GenericControllerImpl<UserPorter, User
                                            HttpSession session, final RedirectAttributes redirectAttributes) {
 
         UserPorter up = this.service.findBy(
-            Restrictions.and(
-                Restrictions.eq(UserPorter.ID, pid),
-                Restrictions.eq(RePa.p__(UserPorter._USER, User.ID), uid)
-            ), UserPorter._USER
+                Restrictions.and(
+                        Restrictions.eq(UserPorter.ID, pid),
+                        Restrictions.eq(RePa.p__(UserPorter._USER, User.ID), uid)
+                ), UserPorter._USER
         );
         if (up == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.userPorter.not.found", JsonBuilder.toJson("userId", "" + uid), TtNotice.Success)));
-            return new ModelAndView("redirect:/panel/user/porter/list/" + uid);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.userPorter.not.found", JsonBuilder.toJson("userId", "" + uid), TtNotice.Success)));
+            return Referer.redirect(_PANEL_URL + "/list/" + uid, null, TtTaskActionStatus.Failure, notice2s);
+
         }
 
         model.addAttribute("userPorter", up);
-        return TtTile___.p_user_porter_details.___getDisModel();
+        return TtTile___.p_user_porter_details.___getDisModel(null, TtTaskActionStatus.Success);
     }
 
     @SuperAdminTask
@@ -112,26 +116,24 @@ public class UserPorterController extends GenericControllerImpl<UserPorter, User
                                              HttpSession session, final RedirectAttributes redirectAttributes) {
 
         UserPorter up = this.service.findBy(
-            Restrictions.and(
-                Restrictions.eq(UserPorter.ID, pid),
-                Restrictions.eq(RePa.p__(UserPorter._USER, User.ID), uid)
-            ), UserPorter._USER
+                Restrictions.and(
+                        Restrictions.eq(UserPorter.ID, pid),
+                        Restrictions.eq(RePa.p__(UserPorter._USER, User.ID), uid)
+                ), UserPorter._USER
         );
         if (up == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.userPorter.not.found", JsonBuilder.toJson("userId", "" + uid), TtNotice.Success)));
-            return new ModelAndView("redirect:/panel/user/porter/list/" + uid);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.userPorter.not.found", JsonBuilder.toJson("userId", "" + uid), TtNotice.Success)));
+            return Referer.redirect(_PANEL_URL + "/list/" + uid, null, TtTaskActionStatus.Failure, notice2s);
         }
 
         if (up.getIsActiveTwoStepConfirm()) {
             up.getUser().removePorterUuid(up.getUuid());
             this.userService.update(up.getUser());
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.userPorter.unconfirm.success", JsonBuilder.toJson("userId", "" + uid), TtNotice.Success)));
-        } else {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.userPorter.unconfirm.previously", JsonBuilder.toJson("userId", "" + uid), TtNotice.Info)));
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.userPorter.unconfirm.success", JsonBuilder.toJson("userId", "" + uid), TtNotice.Success)));
+            return Referer.redirect(_PANEL_URL + "/list/" + uid, null, TtTaskActionStatus.Success, notice2s);
+
         }
-        return new ModelAndView("redirect:/panel/user/porter/list/" + uid);
-
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.userPorter.unconfirm.previously", JsonBuilder.toJson("userId", "" + uid), TtNotice.Info)));
+        return Referer.redirect(_PANEL_URL + "/list/" + uid, null, TtTaskActionStatus.Failure, notice2s);
     }
-
-
 }

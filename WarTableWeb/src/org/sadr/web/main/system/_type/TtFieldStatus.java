@@ -11,7 +11,8 @@ public enum TtFieldStatus {
     New("فیلد جدید"),
     RemoveFromModel("حذف از مدل"),
     RemoveFromDB("حذف از پایگاه"),
-    RemoveFromModelAndDB("حذف از هر دو"),;
+    RemoveFromModelAndDB("حذف از هر دو"),
+    ;
 
     private final String title;
 

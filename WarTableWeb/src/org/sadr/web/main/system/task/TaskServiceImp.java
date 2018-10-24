@@ -11,8 +11,23 @@ import org.springframework.stereotype.Service;
 public class TaskServiceImp extends GenericServiceImpl<Task, TaskDao> implements TaskService {
 
     @Override
-    public boolean authorizeUser(String taskSignature) {
-        return dao.authorizeUser(taskSignature);
+    public boolean authorizeClient(String taskSignature) {
+        return dao.authorizeClient(taskSignature);
+    }
+
+    @Override
+    public Task fetchClientTask(String taskSignature) {
+        return dao.fetchClientTask(taskSignature);
+    }
+
+    @Override
+    public Task fetchMasterTask(String taskSignature) {
+        return dao.fetchMasterTask(taskSignature);
+    }
+
+    @Override
+    public Task fetchTask(String taskSignature) {
+        return dao.fetchTask(taskSignature);
     }
 
     @Override

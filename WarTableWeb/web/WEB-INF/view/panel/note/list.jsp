@@ -66,6 +66,11 @@
                                     </c:forEach>
                                     <td class="center">
                                         <div class="r-button">
+                                            <a href="${cp}/panel/note/details/@{id}"
+                                               class="btn btn-sm btn-l-details tooltips " data-placement="top"
+                                               data-original-title="<spring:message code="all.details"/> ">
+                                                <i class="fa fa-info"></i>
+                                            </a>
                                             <a href="${cp}/panel/note/edit/@{id}"
                                                class="btn btn-sm btn-l-edit tooltips " data-placement="top"
                                                data-original-title="<spring:message code="all.edit"/> ">

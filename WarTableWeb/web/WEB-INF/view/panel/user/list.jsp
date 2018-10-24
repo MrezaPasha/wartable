@@ -7,7 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
+
 <div class="container" style="min-height: 300px;">
     <div class="page-header">
         <div class="cred-header">
@@ -124,11 +124,11 @@
         </div>
     </div>
 </div>
+
 <script>
     jQuery(document).ready(function () {
-
         pluginFillBody = function (i, value, newItem) {
-            if (value.isMaster) {
+            if (value.isMaster && !value.isLogManager) {
                 newItem = newItem.replace(new RegExp("@{plugin_masterClass}", "g"), " btn-l-level");
                 newItem = newItem.replace(new RegExp("@{plugin_masterLink}", "g"), "${cp}/panel/user/access/list/");
             } else {

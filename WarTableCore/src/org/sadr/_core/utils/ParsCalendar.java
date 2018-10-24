@@ -548,16 +548,13 @@ public class ParsCalendar {
         return getPersDay();
     }
 
-
     public String getHours() {
         return "" + (LocalTime.now().getHour() < 10 ? "0" + LocalTime.now().getHour() : LocalTime.now().getHour());
     }
 
-
     public String getMinutes() {
         return "" + (LocalTime.now().getMinute() < 10 ? "0" + LocalTime.now().getMinute() : LocalTime.now().getMinute());
     }
-
 
     public String getSeconds() {
         return "" + (LocalTime.now().getSecond() < 10 ? "0" + LocalTime.now().getSecond() : LocalTime.now().getSecond());

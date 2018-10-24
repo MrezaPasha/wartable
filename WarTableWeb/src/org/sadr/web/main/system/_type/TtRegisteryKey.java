@@ -6,7 +6,9 @@ package org.sadr.web.main.system._type;
 public enum TtRegisteryKey {
 
 
-    TagPage("test", "،تست", TtRegisteryType.Test),;
+    UiFont("ui_font", "فونت ظاهر", TtRegisteryType.Ui),
+    UiStyle("ui_style", "سبک رنگ ظاهر", TtRegisteryType.Ui),
+    ;
 
     private final String key;
     private final String title;

@@ -54,6 +54,9 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
     public boolean clean() {
         try {
             List<Task> delTasks = this.taskDao.findAllBy(Restrictions.eq(Task.IS_REFRESHED, false), Task._USERS, Task._USER_GROUPS);
+            if (delTasks.size() == 0) {
+                return true;
+            }
             for (Task delTask : delTasks) {
                 OutLog.pl("Deleted T:  " + delTask.getSignature());
                 delTask.setUserGroups(null);

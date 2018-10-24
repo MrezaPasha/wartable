@@ -7,7 +7,6 @@ import org.sadr._core._type.TtEntityState;
 import org.sadr._core._type.TtGbColumnFetch;
 import org.sadr._core._type.TtTransformerType;
 import org.sadr._core.tools.transformer.CustomTransformer;
-import org.sadr._core.utils.OutLog;
 import org.sadr._core.utils.ParsCalendar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -57,7 +56,7 @@ public abstract class GenericDaoImpl<T extends Serializable> implements GenericD
     private SessionFactory sessionFactoryLog;
 
     public final Session getCurrentSession() {
-        if(clazz.getName().endsWith(".RemoteLog")){
+        if (clazz.getName().endsWith(".RemoteLog")) {
             return sessionFactoryLog.getCurrentSession();
         }
         return sessionFactoryRest.getCurrentSession();
@@ -266,8 +265,12 @@ public abstract class GenericDaoImpl<T extends Serializable> implements GenericD
         }
         if (gb.getPaging() != null) {
             Criteria cc = initCriteria(TtTransformerType.Object, gb, null);
-            cc.setProjection(Projections.rowCount());
-            gb.getPaging().setSearchCount((int) (long) cc.uniqueResult());
+            cc.setProjection(Projections.projectionList()
+                .add(Projections.rowCount())
+                .add(Projections.groupProperty("id"))
+            );
+            List o = cc.list();
+            gb.getPaging().setSearchCount(o == null ? 0 : o.size());
             gb.getPaging().calc();
 
             c.setMaxResults(gb.getPaging().getSize())

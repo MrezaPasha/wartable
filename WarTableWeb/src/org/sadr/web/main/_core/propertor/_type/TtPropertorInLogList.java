@@ -13,7 +13,10 @@ import java.util.HashMap;
 public enum TtPropertorInLogList {
 
     ///==================== sys config
-    ServerIdentity("N.propertor.severSpec.identity", "SadrServer16303", TtPropertorType.String, TtPropertorInLogSection.ServerSpec, false), ///
+    SystemName("N.propertor.system.name", "SadrServer", TtPropertorType.String, TtPropertorInLogSection.ServerSpec, false), ///
+    SystemHostName("N.propertor.system.host.name", "SadrHost", TtPropertorType.String, TtPropertorInLogSection.ServerSpec, false), ///
+    SystemVersion("N.propertor.system.version", "1.0.0", TtPropertorType.String, TtPropertorInLogSection.ServerSpec, false), ///
+    SystemIp("N.propertor.system.ip", "127.0.0.1", TtPropertorType.String, TtPropertorInLogSection.ServerSpec, false), ///
 
     ///----
     RemoteServerIp("N.propertor.remote.connection.info.ip", "127.0.0.1", TtPropertorType.String, TtPropertorInLogSection.ConnectionInfo, false), ///

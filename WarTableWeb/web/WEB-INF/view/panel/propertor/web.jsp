@@ -23,11 +23,6 @@
                             کاربری
                         </a>
                     </li>
-                    <li class="li-right">
-                        <a href="#panel_tab3_database" data-toggle="tab">
-                            بانک اطلاعاتی
-                        </a>
-                    </li>
 
                     <li style="float: left">
                         <a href="${cp}/panel/propertor/web/reset" class="btn btn-default btn-block">
@@ -52,10 +47,6 @@
                     </div>
                     <div class="tab-pane" id="panel_tab3_user">
                         <c:set var="olist" value="${ulist}" scope="request"/>
-                        <jsp:include page="propertor-tabs.jsp"/>
-                    </div>
-                    <div class="tab-pane" id="panel_tab3_database">
-                        <c:set var="olist" value="${dlist}" scope="request"/>
                         <jsp:include page="propertor-tabs.jsp"/>
                     </div>
 

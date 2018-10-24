@@ -1,6 +1,8 @@
 package org.sadr.web.main._core._type;
 
 import org.sadr._core.utils.Environment;
+import org.sadr.web.main.system._type.TtTaskActionStatus;
+import org.sadr.web.main.system._type.TtTaskActionSubType;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -36,6 +38,7 @@ public enum TtTile___ {
     p_archive_file_details(TtSystemTileLayout.Panel, null),
     p_archive_file_list(TtSystemTileLayout.Panel, null),
     p_backup_list(TtSystemTileLayout.Panel, null),
+    p_backup_upload(TtSystemTileLayout.Panel, null),
     p_develop_index(TtSystemTileLayout.Panel, null),
     p_develop_create_package(TtSystemTileLayout.Panel, null),
     p_e_400(TtSystemTileLayout.Panel, null),
@@ -56,12 +59,13 @@ public enum TtTile___ {
     p_setting_init(TtSystemTileLayout.Panel, null),
     p_note_create(TtSystemTileLayout.Panel, a_note_cred),
     p_note_edit(TtSystemTileLayout.Panel, a_note_cred),
-    p_note_details(TtSystemTileLayout.Panel,null),
+    p_note_details(TtSystemTileLayout.Panel, null),
     p_note_list(TtSystemTileLayout.Panel, null),
-    p_propertor_control(TtSystemTileLayout.Panel, null),
-    p_propertor_web(TtSystemTileLayout.Panel, null),
-    p_propertor_log(TtSystemTileLayout.Panel, null),
+    p_propertor_backup(TtSystemTileLayout.Panel, null),
     p_propertor_boot(TtSystemTileLayout.Panel, null),
+    p_propertor_control(TtSystemTileLayout.Panel, null),
+    p_propertor_log(TtSystemTileLayout.Panel, null),
+    p_propertor_web(TtSystemTileLayout.Panel, null),
     p_setting_site(TtSystemTileLayout.Panel, null),
     p_sys_log_visit(TtSystemTileLayout.Panel, null),
     p_sys_log_list(TtSystemTileLayout.Panel, null),
@@ -81,6 +85,7 @@ public enum TtTile___ {
     p_sys_registery_list(TtSystemTileLayout.Panel, null),
     p_sys_task_active(TtSystemTileLayout.Panel, null),
     p_sys_task_confirm(TtSystemTileLayout.Panel, null),
+    p_ui_set(TtSystemTileLayout.Panel, null),
 
     p_user_porter_details(TtSystemTileLayout.Panel, null),
     p_user_porter_list(TtSystemTileLayout.Panel, null),
@@ -99,8 +104,7 @@ public enum TtTile___ {
     p_user_listInactive(TtSystemTileLayout.Panel, null),
     p_user_listOnline(TtSystemTileLayout.Panel, null),
     p_user_profile(TtSystemTileLayout.Panel, null),
-    p_user_reSignin(TtSystemTileLayout.Panel, null),
-    ;
+    p_user_reSignin(TtSystemTileLayout.Panel, null),;
 
     private final TtTile___ alternative;// alternative codes link the page of a TtTile to another file. sharing jsp files
     private final TtSystemTileLayout template;
@@ -118,9 +122,21 @@ public enum TtTile___ {
         return new ModelAndView(this.getCode());
     }
 
+    public ModelAndView ___getDisModel(TtTaskActionSubType subType, TtTaskActionStatus actionStatus) {
+        return new ModelAndView(this.getCode())
+                .addObject("actionStatus", actionStatus)
+                .addObject("actionSubType", subType);
+    }
+
     public ModelAndView ___getDisModel(String action) {
         return new ModelAndView(this.getCode())
-            .addObject("action", Environment.getInstance().getContextPath() + action);
+                .addObject("action", Environment.getInstance().getContextPath() + action);
+    }
+
+    public ModelAndView ___getDisModel(String action, TtTaskActionSubType subType, TtTaskActionStatus actionStatus) {
+        return new ModelAndView(this.getCode())
+                .addObject("action", Environment.getInstance().getContextPath() + action).addObject("actionStatus", actionStatus)
+                .addObject("actionSubType", subType);
     }
 
     public String getCode() {

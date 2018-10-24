@@ -18,6 +18,8 @@ import org.sadr.web.main._core.utils._type.TtNotice;
 import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.system._type.TtIrrorLevel;
 import org.sadr.web.main.system._type.TtIrrorPlace;
+import org.sadr.web.main.system._type.TtTaskActionStatus;
+import org.sadr.web.main.system._type.TtTaskActionSubType;
 import org.sadr.web.main.system.irror.IrrorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -57,7 +59,7 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
     }
 
 
-    @PersianName("ثبت کاربر")
+    @PersianName("ثبت")
     @RequestMapping(value = _PANEL_URL + "/create")
     public ModelAndView pCreate(Model model) {
         Note u = (Note) model.asMap().get("note");
@@ -76,14 +78,14 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
                                 HttpSession session,
                                 final RedirectAttributes redirectAttributes) {
         if (noteBindingResult.hasErrors()) {
-            return Referer.redirectBindingError(request, redirectAttributes, noteBindingResult, fnote);
+            return Referer.redirectBindingError(TtTaskActionSubType.New_Data, TtTaskActionStatus.Error, request, redirectAttributes, noteBindingResult, fnote);
         }
         fnote.setUser((User) session.getAttribute("sUser"));
         fnote.setIsNotified(false);
         fnote.setIsVisited(false);
         this.service.save(fnote);
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.note.register.success", fnote.getSecretNote(), TtNotice.Success)));
-        return Referer.redirect(_PANEL_URL + "/edit/" + fnote.getIdi());
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.note.register.success", fnote.getSecretNote(), TtNotice.Success)));
+        return Referer.redirect(_PANEL_URL + "/edit/" + fnote.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
     }
 
     @PersianName("مشاهده")
@@ -102,14 +104,14 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
         );
 
         if (dbnote == null) {
-            Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.note.not.found", JsonBuilder.toJson("noteId", "" + uid), TtNotice.Warning));
-            return Referer.redirect(_PANEL_URL + "/list", request);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.note.not.found", JsonBuilder.toJson("noteId", "" + uid), TtNotice.Warning));
+            return Referer.redirect(_PANEL_URL + "/list", null, TtTaskActionStatus.Failure, notice2s);
         }
 
         dbnote.setIsVisited(true);
         this.service.update(dbnote);
         model.addAttribute("note", dbnote);
-        return TtTile___.p_note_details.___getDisModel();
+        return TtTile___.p_note_details.___getDisModel(null, TtTaskActionStatus.Success);
     }
 
 
@@ -132,12 +134,16 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
             );
         }
         if (dbnote == null) {
-            Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.note.not.found", JsonBuilder.toJson("noteId", "" + uid), TtNotice.Warning));
-            return Referer.redirect(_PANEL_URL + "/list", request);
+            Notice2[] noteIds = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.note.not.found", JsonBuilder.toJson("noteId", "" + uid), TtNotice.Warning));
+            return Referer.redirect(
+                    _PANEL_URL + "/list",
+                    TtTaskActionSubType.Edit_Data,
+                    TtTaskActionStatus.Failure,
+                    noteIds);
         }
 
         model.addAttribute("note", dbnote);
-        return TtTile___.p_note_edit.___getDisModel(_PANEL_URL + "/edit");
+        return TtTile___.p_note_edit.___getDisModel(_PANEL_URL + "/edit", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
     }
 
     @RequestMapping(value = _PANEL_URL + "/edit", method = RequestMethod.POST)
@@ -149,7 +155,13 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
             RedirectAttributes redirectAttributes, HttpSession session) {
 
         if (noteBindingResult.hasErrors()) {
-            return Referer.redirectBindingError(request, redirectAttributes, noteBindingResult, fnote);
+            return Referer.redirectBindingError(
+                    TtTaskActionSubType.Edit_Data,
+                    TtTaskActionStatus.Error,
+                    request,
+                    redirectAttributes,
+                    noteBindingResult,
+                    fnote);
         }
 
         User sUser = (User) session.getAttribute("sUser");
@@ -162,8 +174,14 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
         );
 
         if (dbnote == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.note.not.found")));
-            return Referer.redirectObjects(request, redirectAttributes, fnote);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.note.not.found")));
+            return Referer.redirectObjects(
+                    TtTaskActionSubType.Edit_Data,
+                    TtTaskActionStatus.Error,
+                    notice2s,
+                    request,
+                    redirectAttributes,
+                    fnote);
         }
 
         dbnote.setDateTime(fnote.getDateTime());
@@ -179,9 +197,13 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
 
         this.service.update(dbnote);
 
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.edit.success", fnote.getSecretNote(), TtNotice.Success, dbnote.getTitle())));
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.edit.success", TtNotice.Success, dbnote.getTitle())));
 
-        return Referer.redirect(_PANEL_URL + "/edit/" + dbnote.getIdi());
+        return Referer.redirect(
+                _PANEL_URL + "/edit/" + dbnote.getIdi(),
+                TtTaskActionSubType.Edit_Data,
+                TtTaskActionStatus.Success,
+                notice2s);
     }
 
     @PersianName("لیست")
@@ -206,7 +228,7 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
                 GB.col(Note.DATE_TIME),
                 GB.col(Note.IMPORTANCE)
         );
-        return TtTile___.p_note_list.___getDisModel();
+        return TtTile___.p_note_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
     }
 
     @RequestMapping(value = _PANEL_URL + "/list", method = RequestMethod.POST)
@@ -263,16 +285,23 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
                         )
         );
         if (dbus == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.note.not.found", JsonBuilder.toJson("noteId", "" + id))));
-            return Referer.redirect(_PANEL_URL + "/list");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.note.not.found", JsonBuilder.toJson("noteId", "" + id))));
+            return Referer.redirect(_PANEL_URL + "/list",
+                    TtTaskActionSubType.Delete_From_DB,
+                    TtTaskActionStatus.Failure,
+                    notice2s);
         }
 
         this.service.trash(id);
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.trash.success", dbus.getSecretNote(), TtNotice.Success, dbus.getTitle())));
-        return Referer.redirect(_PANEL_URL + "/list");
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.trash.success", dbus.getSecretNote(), TtNotice.Success, dbus.getTitle())));
+        return Referer.redirect(
+                _PANEL_URL + "/list",
+                TtTaskActionSubType.Delete_From_DB,
+                TtTaskActionStatus.Success,
+                notice2s);
     }
 
-    @PersianName("بروزرسانی هشدار")
+    @PersianName("اطلاع رسانی سررسید هشدار به صورت خودکار")
     @RequestMapping(value = _PANEL_URL + "/sync", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<String> pSync(HttpSession session) {
@@ -312,7 +341,7 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
         OutLog.pl(json);
         return Ison.init()
                 .setStatus(TtIsonStatus.Ok)
-                .setProperty("header", SpringMessager.get("N1.note.you.have.note"))
+                .setProperty("header", SpringMessager.get("N1.note.you.have.note", list.size()))
                 .setPropertyJson("notes", json)
                 .toResponse();
     }

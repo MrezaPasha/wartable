@@ -4,16 +4,15 @@ import org.sadr._core.utils.Cryptor;
 import org.sadr._core.utils.OutLog;
 import org.sadr.web.main.CoreConfig;
 import org.sadr.web.main._core.develop.DevelopConfig;
-import org.sadr.web.main._core.propertor.PropertorConfig;
-import org.sadr.web.main._core.propertor.PropertorInBoot;
-import org.sadr.web.main._core.propertor.PropertorInControl;
-import org.sadr.web.main._core.propertor.PropertorInWeb;
+import org.sadr.web.main._core.propertor.*;
 import org.sadr.web.main._core.propertor._type.TtPropertorInBootList;
 import org.sadr.web.main._core.propertor._type.TtPropertorInBoot_DeployMode;
 import org.sadr.web.main._core.setting.SettingConfig;
 import org.sadr.web.main._core.setting.SettingController;
 import org.sadr.web.main._core.tools.authorizer.AuthorizerAspectConfig;
 import org.sadr.web.main._core.tools.schedule.SchedulerConfig;
+import org.sadr.web.main._core.ui.UiConfig;
+import org.sadr.web.main._core.ui.UiController;
 import org.sadr.web.main.admin.user.confirm.UserConfirm;
 import org.sadr.web.main.admin.user.confirm.UserConfirmConfig;
 import org.sadr.web.main.admin.user.group.UserGroup;
@@ -290,6 +289,7 @@ public class WebConfigHandler {
         addConfigClass(AuthorizerAspectConfig.class);
         addConfigClass(SchedulerConfig.class);
         addConfigClass(SettingConfig.class);
+        addConfigClass(UiConfig.class);
         addConfigClass(DevelopConfig.class);
         addConfigClass(PropertorConfig.class);
 
@@ -311,6 +311,8 @@ public class WebConfigHandler {
     public static void loadPropertors() {
         PropertorInControl.getInstance().load();
         PropertorInWeb.getInstance().load();
+        PropertorInBackup.getInstance().load();
+        PropertorInLog.getInstance().load();
     }
 
     //=========================################===========================// InitPrime
@@ -326,7 +328,15 @@ public class WebConfigHandler {
         if (ic != null) {
             ic.initCorePrime(isInitEmergency);
         }
+    }
 
+    //=========================################===========================// Init Ui
+    public static void initUi() {
+        UiController ic;
+        ic = webApplicationContext.getBean(UiController.class);
+        if (ic != null) {
+            ic.init();
+        }
     }
 
 }

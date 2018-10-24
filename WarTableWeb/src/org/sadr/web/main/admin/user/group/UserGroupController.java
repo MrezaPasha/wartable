@@ -8,12 +8,15 @@ import org.sadr.web.main._core._type.TtTaskAccessLevel;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.tools.listener.SessionListener;
 import org.sadr.web.main._core.utils.Notice2;
+import org.sadr.web.main._core.utils.Referer;
 import org.sadr.web.main._core.utils._type.TtNotice;
 import org.sadr.web.main.admin._type.TtUserLevel;
 import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.admin.user.user.UserService;
 import org.sadr.web.main.system._type.TtIrrorLevel;
 import org.sadr.web.main.system._type.TtIrrorPlace;
+import org.sadr.web.main.system._type.TtTaskActionStatus;
+import org.sadr.web.main.system._type.TtTaskActionSubType;
 import org.sadr.web.main.system.irror.IrrorService;
 import org.sadr.web.main.system.module.Module;
 import org.sadr.web.main.system.module.ModuleService;
@@ -137,16 +140,16 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
 
     @RequestMapping(value = _PANEL_URL + "/desk", method = RequestMethod.POST)
     public ModelAndView pDesk(
-        Model model,
-        @ModelAttribute("userGroup") @Valid UserGroup formObj,
-        BindingResult bindingResultformObj,
-        final RedirectAttributes redirectAttributes) {
+            Model model,
+            @ModelAttribute("userGroup") @Valid UserGroup formObj,
+            BindingResult bindingResultformObj,
+            final RedirectAttributes redirectAttributes) {
         formObj.setTitle(formObj.getTitle().trim());
         if (bindingResultformObj.hasErrors()) {
             if (bindingResultformObj.getErrorCount() > 1 || !bindingResultformObj.getFieldError().getField().equals(UserGroup._PARENT + ".id")) {
                 redirectAttributes.addFlashAttribute("raObj_1", formObj);
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.all.validation.error")));
-                return new ModelAndView("redirect:/panel/user/group/desk?ix=" + formObj.getId());
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.all.validation.error")));
+                return Referer.redirect(_PANEL_URL + "/desk?ix=" + formObj.getId(), TtTaskActionSubType.Edit_Group, TtTaskActionStatus.Error, notice2s);
             }
         }
 
@@ -158,8 +161,8 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
             // ===================================== CREATE
             if (this.service.isExist(Restrictions.eq(UserGroup.TITLE, formObj.getTitle()))) {
                 redirectAttributes.addFlashAttribute("raObj_1", formObj);
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.all.title.duplicated", formObj.getSecretNote(), TtNotice.Warning)));
-                return new ModelAndView("redirect:/panel/user/group/desk?ix=" + formObj.getId());
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.all.title.duplicated", formObj.getSecretNote(), TtNotice.Warning)));
+                return Referer.redirect(_PANEL_URL + "/desk?ix=" + formObj.getId(), TtTaskActionSubType.Edit_Group, TtTaskActionStatus.Failure, notice2s);
             }
 
             this.service.save(formObj);
@@ -168,14 +171,15 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
             // ===================================== EDIT
             UserGroup dbObj = this.service.findById(formObj.getId());
             if (dbObj == null) {
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.userGroup.not.found", formObj.getSecretNote(), TtNotice.Warning)));
-                return new ModelAndView("redirect:/panel/user/group/desk?ix=" + formObj.getId());
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.userGroup.not.found", formObj.getSecretNote(), TtNotice.Warning)));
+                return Referer.redirect(_PANEL_URL + "/desk?ix=" + formObj.getId(), TtTaskActionSubType.Edit_Group, TtTaskActionStatus.Failure, notice2s);
+
             }
 
             if (this.service.isDuplicateWith(Restrictions.eq(UserGroup.TITLE, formObj.getTitle()), formObj.getId())) {
                 redirectAttributes.addFlashAttribute("raObj_1", formObj);
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.all.title.duplicated", formObj.getSecretNote(), TtNotice.Warning)));
-                return new ModelAndView("redirect:/panel/user/group/desk?ix=" + formObj.getId());
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.all.title.duplicated", formObj.getSecretNote(), TtNotice.Warning)));
+                return Referer.redirect(_PANEL_URL + "/desk?ix=" + formObj.getId(), TtTaskActionSubType.Edit_Group, TtTaskActionStatus.Failure, notice2s);
             }
 
             // Parent Loop check
@@ -184,8 +188,8 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
                 while (parent != null) {
                     if (parent.getIdi() == formObj.getIdi()) {
                         redirectAttributes.addFlashAttribute("raObj_1", formObj);
-                        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.group.parent.loop", formObj.getSecretNote(), TtNotice.Danger)));
-                        return new ModelAndView("redirect:/panel/user/group/desk?ix=" + formObj.getId());
+                        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.group.parent.loop", formObj.getSecretNote(), TtNotice.Danger)));
+                        return Referer.redirect(_PANEL_URL + "/desk?ix=" + formObj.getId(), TtTaskActionSubType.Edit_Group, TtTaskActionStatus.Failure, notice2s);
                     } else {
                         if (parent.getParent() == null) {
                             break;
@@ -200,7 +204,8 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
             this.service.update(dbObj);
             Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.edit.success", dbObj.getSecretNote(), TtNotice.Success, dbObj.getTitle())));
         }
-        return new ModelAndView("redirect:/panel/user/group/desk");
+        return Referer.redirect(_PANEL_URL + "/desk", TtTaskActionSubType.Edit_Group, TtTaskActionStatus.Success);
+
     }
 
     @PersianName("تخصیص کاربر به گروه")
@@ -213,7 +218,7 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
             model.addAttribute("selectedUserGroup", new UserGroup());
         } else {
             UserGroup nc = this.service.findById(gid,
-                UserGroup._USERS
+                    UserGroup._USERS
             );
             if (nc == null) {
                 model.addAttribute("uglist", this.service.findAll());
@@ -301,8 +306,8 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
             model.addAttribute("selectedUserGroup", new UserGroup());
         } else {
             UserGroup userGroup = this.service.findById(id,
-                UserGroup._TASKS,
-                UserGroup._TASKS + "." + Task._MODULE);
+                    UserGroup._TASKS,
+                    UserGroup._TASKS + "." + Task._MODULE);
             if (userGroup == null) {
                 model.addAttribute("uglist", this.service.findAll());
                 model.addAttribute("selectedUserGroup", new UserGroup());
@@ -367,10 +372,10 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
         if (ug.getTasks().size() > 0) {
             Set<Task> userTasksOrg = ug.getTasks();
             List<Task> allTk = this.taskService.findAllBy(
-                Restrictions.and(
-                    Restrictions.eq(Task._MODULE, mud),
-                    Restrictions.eq(Task.ACCESS_LEVEL, TtTaskAccessLevel.Grant)
-                ));
+                    Restrictions.and(
+                            Restrictions.eq(Task._MODULE, mud),
+                            Restrictions.eq(Task.ACCESS_LEVEL, TtTaskAccessLevel.Grant)
+                    ));
             List<Task> newTk = new ArrayList<>();
             Set<Task> newMyTk = new HashSet<>();
             boolean isExist;
@@ -406,10 +411,10 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
 
         } else {
             model.addAttribute("tasks", this.taskService.findAllBy(
-                Restrictions.and(
-                    Restrictions.eq(Task._MODULE, moduleService.findById(mid)),
-                    Restrictions.eq(Task.ACCESS_LEVEL, TtTaskAccessLevel.Grant)
-                )));
+                    Restrictions.and(
+                            Restrictions.eq(Task._MODULE, moduleService.findById(mid)),
+                            Restrictions.eq(Task.ACCESS_LEVEL, TtTaskAccessLevel.Grant)
+                    )));
 
         }
         model.addAttribute("moduleName", mud.getMessageCode());
@@ -431,7 +436,7 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
         try {
             mid = Integer.valueOf(sid.trim());
         } catch (Exception e) {
-            irrorService.submit(e,request, TtIrrorPlace.Controller, TtIrrorLevel.Warn);
+            irrorService.submit(e, request, TtIrrorPlace.Controller, TtIrrorLevel.Warn);
             Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.not.found", JsonBuilder.toJson("moduleId", "" + sid), TtNotice.Warning)));
             return new ModelAndView("redirect:/panel/user/group/list");
         }
@@ -440,9 +445,9 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
             return new ModelAndView("redirect:/panel/user/group/list");
         } else {
             UserGroup dbU = service.findById(ug.getId(),
-                UserGroup._USERS,
-                UserGroup._TASKS,
-                UserGroup._TASKS + "." + Task._MODULE);
+                    UserGroup._USERS,
+                    UserGroup._TASKS,
+                    UserGroup._TASKS + "." + Task._MODULE);
             if (dbU == null) {
                 Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.not.found", JsonBuilder.toJson("moduleId", "" + sid), TtNotice.Warning)));
                 return new ModelAndView("redirect:/panel/user/group/list");

@@ -7,7 +7,6 @@ import org.sadr.web.main.system.irror.IrrorConfig;
 import org.springframework.context.annotation.Bean;
 
 /**
- *
  * @author masoud
  */
 public class BackupConfig extends Config {
@@ -22,6 +21,8 @@ public class BackupConfig extends Config {
     public BackupServiceImp backupServiceImp() {
         BackupServiceImp usi = new BackupServiceImp();
         usi.setDao(backupDaoImp());
+        usi.setDirectoryService(new DirectoryConfig().directoryServiceImp());
+        usi.setFileService(new FileConfig().fileServiceImp());
         return usi;
     }
 

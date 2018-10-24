@@ -33,11 +33,17 @@
                ir-search-field-noSp="${f_lastName[3]}"
         >
     </div>
-    <div class="col-xxs-12 col-xs-3 col-md-6">
+    <div class="col-xxs-12 col-xs-12 col-md-6">
+        <button ir-search-submit="export"
+                class="btn btn-p-export btn-animated btn-animated-right">
+            <spring:message code="all.export" />
+            <i class="clip-file-excel"></i>
+        </button>
         <button ir-search-submit class="btn btn-animated btn-animated-right">
-            جستجو
+            <spring:message code="all.search" />
             <i class="clip-search"></i>
         </button>
+
     </div>
 </div>
 <%--/****DO-NoT-REMOVE-IT*#- ==============  END  ============== -#*/--%>

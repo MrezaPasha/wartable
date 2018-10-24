@@ -24,6 +24,9 @@
         <div class="tab-content">
             <form id="form" accept-charset="UTF-8" action="${action}" method="POST">
                 <form:hidden id="user_id" path="user.id"/>
+                <c:if test="${user.isLogManager}">
+                    <c:set var="dis" value="true"/>
+                </c:if>
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="form-group">
@@ -33,7 +36,7 @@
                                 <span class="symbol required"></span>
                                 <form:errors cssClass="form-validation-error" path="${varName}"/>
                             </form:label>
-                            <form:input path="${varName}" cssClass="form-control string-required string-max-30"/>
+                            <form:input disabled="${dis}" path="${varName}" cssClass="form-control string-required string-max-30"/>
                         </div>
                         <div class="form-group">
                             <c:set var="varName" value="user.gender"/>

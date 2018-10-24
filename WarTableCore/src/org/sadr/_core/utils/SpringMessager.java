@@ -34,7 +34,7 @@ public class SpringMessager {
         }
     }
 
-    public static String get(String code, Object[] params) {
+    public static String get(String code, Object... params) {
         try {
             return messageSource.getMessage(
                 code,
@@ -47,7 +47,7 @@ public class SpringMessager {
         }
     }
 
-    public static String get(String code, Object[] params, Locale locale) {
+    public static String get(String code, Locale locale,Object... params) {
         try {
             return messageSource.getMessage(
                 code,

@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 public @interface PersianName {
 
     String value() default "";
+    String export() default "";
 }

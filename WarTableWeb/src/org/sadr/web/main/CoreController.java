@@ -1,8 +1,10 @@
 package org.sadr.web.main;
 
+import org.hibernate.criterion.Restrictions;
 import org.sadr._core.meta.annotation.Front;
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.utils.ParsCalendar;
+import org.sadr.web.main._core._type.TtTaskAccessLevel;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.meta.annotation.StandaloneController;
 import org.sadr.web.main._core.meta.annotation.TaskAccessLevel;
@@ -12,6 +14,9 @@ import org.sadr.web.main._core.utils.Referer;
 import org.sadr.web.main._core.utils._type.TtIsonStatus;
 import org.sadr.web.main.admin._type.TtUserLevel;
 import org.sadr.web.main.admin.user.user.User;
+import org.sadr.web.main.note.note.Note;
+import org.sadr.web.main.note.note.NoteService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,16 +40,34 @@ public class CoreController {
     //===================================================
     private final String _FRONT_URL = "" + REQUEST_MAPPING_BASE;
     private final String _PANEL_URL = "/panel" + REQUEST_MAPPING_BASE;
-
     ////////////////////
+
+
+    private NoteService noteService;
+
+    @Autowired
+    public void setNoteService(NoteService noteService) {
+        this.noteService = noteService;
+    }
+
     /////////////////////////////////////////////////////// PANEL
+    @TaskAccessLevel(TtTaskAccessLevel.Free4Users)
     @PersianName("داشبورد")
     @RequestMapping(value = "/panel", method = RequestMethod.GET)
-    public ModelAndView pPanelDashboard(Model model) {
+    public ModelAndView pPanelDashboard(Model model, HttpSession session) {
         model.addAttribute("signinLog", CacheStatic.getSigninLog());
         model.addAttribute("signinFailedCount", CacheStatic.getSigninLogFailedCount());
         model.addAttribute("signinMainIp", CacheStatic.getSigninMainIp());
         model.addAttribute("isSigninIpChanged", CacheStatic.isSigninIsIpChanged());
+
+        model.addAttribute("nlist", this.noteService.findAllBy(
+                Restrictions.and(
+                        Restrictions.eq(Note._USER, (User) session.getAttribute("sUser")),
+                        Restrictions.eq(Note.IS_VISITED, false),
+                        Restrictions.le(Note.DATE_TIME, ParsCalendar.getInstance().getShortDateTime())
+                )
+        ));
+
         return TtTile___.p_dashboard.___getDisModel();
     }
 

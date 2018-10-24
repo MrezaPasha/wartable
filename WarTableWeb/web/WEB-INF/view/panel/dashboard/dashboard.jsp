@@ -5,14 +5,7 @@
 <%@ page session="false" %>
 <section class="panel-dashboard">
     <div class="container">
-        <div class="btn-box">
-            <a href="${cp}/panel/note/create" class="btn-item">
-                <span class="title">یادآور</span>
-            </a>
-
-        </div>
-
-        <div class="row">
+        <div class="row dashboard-info-box">
             <c:if test="${signinLog!=null}">
                 <div class="col-sm-4">
                     <div class="signin-log">
@@ -49,6 +42,30 @@
                     </div>
                 </div>
             </c:if>
+            <c:if test="${not empty nlist}">
+                <div class="col-sm-6 col-sm-offset-1 note-sync-container">
+                    <h1>یاداشت های نخوانده</h1>
+                    <table>
+                        <thead>
+                        <th><spring:message code="note.title"/></th>
+                        <th><spring:message code="note.dateTime"/></th>
+                        <th><spring:message code="note.importance"/></th>
+                        <th></th>
+                        </thead>
+                        <tbody>
+                        <c:forEach items="${nlist}" var="myvar">
+                                <tr>
+                                    <td>${myvar.title}</td>
+                                    <td>${myvar.dateTime}</td>
+                                    <td>${myvar.importance.title}</td>
+                                    <td><a href="${cp}/panel/note/details/${myvar.id}"><spring:message code="all.details" /></a></td>
+                                </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </c:if>
         </div>
+
     </div>
 </section>

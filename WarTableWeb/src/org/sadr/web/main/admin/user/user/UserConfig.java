@@ -41,7 +41,6 @@ public class UserConfig extends WebMvcConfigurerAdapter {
 
         uc.setTaskService(new TaskConfig().taskServiceImp());
         uc.setModuleService(new ModuleConfig().moduleServiceImp());
-        uc.setUuidService(new UserUuidConfig().userUuidServiceImp());
         uc.setUserGroupService(new UserGroupConfig().userGroupServiceImp());
         uc.setUserAttemptService(new UserAttemptConfig().userAttemptServiceImp());
         uc.setUserConfirmService(new UserConfirmConfig().userConfirmServiceImp());

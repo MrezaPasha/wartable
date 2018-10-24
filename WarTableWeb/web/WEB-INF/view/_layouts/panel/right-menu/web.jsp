@@ -13,7 +13,7 @@
         <span class="selected"></span>
     </a>
     <ul class="sub-menu">
-        <li data-menu-id="|p_note_list|p_note_create|p_note_edit|">
+        <li id="noteMenu" data-menu-id="|p_note_list|p_note_create|p_note_edit|p_note_details|">
             <a href="${cp}/panel/note/list">
                 <i class=" clip-tree light"></i>
                 <span class="title"><spring:message code="rightmenu.note"/></span>
@@ -32,7 +32,7 @@
                         <span class="title"><spring:message code="rightmenu.list"/></span>
                     </a>
                 </li>
-                <li data-menu-id="|p_user_group_desk|p_user_group_access|p_user_group_access_assign|p_user_group_assign|p_user_group_access_list|">
+                <li data-menu-id="|p_user_group_desk|p_user_group_access|p_user_group_access_assign|p_user_group_assign|p_user_group_access_list|p_user_group_access_assign|">
                     <a href="${cp}/panel/user/group/desk">
                         <i class=" clip-tree light"></i>
                         <span class="title"><spring:message code="rightmenu.userGroups"/></span>
@@ -73,15 +73,26 @@
                 <span class="selected"></span>
             </a>
             <ul class="sub-menu">
-                <li data-menu-id="|p_backup_list|">
+                <li data-menu-id="|p_backup_list||p_backup_upload|">
                     <a href="${cp}/panel/backup/list">
                         <i class=" clip-tree light"></i>
                         <span class="title"><spring:message code="rightmenu.web.backup.list"/></span>
                     </a>
                 </li>
+                <li data-menu-id="p_propertor_backup">
+                    <a href="${cp}/panel/propertor/backup">
+                        <i class=" clip-tree light"></i>
+                        <span class="title"><spring:message code="rightmenu.backup.config"/></span>
+                    </a>
+                </li>
             </ul>
         </li>
-
+        <li data-menu-id="|p_ui_set|">
+            <a href="${cp}/panel/ui/set">
+                <i class=" clip-tree light"></i>
+                <span class="title"><spring:message code="rightmenu.web.ui.set"/></span>
+            </a>
+        </li>
     </ul>
 </li>
 <%--/****DO-NoT-REMOVE-IT*#- ==============  END  ============== -#*/--%>

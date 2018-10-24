@@ -100,6 +100,14 @@
                             <td>${log.actionType.title}</td>
                         </tr>
                         <tr>
+                            <th><spring:message code="log.actionSubType"/></th>
+                            <td>${log.actionSubType}</td>
+                        </tr>
+                        <tr>
+                            <th><spring:message code="log.actionStatus"/></th>
+                            <td>${log.actionStatus.title}</td>
+                        </tr>
+                        <tr>
                             <th><spring:message code="log.importanceLevel"/></th>
                             <td>${log.importanceLevel.title}</td>
                         </tr>

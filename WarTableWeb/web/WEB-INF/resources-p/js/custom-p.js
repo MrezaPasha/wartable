@@ -28,11 +28,11 @@ var CustomPanelJs = function () {
                 $('[data-menu-id*="|' + sp[i] + '|"],[data-menu-id="' + sp[i] + '"]').css({"display": "list-item", "visibility": "visible"});
                 $('[data-menu-id*="|' + sp[i] + '|"],[data-menu-id="' + sp[i] + '"]').parents("li").css({"display": "block", "visibility": "visible"});
             }
-            $('[data-menu-id*="|' + $("#rightMenuIdHandler").val() + '|"],[data-menu-id="' + $("#rightMenuIdHandler").val() + '"]').each(function () {
-                $(this).addClass("active");
-                $(this).parents("li").addClass("active").addClass("open");
-            });
         }
+        $('[data-menu-id*="|' + $("#rightMenuIdHandler").val() + '|"],[data-menu-id="' + $("#rightMenuIdHandler").val() + '"]').each(function () {
+            $(this).addClass("active");
+            $(this).parents("li").addClass("active").addClass("open");
+        });
     };
     var runPropertor = function (prop) {
         var saveSuccessAnimate = function () {
@@ -175,7 +175,7 @@ var CustomPanelJs = function () {
                 type: 'POST',
                 success: function (data) {
                     console.log(data);
-                    if (data.status === "ok") {
+                    if (data !== undefined && data.status === "ok") {
                         $('#noteSyncModal').modal('show');
                         console.log("ookk");
                         var hx = "<table class='note-sync-table'><thead><tr><th>عنوان</th><th>زمان</th><th>اهمیت</th><th></th></tr></thead><tbody>";
@@ -199,9 +199,10 @@ var CustomPanelJs = function () {
             });
             return un;
         }
-        syncNotes();
-        setInterval(syncNotes, 3000);
-
+        if ($("#noteMenu").length > 0 && $("#noteMenu").css("visibility") == "visible") {
+            syncNotes();
+            setInterval(syncNotes, 3000);
+        }
     };
 
 
@@ -219,7 +220,11 @@ var CustomPanelJs = function () {
         },
         initNoteSync: function () {
             runNoteSync();
+        },
+        initRandomUsername: function () {
+            runRandomUsername();
         }
     };
-}();
+}
+();
 /****DO-NoT-REMOVE-IT*#- ==============  END  ============== -#*/

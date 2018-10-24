@@ -1,6 +1,9 @@
 package org.sadr.web.main.system.log.general;
 
-import org.aspectj.lang.ProceedingJoinPoint;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.jasypt.hibernate4.type.EncryptedStringType;
 import org.sadr._core._type.TtEntityState;
 import org.sadr._core._type.TtYesNo;
 import org.sadr._core.meta.annotation.PersianName;
@@ -17,7 +20,7 @@ import org.sadr.web.main.admin.user.group.UserGroup;
 import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.system._type.*;
 import org.sadr.web.main.system.task.Task;
-import org.springframework.validation.support.BindingAwareModelMap;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -27,17 +30,79 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * @author masoud
  */
+@TypeDef(
+        name = "encryptedString",
+        typeClass = EncryptedStringType.class,
+        parameters = {
+                @Parameter(name = "encryptorRegisteredName", value = "strongHibernateStringEncryptor")
+        }
+)
 @PersianName("رویدادنگاری محلی")
 @Entity
 @Table(name = "Web.System.Log")
 public class Log extends GenericDataModel<Log> implements Serializable {
-//#########++++++#######// StaticFields: Start //
-public static final String SERVER_ID = "serverId";public static final String IMPORTANCE_LEVEL = "importanceLevel";public static final String SENSITIVITY = "sensitivity";public static final String ACTION_TYPE = "actionType";public static final String USER_ID = "userId";public static final String USER_LEVEL = "userLevel";public static final String USER_GROUP_ID = "userGroupId";public static final String DATE_TIME_G = "dateTimeG";public static final String TASK_NAME = "taskName";public static final String TASK_TITLE = "taskTitle";public static final String IS_TASK_TWO_LEVEL_CONFIRM = "isTaskTwoLevelConfirm";public static final String MESSAGE = "message";public static final String SESSION_ID = "sessionId";public static final String COMPUTER_SIGNATURE = "computerSignature";public static final String AGENT_SIGNATURE = "agentSignature";public static final String PORTER_UUID = "porterUuid";public static final String PORT_NUMBER = "portNumber";public static final String URL = "url";public static final String REQUEST_METHOD = "requestMethod";public static final String HTTP_CODE = "httpCode";public static final String SEND_DATE_TIME_G = "sendDateTimeG";public static final String SEND_STATUS = "sendStatus";public static final String ONLINE_LOGGING_STRATEGY = "onlineLoggingStrategy";public static final String $REL_COLUMNS = "relColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $SEND_DATE_TIME = "sendDateTime";public static final String $IS_TASK_TWO_LEVEL_CONFIRM_Y = "isTaskTwoLevelConfirmY";public static final String $ACT_COLUMNS = "actColumns";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
+    //#########++++++#######// StaticFields: Start //
+    public static final String SERVER_ID = "serverId";
+    public static final String IMPORTANCE_LEVEL = "importanceLevel";
+    public static final String SENSITIVITY = "sensitivity";
+    public static final String ACTION_TYPE = "actionType";
+    public static final String ACTION_SUB_TYPE = "actionSubType";
+    public static final String ACTION_STATUS = "actionStatus";
+    public static final String USER_ID = "userId";
+    public static final String USER_LEVEL = "userLevel";
+    public static final String USER_GROUP_ID = "userGroupId";
+    public static final String DATE_TIME_G = "dateTimeG";
+    public static final String TASK_NAME = "taskName";
+    public static final String TASK_TITLE = "taskTitle";
+    public static final String IS_TASK_TWO_LEVEL_CONFIRM = "isTaskTwoLevelConfirm";
+    public static final String MESSAGE = "message";
+    public static final String SESSION_ID = "sessionId";
+    public static final String COMPUTER_SIGNATURE = "computerSignature";
+    public static final String AGENT_SIGNATURE = "agentSignature";
+    public static final String PORTER_UUID = "porterUuid";
+    public static final String PORT_NUMBER = "portNumber";
+    public static final String URL = "url";
+    public static final String REQUEST_METHOD = "requestMethod";
+    public static final String HTTP_CODE = "httpCode";
+    public static final String SEND_DATE_TIME_G = "sendDateTimeG";
+    public static final String SEND_STATUS = "sendStatus";
+    public static final String ONLINE_LOGGING_STRATEGY = "onlineLoggingStrategy";
+    public static final String $IS_TASK_TWO_LEVEL_CONFIRM_Y = "isTaskTwoLevelConfirmY";
+    public static final String $ACT_COLUMNS = "actColumns";
+    public static final String $REL_COLUMNS = "relColumns";
+    public static final String $VIR_COLUMNS = "virColumns";
+    public static final String $SEND_DATE_TIME = "sendDateTime";
+    private static String[] actColumns;
+    private static String[] relColumns;
+    private static String[] virColumns;
+
+    public static void setAvrColumns(String acts, String virts, String rels) {
+        if (acts != null) {
+            actColumns = acts.split(",");
+        }
+        if (virts != null) {
+            virColumns = virts.split(",");
+        }
+        if (rels != null) {
+            relColumns = rels.split(",");
+        }
+    }
+
+    public static String[] getActColumns() {
+        return actColumns;
+    }
+
+    public static String[] getVirColumns() {
+        return virColumns;
+    }
+
+    public static String[] getRelColumns() {
+        return relColumns;
+    }
 //#########******#######// StaticFields: End //
 
     private static final int MESSAGE_LEN = 2048;
@@ -45,13 +110,17 @@ public static final String SERVER_ID = "serverId";public static final String IMP
     public Log() {
     }
 
-    public Log(ProceedingJoinPoint joinPoint,
+    public Log(ModelAndView andView,
                HttpServletRequest request, String message,
                TtLogHandler handler,
                Task task,
                User user) {
 
-        this.serverId = PropertorInLog.getInstance().getProperty(TtPropertorInLogList.ServerIdentity);
+        this.serverId = PropertorInLog.getInstance().getProperty(TtPropertorInLogList.SystemName)
+                + "|" + PropertorInLog.getInstance().getProperty(TtPropertorInLogList.SystemHostName)
+                + "|" + PropertorInLog.getInstance().getProperty(TtPropertorInLogList.SystemVersion)
+                + "|" + PropertorInLog.getInstance().getProperty(TtPropertorInLogList.SystemIp)
+        ;
 
 
         String json = "{\"handler\":\"" + handler
@@ -60,16 +129,29 @@ public static final String SERVER_ID = "serverId";public static final String IMP
         if (request.getQueryString() != null) {
             json += ",\"QueryStr\":\"" + request.getQueryString() + "\"";
         }
-        for (Object arg : joinPoint.getArgs()) {
-            if (arg instanceof BindingAwareModelMap) {
-                for (Map.Entry<String, Object> entrySet : ((BindingAwareModelMap) arg).entrySet()) {
-                    Object value = entrySet.getValue();
-                    if (value instanceof org.sadr.web.main._core.utils.Notice2[]) {
-                        json += ",\"Notice2\":" + Arrays.toString((Notice2[]) value);
-                    }
-                }
+
+        if (andView != null && andView.getModel() != null) {
+            Object obj;
+            obj = andView.getModel().get("noticeList");
+            if (obj != null) {
+                andView.getModel().remove("noticeList");
+            }
+            obj = andView.getModel().get("actionSubType");
+            if (obj != null) {
+                this.actionSubType = TtTaskActionSubType.getValue(obj.toString());
+                andView.getModel().remove("actionSubType");
+            }
+            obj = andView.getModel().get("actionStatus");
+            if (obj != null) {
+                this.actionStatus = TtTaskActionStatus.getValue(obj.toString());
+                andView.getModel().remove("actionStatus");
+            }
+            obj = andView.getModel().get("secretNote");
+            if (obj != null) {
+                andView.getModel().remove("secretNote");
             }
         }
+
         json += "}";
 
 //        this.logLevel = logLevel;
@@ -106,19 +188,19 @@ public static final String SERVER_ID = "serverId";public static final String IMP
                         h = m = s = 0;
                         if (t != null) {
                             String[] st = t.split(":");
-                            if (t.length() > 1) {
+                            if (st.length > 0) {
                                 try {
                                     h = Integer.parseInt(st[0]);
                                 } catch (Exception e) {
                                 }
                             }
-                            if (t.length() > 2) {
+                            if (st.length > 1) {
                                 try {
                                     m = Integer.parseInt(st[1]);
                                 } catch (Exception e) {
                                 }
                             }
-                            if (t.length() > 3) {
+                            if (st.length > 2) {
                                 try {
                                     s = Integer.parseInt(st[2]);
                                 } catch (Exception e) {
@@ -158,10 +240,10 @@ public static final String SERVER_ID = "serverId";public static final String IMP
         this.sendStatus = TtLogOnlineSendStatus.NotSend;
     }
 
-    public Log(ProceedingJoinPoint joinPoint, HttpServletRequest request, String message, TtLogHandler handler,
+    public Log(ModelAndView andView, HttpServletRequest request, String message, TtLogHandler handler,
                Task task,
                User user, UserGroup ug) {
-        this(joinPoint, request, message, handler, task, user);
+        this(andView, request, message, handler, task, user);
         this.userGroupId = ug != null ? ug.getId() : 0;
 
     }
@@ -180,6 +262,12 @@ public static final String SERVER_ID = "serverId";public static final String IMP
 
     @PersianName("نوع فعالیت")
     private TtTaskActionType actionType;
+
+    @PersianName("نوع زیر فعالیت")
+    private TtTaskActionSubType actionSubType;
+
+    @PersianName("پرچم امنیتی")
+    private TtTaskActionStatus actionStatus;
 
     //////////////////////////////////////
 
@@ -214,6 +302,7 @@ public static final String SERVER_ID = "serverId";public static final String IMP
 
     //////////////////////////////////////
 
+    @Type(type = "encryptedString")
     @Size(max = 255)
     @PersianName("شناسه نشست")
     private String sessionId;
@@ -485,5 +574,21 @@ public static final String SERVER_ID = "serverId";public static final String IMP
 
     public void setActionType(TtTaskActionType actionType) {
         this.actionType = actionType;
+    }
+
+    public TtTaskActionSubType getActionSubType() {
+        return actionSubType;
+    }
+
+    public void setActionSubType(TtTaskActionSubType actionSubType) {
+        this.actionSubType = actionSubType;
+    }
+
+    public TtTaskActionStatus getActionStatus() {
+        return actionStatus;
+    }
+
+    public void setActionStatus(TtTaskActionStatus actionStatus) {
+        this.actionStatus = actionStatus;
     }
 }

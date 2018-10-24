@@ -6,21 +6,24 @@ import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GB;
 import org.sadr._core.meta.generic.GenericControllerImpl;
 import org.sadr._core.meta.generic.JB;
+import org.sadr._core.utils.OutLog;
 import org.sadr._core.utils.ParsCalendar;
 import org.sadr._core.utils.Searchee;
-import org.sadr._core.utils.ShellCommander;
 import org.sadr.web.main._core._type.TtTaskAccessLevel;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.propertor.PropertorInControl;
 import org.sadr.web.main._core.propertor._type.TtPropertorInControlList;
+import org.sadr.web.main._core.tools._type.TtUploadIfExist;
+import org.sadr.web.main._core.tools.uploader.Uploader;
 import org.sadr.web.main._core.utils.Notice2;
 import org.sadr.web.main._core.utils.Referer;
 import org.sadr.web.main._core.utils._type.TtNotice;
+import org.sadr.web.main.archive._type.TtFileUploadStatus;
 import org.sadr.web.main.archive._type.TtRepoDirectory;
-import org.sadr.web.main.archive.directory.Directory;
 import org.sadr.web.main.archive.directory.DirectoryService;
 import org.sadr.web.main.archive.file.file.File;
 import org.sadr.web.main.archive.file.file.FileService;
+import org.sadr.web.main.system._type.TtBackupType;
 import org.sadr.web.main.system._type.TtIrrorLevel;
 import org.sadr.web.main.system._type.TtIrrorPlace;
 import org.sadr.web.main.system.irror.IrrorService;
@@ -30,12 +33,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 
 /**
  * @author masoud
@@ -71,53 +74,59 @@ public class BackupController extends GenericControllerImpl<Backup, BackupServic
 
     ///////////////////////////////////////////////////////
 
-    private Backup backup(String shortDateTime, RedirectAttributes redirectAttributes, boolean isLog) {
-        String backupFileName = shortDateTime
-                .replace(" ", "")
-                .replace("/", "")
-                .replace(":", "")
-                + (isLog ? "_logdb" : "_wtdb") + ".sql";
-        Directory dir = directoryService.getDirectory(TtRepoDirectory.Db_Backup);
 
-        String filePath = ShellCommander.postgres(dir.getAbsolutePath(), (isLog ? "logdb" : "wtdb"), "root", backupFileName, "backup");
-        java.io.File f = new java.io.File(filePath);
-        if (filePath != null) {
-            File file = new File();
-            file.setDirectory(dir);
-            file.setIsTemporary(false);
-            file.setOrginalName(f.getName());
-            file.setIsContainOrginal(true);
-            file.setSize(f.length());
-            file.setAccessLevel(TtTaskAccessLevel.Grant);
-            file.setTitle(f.getName());
+    @PersianName("بارگذاری فایل")
+    @RequestMapping(value = _PANEL_URL + "/upload")
+    public ModelAndView pUpload() {
 
-            fileService.save(file);
-
-            Backup backup = new Backup();
-            backup.setFile(file);
-            backup.setBackupDateTime(shortDateTime);
-
-            this.service.save(backup);
-            return backup;
-        } else {
-            return null;
-        }
+        OutLog.pl();
+        return TtTile___.p_backup_upload.___getDisModel(_PANEL_URL + "/upload");
     }
+
+    @RequestMapping(value = _PANEL_URL + "/upload", method = RequestMethod.POST)
+    public ModelAndView pUpload(Model model,
+                                @RequestParam(value = "attachment") MultipartFile attachment,
+                                final RedirectAttributes redirectAttributes) {
+        OutLog.pl("");
+
+
+        File file = Uploader.getInstance().upload(attachment, TtRepoDirectory.Db_Backup, TtUploadIfExist.RenameNewFile);
+
+        if (file == null) {
+            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.file.upload.failed", TtNotice.Danger)));
+            return Referer.redirect(_PANEL_URL + "/upload");
+        }
+        file.setIsTemporary(false);
+        file.setIsContainOrginal(true);
+        file.setAccessLevel(TtTaskAccessLevel.Grant);
+        file.setTitle(attachment.getOriginalFilename());
+        file.setUploadStatus(TtFileUploadStatus.Uploaded);
+
+        fileService.save(file);
+
+        Backup backup = new Backup();
+        backup.setFile(file);
+        backup.setBackupDateTime(ParsCalendar.getInstance().getShortDateTime());
+        backup.setBackupType(TtBackupType.Uploaded);
+        this.service.save(backup);
+
+        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.backup.upload.success", file.getSecretNote(), TtNotice.Success, file.getTitle())));
+        return Referer.redirect(_PANEL_URL + "/list");
+    }
+
 
     @PersianName("پشتیبان گیری")
     @RequestMapping(value = _PANEL_URL + "/backup")
-    public ModelAndView pBackup(Model model, RedirectAttributes redirectAttributes) throws IOException, InterruptedException {
+    public ModelAndView pBackup(RedirectAttributes redirectAttributes) throws InterruptedException {
 
         PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForClient);
         PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForGuests);
         PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForMasters);
         PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForAdmins);
         Thread.sleep(3000);
-        String shortDateTime = ParsCalendar.getInstance().getShortDateTime();
-
         String name = "";
 
-        Backup backup = backup(shortDateTime, redirectAttributes, false);
+        Backup backup = this.service.backup(TtBackupType.Manual, false);
         if (backup != null) {
             name = backup.getTitle();
         }
@@ -143,13 +152,6 @@ public class BackupController extends GenericControllerImpl<Backup, BackupServic
                                  HttpSession session,
                                  HttpServletRequest request,
                                  RedirectAttributes redirectAttributes) throws InterruptedException {
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForClient);
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForGuests);
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForMasters);
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForAdmins);
-
-        Thread.sleep(3000);
-
         Backup backup = this.service.findById(uid, Backup._FILE);
 
         if (backup == null) {
@@ -157,15 +159,27 @@ public class BackupController extends GenericControllerImpl<Backup, BackupServic
             return Referer.redirect(_PANEL_URL + "/list");
         }
 
-        Directory dir = directoryService.getDirectory(TtRepoDirectory.Db_Backup);
-        String filePath = ShellCommander.postgres(dir.getAbsolutePath(), "wtdb", "root", backup.getFile().getOrginalName(), "restore");
-        java.io.File f = new java.io.File(filePath);
+
+        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForClient);
+        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForGuests);
+        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForMasters);
+        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForAdmins);
+        Thread.sleep(1000);
+
+
+        //========= auto backup
+        Backup backup1 = this.service.backup(TtBackupType.BeforeRestore, false);
+        //--------------
+
+
+        String filePath = this.service.restore(backup);
+
         if (filePath != null) {
             Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.backup.restore.success", backup.getTitle(), TtNotice.Success, backup.getTitle())));
         } else {
             Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.backup.restore.failed", TtNotice.Danger)));
         }
-        Thread.sleep(3000);
+        Thread.sleep(1000);
 
         PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForClient);
         PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForGuests);
@@ -192,7 +206,8 @@ public class BackupController extends GenericControllerImpl<Backup, BackupServic
                 Backup.class,
                 GB.col(Backup.ID),
                 GB.col(Backup.BACKUP_DATE_TIME),
-                GB.col(Backup.$TITLE)
+                GB.col(Backup.$TITLE),
+                GB.col(Backup.BACKUP_TYPE)
         );
         return TtTile___.p_backup_list.___getDisModel();
     }
@@ -204,7 +219,8 @@ public class BackupController extends GenericControllerImpl<Backup, BackupServic
         try {
             GB gb = GB.init(Backup.class)
                     .set(
-                            Backup.BACKUP_DATE_TIME
+                            Backup.BACKUP_DATE_TIME,
+                            Backup.BACKUP_TYPE
                     )
                     .setGbs(
                             GB.init(File.class, Backup._FILE)
@@ -216,7 +232,12 @@ public class BackupController extends GenericControllerImpl<Backup, BackupServic
             JB jb = JB.init()
                     .set(
                             Backup.BACKUP_DATE_TIME,
-                            Backup.$TITLE
+                            Backup.$TITLE,
+                            Backup.BACKUP_TYPE
+                    )
+                    .setJbs(
+                            JB.init(File.class, Backup._FILE)
+                                    .set(File.ID)
                     );
 
             String json = this.service.findAllJson(gb, jb);

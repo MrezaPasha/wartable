@@ -12,8 +12,12 @@
     <div class="page-header">
         <div class="cred-header">
             <h3 class="cred-title"><spring:message code="backup.list"/></h3>
-            <a href="${cp}/panel/backup/backup" class="btn btn-p-create btn-animated btn-animated-right">
-                <i class="clip-plus-circle light"></i>
+            <a href="${cp}/panel/backup/upload" class="btn btn-l-invoice btn-animated btn-animated-right">
+                <i class="clip-upload-2 light"></i>
+                <span class="title"><spring:message code="backup.upload"/></span>
+            </a>
+            <a href="${cp}/panel/backup/backup" class="btn btn-p-send btn-animated btn-animated-right">
+                <i class="clip-database light"></i>
                 <span class="title"><spring:message code="backup.create"/></span>
             </a>
         </div>
@@ -64,11 +68,18 @@
                                         <td> @{${col.key}}</td>
                                     </c:forEach>
                                     <td class="center">
-                                        <div class="r-button">
+                                        <div class="r-button btn-group">
                                             <a href="${cp}/panel/backup/restore/@{id}"
-                                               class="btn btn-sm btn-l-preview tooltips" data-placement="top"
+                                               class="btn btn-sm btn-l-notClient tooltips btn-animated btn-animated-right" data-placement="top"
                                                data-original-title="<spring:message code="backup.restore"/>">
-                                                <i class="fa fa-desktop pad-2"></i>
+                                                 <i class="clip-rotate-2 pad-2"></i>
+                                                <spring:message code="backup.restore"/>
+                                            </a>
+                                            <a href="${cp}/panel/file/dl/@{file.id}"
+                                               class="btn btn-sm btn-l-call tooltips btn-animated btn-animated-right" data-placement="top"
+                                               data-original-title="<spring:message code="backup.download"/>">
+                                                <i class="fa fa-download pad-2"></i>
+                                                <spring:message code="backup.download"/>
                                             </a>
                                         </div>
                                     </td>
@@ -107,6 +118,7 @@
     jQuery(document).ready(function () {
 
         pluginFillBody = function (i, value, newItem) {
+            console.log(value);
             return newItem;
         };
         CustomJs.initAjaxSearch();

@@ -27,6 +27,11 @@
         <%--<link rel="shortcut icon" href="${cp}/resources-f/images/eam.png" alt="">--%>
         <link href="${cp}/resources-f/bootstrap/css/bootstrap-rtl.css" rel="stylesheet">
 
+        <c:set var="fontVar" value='${sessionScope.font}'/>
+        <c:if test="${fontVar==null}">
+            <c:set var="fontVar" value='iransans'/>
+        </c:if>
+        <link rel="stylesheet" href="${cp}/resources/css/font-${fontVar}.css?r=${rl1}">
         <link rel="stylesheet" href="${cp}/resources/css/custom.css?r=${rl1}">
         <link rel="stylesheet" href="${cp}/resources-f/css/custom-f.css?r=${rl1}">
 

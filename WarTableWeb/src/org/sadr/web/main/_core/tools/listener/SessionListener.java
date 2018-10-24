@@ -17,12 +17,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SessionListener implements HttpSessionListener {
 
     private static final Map<String, Object[]> sessions = new HashMap<>();
+    private static String defaultFont;
+    private static String defaultStyle;
 
     /////////////////////////////// OVERRIDES
     @Override
     public void sessionCreated(HttpSessionEvent event) {
         HttpSession session = event.getSession();
         session.setMaxInactiveInterval(PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.UserSessionTimeOut));
+        session.setAttribute("font", defaultFont);
+        session.setAttribute("style", defaultStyle);
         sessions.put(session.getId(), new Object[]{session, null});
         CacheStatic.addSessionCount();
     }
@@ -125,6 +129,17 @@ public class SessionListener implements HttpSessionListener {
         }
     }
 
+    public static void refreshUiSetting() {
+        ConcurrentHashMap<String, Object[]> chm = new ConcurrentHashMap(sessions);
+        Map.Entry<String, Object[]> entry;
+        Iterator<Map.Entry<String, Object[]>> it = chm.entrySet().iterator();
+        while (it.hasNext()) {
+            entry = it.next();
+            ((HttpSession) entry.getValue()[0]).setAttribute("font", defaultFont);
+            ((HttpSession) entry.getValue()[0]).setAttribute("style", defaultStyle);
+        }
+    }
+
     //////////////////////////////////////// STATIC GETTERS
     public static HttpSession getSession(String sessionId) {
         return (HttpSession) sessions.get(sessionId)[0];
@@ -175,5 +190,13 @@ public class SessionListener implements HttpSessionListener {
 
     public static int getCurrentSessionCount() {
         return sessions.size();
+    }
+
+    public static void setDefaultFont(String defaultFont) {
+        SessionListener.defaultFont = defaultFont;
+    }
+
+    public static void setDefaultStyle(String defaultStyle) {
+        SessionListener.defaultStyle = defaultStyle;
     }
 }

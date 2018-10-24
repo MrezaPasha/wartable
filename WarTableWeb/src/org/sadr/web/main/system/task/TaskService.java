@@ -7,7 +7,13 @@ import org.sadr._core.meta.generic.GenericService;
  */
 public interface TaskService extends GenericService<Task> {
 
-    public boolean authorizeUser(String taskSignature);
+    public boolean authorizeClient(String taskSignature);
+
+    Task fetchClientTask(String taskSignature);
+
+    Task fetchMasterTask(String taskSignature);
+
+    Task fetchTask(String taskSignature);
 
     public boolean authorizeGuest(String taskSignature);
 

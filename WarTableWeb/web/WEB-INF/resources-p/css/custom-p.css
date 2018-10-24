@@ -1381,7 +1381,15 @@ a.btn-p-act.btn-p-basket {
     margin-top: 4px;
 }
 
-.btn-p-cansel {
+.btn-p-export {
+    color: #ffffff;
+    background-color: #0083cc;
+    border-color: #0083cc;
+    float: left;
+    margin-right: 4px;
+}
+
+.btn-p-cancel {
     color: #ffffff;
     background-color: #F44336;
     border-color: #F44336;
@@ -1681,7 +1689,7 @@ i.meh {
 
 }
 
-.btn-p-cansel:hover, .btn-p-cansel:focus, .btn-p-cansel:active, .btn-p-cansel.active {
+.btn-p-cancel:hover, .btn-p-cancel:focus, .btn-p-cancel:active, .btn-p-cancel.active {
     color: #ffffff;
     background-color: #F44336;
     border-color: #F44336;
@@ -2018,13 +2026,6 @@ div.cred-name {
 /* ---------------------------------------------------------------------- */
 /*
  /* ---------------------------------------------------------------------- */
-
-.fileupload {
-    max-width: 150px;
-    max-height: 150px;
-    line-height: 20px;
-    margin: auto;
-}
 
 .fileupload-slide {
     width: 900px;

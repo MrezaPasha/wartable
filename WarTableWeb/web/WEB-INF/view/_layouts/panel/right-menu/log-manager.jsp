@@ -13,32 +13,23 @@
         <span class="selected"></span>
     </a>
     <ul class="sub-menu">
-        <li>
-            <a href="javascript:void(0)">
-                <i class="clip-users"></i>
-                <span class="title"><spring:message code="rightmenu.web.logging"/></span><i class="icon-arrow"></i>
-                <span class="selected"></span>
+        <li data-menu-id="|p_sys_log_remote_list|p_sys_log_remote_details|">
+            <a href="${cp}/panel/log/remote/list">
+                <i class=" clip-tree light"></i>
+                <span class="title"><spring:message code="rightmenu.web.logging.list"/></span>
             </a>
-            <ul class="sub-menu">
-                <li data-menu-id="|p_sys_log_remote_list|p_sys_log_remote_details|">
-                    <a href="${cp}/panel/log/remote/list">
-                        <i class=" clip-tree light"></i>
-                        <span class="title"><spring:message code="rightmenu.web.logging.list"/></span>
-                    </a>
-                </li>
-                <li data-menu-id="|p_sys_log_remote_moduleList|p_sys_log_remote_taskList|p_sys_log_remote_taskConfig|p_sys_log_remote_onlineLogging|">
-                    <a href="${cp}/panel/log/remote/module/list">
-                        <i class=" clip-tree light"></i>
-                        <span class="title"><spring:message code="rightmenu.web.logging.setting"/></span>
-                    </a>
-                </li>
-                <li data-menu-id="|p_propertor_log|">
-                    <a href="${cp}/panel/propertor/log">
-                        <i class=" clip-tree light"></i>
-                        <span class="title"><spring:message code="rightmenu.web.logging.config"/></span>
-                    </a>
-                </li>
-            </ul>
+        </li>
+        <li data-menu-id="|p_sys_log_remote_moduleList|p_sys_log_remote_taskList|p_sys_log_remote_taskConfig|p_sys_log_remote_onlineLogging|">
+            <a href="${cp}/panel/log/remote/module/list">
+                <i class=" clip-tree light"></i>
+                <span class="title"><spring:message code="rightmenu.web.logging.setting"/></span>
+            </a>
+        </li>
+        <li data-menu-id="|p_propertor_log|">
+            <a href="${cp}/panel/propertor/log">
+                <i class=" clip-tree light"></i>
+                <span class="title"><spring:message code="rightmenu.web.logging.config"/></span>
+            </a>
         </li>
     </ul>
 </li>

@@ -56,23 +56,27 @@ public class ShellCommander {
         return "";
     }
 
-    public static String postgres(String backupDirectory, String databaseName, String databasePassword, String backupFileName , String type) {
+    public static void dropschema() {
 
-        OutLog.pl(backupDirectory);
+    }
 
-        File backupFilePath = new File(backupDirectory);
+    public static String postgres(String backupDirectory, String databaseName, String databasePassword, String backupFileName, String type) {
 
-        if (!backupFilePath.exists()) {
-            File dir = backupFilePath;
-            dir.mkdirs();
+        File backupFilePath = null;
+        if (type != "drop" && type != "create") {
+            OutLog.pl(backupDirectory);
+            backupFilePath = new File(backupDirectory);
+
+            if (!backupFilePath.exists()) {
+                File dir = backupFilePath;
+                dir.mkdirs();
+            }
         }
-
-        List<String> commands = getPgComands(databaseName, backupFilePath, backupFileName, type);
+        List<String> commands = getPgCommands(databaseName, backupFilePath, backupFileName, type);
         if (!commands.isEmpty()) {
             try {
                 ProcessBuilder pb = new ProcessBuilder(commands);
                 pb.environment().put("PGPASSWORD", databasePassword);
-
                 Process process = pb.start();
 
                 try (BufferedReader buf = new BufferedReader(
@@ -83,7 +87,6 @@ public class ShellCommander {
                         line = buf.readLine();
                     }
                 }
-
                 process.waitFor();
                 process.destroy();
 
@@ -94,12 +97,13 @@ public class ShellCommander {
                 return null;
             }
         } else {
+
             System.out.println("Error: Invalid params.");
             return null;
         }
     }
 
-    private static List<String> getPgComands(String databaseName, File backupFilePath, String backupFileName, String type) {
+    private static List<String> getPgCommands(String databaseName, File backupFilePath, String backupFileName, String type) {
 
         ArrayList<String> commands = new ArrayList<>();
         switch (type) {
@@ -132,6 +136,34 @@ public class ShellCommander {
                 commands.add(databaseName);
                 commands.add("-v");
                 commands.add(backupFilePath.getAbsolutePath() + File.separator + backupFileName);
+                break;
+            case "drop":
+                commands.add("psql");
+                commands.add("-h");
+                commands.add("localhost");
+                commands.add("-p");
+                commands.add("5432");
+                commands.add("-U");
+                commands.add("postgres");
+                commands.add("-d");
+                commands.add(databaseName);
+                commands.add("-c");
+                commands.add("drop schema public cascade");
+            case "create":
+                commands.add("psql");
+                commands.add("-h");
+                commands.add("localhost");
+                commands.add("-p");
+                commands.add("5432");
+                commands.add("-U");
+                commands.add("postgres");
+                commands.add("-d");
+                commands.add(databaseName);
+                commands.add("-c");
+                commands.add("create schema public");
+
+//                commands.add("-v");
+//                commands.add(backupFilePath.getAbsolutePath() + File.separator + backupFileName);
                 break;
             default:
                 return Collections.EMPTY_LIST;

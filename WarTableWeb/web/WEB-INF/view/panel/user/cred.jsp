@@ -57,14 +57,14 @@
                                 </c:when>
                                 <c:otherwise>
                                     <c:set var="dis" value="false"/>
-
                                 </c:otherwise>
                             </c:choose>
                             <c:if test="${user.isLogManager}">
                                 <c:set var="dis" value="true"/>
                             </c:if>
                             <form:input disabled="${dis}" path="${varName}" cssClass="form-control string-required string-max-30"/>
-                            <button type="button" id="randomButton" class="btn-username-refresh">
+                            <button type="button" <c:if test="${user.isLogManager or user.isSuperAdmin}"> disabled </c:if>
+                                    id="randomButton" class="btn-username-refresh">
                                 <i class="clip-refresh"></i>
                             </button>
                         </div>
@@ -127,22 +127,24 @@
                                 <span class="symbol required"></span>
                             </form:label>
                             <form:errors cssClass="form-validation-error" path="${varName}"/>
-                            <form:select  disabled="${dis}" path="${varName}" data-visible-src="dv0" data-visible-value="Master" cssClass="form-control search-select dropdown-required">
+                            <form:select disabled="${dis}" path="${varName}" data-visible-src="dv0" data-visible-value="Master" cssClass="form-control search-select dropdown-required">
                                 <option value=""></option>
                                 <form:options itemLabel="title"/>
                             </form:select>
                         </div>
-                        <div data-visible-dst="dv0" data-visible-align="true" class="form-group">
-                            <c:set var="varName" value="user.userGroups"/>
-                            <form:label path="${varName}" cssClass="control-label">
-                                <spring:message code="${varName}"/>
-                            </form:label>
-                            <form:errors cssClass="form-validation-error" path="${varName}"/>
-                            <form:select multiple="multiple" path="${varName}" cssClass="form-control height-auto search-select">
-                                <form:options items="${user.userGroups}" itemValue="id" itemLabel="title"/>
-                                <form:options items="${uglist}" itemValue="id" itemLabel="title"/>
-                            </form:select>
-                        </div>
+                        <c:if test="${!dis}">
+                            <div data-visible-dst="dv0" data-visible-align="true" class="form-group">
+                                <c:set var="varName" value="user.userGroups"/>
+                                <form:label path="${varName}" cssClass="control-label">
+                                    <spring:message code="${varName}"/>
+                                </form:label>
+                                <form:errors cssClass="form-validation-error" path="${varName}"/>
+                                <form:select multiple="multiple" path="${varName}" cssClass="form-control height-auto search-select">
+                                    <form:options items="${user.userGroups}" itemValue="id" itemLabel="title"/>
+                                    <form:options items="${uglist}" itemValue="id" itemLabel="title"/>
+                                </form:select>
+                            </div>
+                        </c:if>
                     </div>
                     <div class="col-sm-4">
                         <div class="form-group-password">

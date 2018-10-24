@@ -36,6 +36,8 @@ public class FilterHandler implements Filter {
         WebConfigHandler.initPrime();
         OutLog.sl(" > Project loaded completely :) ");
 
+        WebConfigHandler.initUi();
+        OutLog.sl(" > Project Ui Set completely :) ");
     }
 
     @Override

@@ -64,7 +64,7 @@ public class UserServiceImp extends GenericServiceImpl<User, UserDao> implements
             session.removeAttribute("userMenu");
             return null;
         }
-        if (user.getIsLogManager()) {
+        if (user.getIsLogManager() && !user.getIsSuperAdmin()) {
             session.setAttribute("sUser", user);
             List<Task> tasks = this.taskService.findAllBy(Restrictions.and(
                     Restrictions.eq(Task.IS_LOG_MANAGER, true),

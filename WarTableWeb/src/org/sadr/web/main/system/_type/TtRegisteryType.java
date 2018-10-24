@@ -5,7 +5,7 @@ package org.sadr.web.main.system._type;
  */
 public enum TtRegisteryType {
 
-    Test("test", "تست"),;
+    Ui("ui", "تنظیمات ظاهر"),;
 
     private final String key;
     private final String title;

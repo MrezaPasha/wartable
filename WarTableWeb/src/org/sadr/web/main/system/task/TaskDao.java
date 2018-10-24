@@ -7,7 +7,13 @@ import org.sadr._core.meta.generic.GenericDao;
  */
 public interface TaskDao extends GenericDao<Task> {
 
-    boolean authorizeUser(String taskSignature);
+    boolean authorizeClient(String taskSignature);
+
+    Task fetchClientTask(String taskSignature);
+
+    Task fetchMasterTask(String taskSignature);
+
+    Task fetchTask(String taskSignature);
 
     boolean authorizeGuest(String taskSignature);
 

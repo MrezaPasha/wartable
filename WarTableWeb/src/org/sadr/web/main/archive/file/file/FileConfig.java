@@ -5,6 +5,7 @@
  */
 package org.sadr.web.main.archive.file.file;
 
+import org.sadr.web.main.archive.file.download.FileDownloadConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -30,6 +31,7 @@ public class FileConfig extends WebMvcConfigurerAdapter {
     public FileController fileController() {
         FileController uc = new FileController();
         uc.setService(fileServiceImp());
+        uc.setFileDownloadService(new FileDownloadConfig().fileDownloadServiceImp());
         return uc;
     }
 }

@@ -20,11 +20,7 @@ public class SettingConfig extends WebMvcConfigurerAdapter {
         SettingController ic = new SettingController();
         ic.setModuleService(new ModuleConfig().moduleServiceImp());
         ic.setDirectoryService(new DirectoryConfig().directoryServiceImp());
-        ic.setRegisteryService(new RegisteryConfig().registeryServiceImp());
-        ic.setModelService(new ModelConfig().modelServiceImp());
-        ic.setDailyLogService(new DailyLogConfig().dailyLogServiceImp());
         ic.setUserService(new UserConfig().userServiceImp());
-        ic.setFileService(new FileConfig().fileServiceImp());
         return ic;
     }
 }

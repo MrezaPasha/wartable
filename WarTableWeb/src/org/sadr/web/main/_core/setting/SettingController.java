@@ -52,38 +52,14 @@ public class SettingController {
 
     private ModuleService moduleService;
     private DirectoryService directoryService;
-    private RegisteryService registeryService;
-    private ModelService modelService;
-    private DailyLogService dailyLogService;
     private UserService userService;
-    private FileService fileService;
 
     @Autowired
     private ListableBeanFactory beanFactory;
 
     @Autowired
-    public void setFileService(FileService fileService) {
-        this.fileService = fileService;
-    }
-
-    @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
-    }
-
-    @Autowired
-    public void setDailyLogService(DailyLogService dailyLogService) {
-        this.dailyLogService = dailyLogService;
-    }
-
-    @Autowired
-    public void setModelService(ModelService modelService) {
-        this.modelService = modelService;
-    }
-
-    @Autowired
-    public void setRegisteryService(RegisteryService registeryService) {
-        this.registeryService = registeryService;
     }
 
     @Autowired

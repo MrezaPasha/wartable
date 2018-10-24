@@ -13,6 +13,7 @@ import org.sadr._core._type.TtGbColumnFetch;
 import org.sadr._core.utils.SpringMessager;
 import org.springframework.ui.Model;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -232,6 +233,16 @@ public class GB {
         return this;
     }
 
+    public int getColumnsCountInDepth() {
+        int cnt = 0;
+        if (gbs != null) {
+            for (GB j : gbs) {
+                cnt += j.getColumnsCountInDepth();
+            }
+        }
+        return cnt + (columns != null ? columns.length : 0);
+    }
+
     ///#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=  METHODS
     public GbPaging getPaging() {
         return paging;
@@ -262,6 +273,19 @@ public class GB {
     public String[] getColumns() {
         return columns;
     }
+
+    public String[] getColumnsWithCheck() {
+        if (columns == null && columnFetch == TtGbColumnFetch.All) {
+            try {
+                columns = (String[]) clazz.getMethod("getActColumns").invoke(clazz.newInstance());
+            } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return columns;
+    }
+
 
     public GB set(String... columns) {
         this.columns = columns;

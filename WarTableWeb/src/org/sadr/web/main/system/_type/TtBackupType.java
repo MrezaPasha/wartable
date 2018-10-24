@@ -8,6 +8,7 @@ public enum TtBackupType {
     Manual("پشتیبان گیری دستی"),
     Scheduling("پشتیبان گیری خودکار بر اساس زمان بندی"),
     BeforeRestore("پشتیبان گیری خودکار قبل از بازیابی"),
+    Uploaded("بارگذاری شده"),
 
     ;
 

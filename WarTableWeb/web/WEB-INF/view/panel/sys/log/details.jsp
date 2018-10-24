@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <div class="container" style="min-height: 300px;">
     <h3 class="cred-header">
-        <span class="cred-title"><spring:message code="error.system"/></span>
+        <span class="cred-title"><spring:message code="log.details"/></span>
     </h3>
     <div class="well well-act">
         <a href="${cp}/panel/log/list" class="btn btn-p-back btn-sm btn-default btn-animated btn-animated-right float-left">
@@ -98,6 +98,14 @@
                         <tr class="details-separator">
                             <th><spring:message code="log.actionType"/></th>
                             <td>${log.actionType.title}</td>
+                        </tr>
+                        <tr>
+                            <th><spring:message code="log.actionSubType"/></th>
+                            <td>${log.actionSubType}</td>
+                        </tr>
+                        <tr>
+                            <th><spring:message code="log.actionStatus"/></th>
+                            <td>${log.actionStatus.title}</td>
                         </tr>
                         <tr>
                             <th><spring:message code="log.importanceLevel"/></th>

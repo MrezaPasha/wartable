@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.sadr.web.main._core.setting;
+package org.sadr.web.main._core.propertor;
 
 /**
  * @author MSD

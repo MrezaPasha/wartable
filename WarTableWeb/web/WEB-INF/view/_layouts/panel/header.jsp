@@ -27,7 +27,9 @@
         });
     </script>
 </c:if>
-
+<div class="modal fade" id="noteSyncModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <jsp:include page="note-sync-modal.jsp"/>
+</div>
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">

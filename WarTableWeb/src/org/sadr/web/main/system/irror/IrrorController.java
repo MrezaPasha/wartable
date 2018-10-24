@@ -1,6 +1,5 @@
 package org.sadr.web.main.system.irror;
 
-import org.apache.poi.ss.formula.functions.Irr;
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GB;
 import org.sadr._core.meta.generic.GenericControllerImpl;
@@ -166,7 +165,7 @@ public class IrrorController extends GenericControllerImpl<Irror, IrrorService> 
     @PersianName("نمایش جزئیات خطا")
     @RequestMapping(value = _PANEL_URL + "/show/{id}")
     public ModelAndView pErrorShow(Model model,
-                                   @PathVariable("id") int id
+                                   @PathVariable("id") long id
     ) {
         Irror i = this.service.findById(id, Irror._USER);
         if (i == null) {

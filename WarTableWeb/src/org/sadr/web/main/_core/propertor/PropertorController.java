@@ -6,11 +6,7 @@ import org.sadr.web.main._core.meta.annotation.LogManagerTask;
 import org.sadr.web.main._core.meta.annotation.MenuIdentity;
 import org.sadr.web.main._core.meta.annotation.StandaloneController;
 import org.sadr.web.main._core.meta.annotation.SuperAdminTask;
-import org.sadr.web.main._core.propertor._type.TtPropertorInBootList;
-import org.sadr.web.main._core.propertor._type.TtPropertorInControlList;
-import org.sadr.web.main._core.propertor._type.TtPropertorInLogList;
-import org.sadr.web.main._core.propertor._type.TtPropertorInWebList;
-import org.sadr.web.main._core.setting.PropertorBag;
+import org.sadr.web.main._core.propertor._type.*;
 import org.sadr.web.main._core.utils.Ison;
 import org.sadr.web.main._core.utils.Notice2;
 import org.sadr.web.main._core.utils.Referer;
@@ -156,7 +152,6 @@ public class PropertorController {
 
         List<PropertorBag> glist = new ArrayList<>();
         List<PropertorBag> ulist = new ArrayList<>();
-        List<PropertorBag> dlist = new ArrayList<>();
 
         String pn = "";
         for (TtPropertorInWebList value : TtPropertorInWebList.values()) {
@@ -167,16 +162,11 @@ public class PropertorController {
                 case User:
                     ulist.add(new PropertorBag(value, PropertorInWeb.getInstance().getProperty(value), !value.getSection().toString().equals(pn)));
                     break;
-                case Database:
-                    dlist.add(new PropertorBag(value, PropertorInWeb.getInstance().getProperty(value), !value.getSection().toString().equals(pn)));
-                    break;
             }
             pn = value.getSection().toString();
         }
         model.addAttribute("glist", glist);
         model.addAttribute("ulist", ulist);
-        model.addAttribute("dlist", dlist);
-
 
         return TtTile___.p_propertor_web.___getDisModel();
     }
@@ -248,7 +238,7 @@ public class PropertorController {
                 .toResponse();
     }
 
-    ///=////////////////////////////////////////////////////////////// WEB PROPERTOR
+    ///=////////////////////////////////////////////////////////////// LOG PROPERTOR
 
     @LogManagerTask
     @MenuIdentity(TtTile___.p_propertor_log)
@@ -276,7 +266,6 @@ public class PropertorController {
         }
         model.addAttribute("slist", slist);
         model.addAttribute("clist", clist);
-
 
 
         return TtTile___.p_propertor_log.___getDisModel();
@@ -345,6 +334,105 @@ public class PropertorController {
         }
         if (res) {
             PropertorInLog.getInstance().store();
+        }
+
+        return Ison.init()
+                .setStatus(TtIsonStatus.Ok)
+                .setProperty("isOk", res)
+                .toResponse();
+    }
+
+    ///=////////////////////////////////////////////////////////////// BACKUP PROPERTOR
+
+    @MenuIdentity(TtTile___.p_propertor_backup)
+    @PersianName("پشتیبان گیری: پیشخوان پیکربندی")
+    @RequestMapping("/backup")
+    public ModelAndView pPropertorInBackup(Model model, final RedirectAttributes redirectAttributes) throws Exception {
+
+        PropertorInBackup.getInstance().load();
+
+        List<PropertorBag> blist = new ArrayList<>();
+        List<PropertorBag> rlist = new ArrayList<>();
+
+        String pn = "";
+        for (TtPropertorInBackupList value : TtPropertorInBackupList.values()) {
+            switch (value.getSection().getTab()) {
+                case Backup:
+                    blist.add(new PropertorBag(value, PropertorInBackup.getInstance().getProperty(value), !value.getSection().toString().equals(pn)));
+                    break;
+                case Restore:
+                    rlist.add(new PropertorBag(value, PropertorInBackup.getInstance().getProperty(value), !value.getSection().toString().equals(pn)));
+                    break;
+
+            }
+            pn = value.getSection().toString();
+        }
+        model.addAttribute("blist", blist);
+        model.addAttribute("rlist", rlist);
+
+
+        return TtTile___.p_propertor_backup.___getDisModel();
+    }
+
+    @PersianName("پشتیبان گیری: بازنشانی پیکربندی")
+    @RequestMapping("/backup/reset")
+    public ModelAndView pPropertorInBackupReset(final RedirectAttributes redirectAttributes) throws Exception {
+        PropertorInBackup.getInstance().load();
+        PropertorInBackup.getInstance().resetProperties();
+        PropertorInBackup.getInstance().store();
+        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.corePropertor.reset.success", TtNotice.Success)));
+        return Referer.redirect("/panel/propertor/backup");
+
+    }
+
+    @PersianName("پشتیبان گیری: بروزرسانی پیکربندی")
+    @RequestMapping("/backup/update")
+    public ModelAndView pPropertorInBackupUpdate(final RedirectAttributes redirectAttributes) throws Exception {
+        PropertorInBackup.getInstance().load();
+        PropertorInBackup.getInstance().updateProperties();
+        PropertorInBackup.getInstance().store();
+        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.corePropertor.update.success", TtNotice.Success)));
+        return Referer.redirect("/panel/propertor/backup");
+
+    }
+
+    @PersianName("پشتیبان گیری: بارگذاری پیکربندی")
+    @RequestMapping("/backup/load")
+    public ModelAndView pPropertorInBackupLoad(final RedirectAttributes redirectAttributes) throws Exception {
+        PropertorInBackup.getInstance().load();
+        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.corePropertor.load.success", TtNotice.Success)));
+        return Referer.redirect("/panel/propertor/backup");
+
+    }
+
+    @PersianName("پشتیبان گیری:  تنظیم پارامتر پیکربندی")
+    @RequestMapping(value = "/backup/set", method = RequestMethod.POST, headers = "Accept=application/json", produces = "application/json")
+    public @ResponseBody
+    ResponseEntity<String> pPropertorInBackupSetValue(HttpSession session,
+                                                   @FormParam("type") String type,
+                                                   @FormParam("id") int id,
+                                                   @FormParam("value") String value) {
+        boolean res = false;
+        switch (type) {
+            case "OnOff":
+                if ("true".equals(value)) {
+                    res = PropertorInBackup.getInstance().setOn(TtPropertorInBackupList.getByOrdinal(id));
+                } else {
+                    res = PropertorInBackup.getInstance().setOff(TtPropertorInBackupList.getByOrdinal(id));
+                }
+                break;
+            case "Variable":
+            case "Integer":
+            case "String":
+            case "StringBig":
+                res = PropertorInBackup.getInstance().setProperty(TtPropertorInBackupList.getByOrdinal(id), value);
+                break;
+            case "TtVariable":
+                res = PropertorInBackup.getInstance().setProperty(TtPropertorInBackupList.getByOrdinal(id), value);
+                break;
+        }
+        if (res) {
+            PropertorInBackup.getInstance().store();
         }
 
         return Ison.init()

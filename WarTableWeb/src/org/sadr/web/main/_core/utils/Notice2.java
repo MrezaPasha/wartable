@@ -32,14 +32,15 @@ public class Notice2 implements Serializable {
         return d;
     }
 
-    public static void initRedirectAttr(RedirectAttributes r, Notice2... ns) {
+    public static Notice2[] initRedirectAttr(RedirectAttributes r, Notice2... ns) {
         if (r.getFlashAttributes().containsKey("notice")) {
             ns = mergeNotices((Notice2[]) r.getFlashAttributes().get("notice"), ns);
         }
         r.addFlashAttribute("notice", ns);
+        return ns;
     }
 
-    public static void initPostError(RedirectAttributes r, BindingResult bindingResult) {
+    public static Notice2[] initPostError(RedirectAttributes r, BindingResult bindingResult) {
         String s = "";
         for (FieldError e : bindingResult.getFieldErrors()) {
             s += "، " + SpringMessager.get(e.getObjectName() + "." + e.getField());
@@ -47,16 +48,10 @@ public class Notice2 implements Serializable {
         Notice2[] ns = addNotices(new Notice2("N1.all.validation.error", s.length() > 1 ? s.substring(2) : ""));
 
         r.addFlashAttribute("notice", ns);
+        return ns;
     }
 
-    public static void initRedirectAttr(boolean doMerge, RedirectAttributes r, Notice2... ns) {
-        if (doMerge && r.getFlashAttributes().containsKey("notice")) {
-            ns = mergeNotices((Notice2[]) r.getFlashAttributes().get("notice"), ns);
-        }
-        r.addFlashAttribute("notice", ns);
-    }
-
-    public static void initModelAttr(Model m, Notice2... ns) {
+    public static Notice2[] initModelAttr(Model m, Notice2... ns) {
         if (m.containsAttribute("notice")) {
             Map<String, Object> asMap = m.asMap();
             for (Map.Entry<String, Object> objmap : asMap.entrySet()) {
@@ -68,9 +63,10 @@ public class Notice2 implements Serializable {
             }
         }
         m.addAttribute("notice", ns);
+        return ns;
     }
 
-    public static void initModelAttr(boolean doMerge, Model m, Notice2... ns) {
+    public static Notice2[] initModelAttr(boolean doMerge, Model m, Notice2... ns) {
         if (doMerge && m.containsAttribute("notice")) {
             Map<String, Object> asMap = m.asMap();
             for (Map.Entry<String, Object> objmap : asMap.entrySet()) {
@@ -82,6 +78,7 @@ public class Notice2 implements Serializable {
             }
         }
         m.addAttribute("notice", ns);
+        return ns;
     }
 
     public static void releaseModelNotice(Model m) {

@@ -22,12 +22,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="description" content="شرکت ایده پردازان رایانش ابری سپاهان (ایراس)"/>
-    <meta name="keywords" content="پنل مدیریت  میراث"/>
+    <meta name="description" content="مرکز تحقیقات صدر"/>
+    <meta name="keywords" content="پنل مدیریت  میزجنگ"/>
     <meta name="author" content="<spring:message  code="sadr.title"/>">
     <title>
         ایراس-${title}
     </title>
+
+    <c:set var="fontVar" value='${sessionScope.font}'/>
+    <c:if test="${fontVar==null}">
+        <c:set var="fontVar" value='iransans'/>
+    </c:if>
+    <link rel="stylesheet" href="${cp}/resources/css/font-${fontVar}.css?r=${rl1}">
+    <c:set var="styleVar" value='${sessionScope.style}'/>
+    <c:if test="${styleVar==null}">
+        <c:set var="styleVar" value='light'/>
+    </c:if>
+    <link rel="stylesheet" href="${cp}/resources-p/css/theme_${styleVar}.css?r=${rl2}" type="text/css" id="skin_color"/>
     <link rel="stylesheet" href="${cp}/resources/plugins/datetime-picker/content/css-date/date.css?r=${rl3}"/>
     <link rel="stylesheet" href="${cp}/resources-p/plugins/bootstrap/css/bootstrap-rtl.css?r=${rl3}"/>
     <link rel="stylesheet" href="${cp}/resources-p/css/print.css?r=${rl2}" type="text/css" media="print"/>
@@ -36,7 +47,6 @@
     <link rel="stylesheet" href="${cp}/resources-p/plugins/font-awesome/css/font-awesome.min.css?r=${rl3}"/>
     <link rel="stylesheet" href="${cp}/resources-p/fonts/style.css?r=${rl2}"/>
     <link rel="stylesheet" href="${cp}/resources-p/css/rtl-version.css?r=${rl2}"/>
-    <link rel="stylesheet" href="${cp}/resources-p/css/theme_light.css?r=${rl2}" type="text/css" id="skin_color"/>
     <link rel="stylesheet" href="${cp}/resources/css/custom.css?r=${rl1}"/>
     <link rel="stylesheet" href="${cp}/resources-p/css/custom-p.css?r=${rl1}"/>
 
@@ -55,7 +65,7 @@
     <script type="text/javascript" src="${cp}/resources-p/js/custom-p.js?r=${rl1}"></script>
     <script>
         jQuery(document).ready(function () {
-            CustomJs.initCloseBrowser();
+            // CustomJs.initCloseBrowser();
             Main.init();
             CustomPanelJs.init();
             CustomJs.init();

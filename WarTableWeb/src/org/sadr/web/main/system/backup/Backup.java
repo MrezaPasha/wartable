@@ -3,6 +3,7 @@ package org.sadr.web.main.system.backup;
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GenericDataModel;
 import org.sadr.web.main.archive.file.file.File;
+import org.sadr.web.main.system._type.TtBackupType;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,7 +20,7 @@ import java.io.Serializable;
 @Table(name = "Web.System.Backup")
 public class Backup extends GenericDataModel<Backup> implements Serializable {
 //#########++++++#######// StaticFields: Start //
-public static final String BACKUP_DATE_TIME = "backupDateTime";public static final String _FILE = "file";public static final String $SECRET_NOTE = "secretNote";public static final String $REL_COLUMNS = "relColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $TITLE = "title";public static final String $ACT_COLUMNS = "actColumns";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
+public static final String BACKUP_DATE_TIME = "backupDateTime";public static final String _FILE = "file";public static final String BACKUP_TYPE = "backupType";public static final String $TITLE = "title";public static final String $ACT_COLUMNS = "actColumns";public static final String $SECRET_NOTE = "secretNote";public static final String $REL_COLUMNS = "relColumns";public static final String $VIR_COLUMNS = "virColumns";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
 //#########******#######// StaticFields: End //
 
     @Size(max = 30)
@@ -30,6 +31,8 @@ public static final String BACKUP_DATE_TIME = "backupDateTime";public static fin
     @ManyToOne(fetch = FetchType.LAZY)
     private File file;
 
+    @PersianName("نوع پشتیبان گیری")
+    private TtBackupType backupType;
 
     ///############################## RELATIONS
 
@@ -59,5 +62,13 @@ public static final String BACKUP_DATE_TIME = "backupDateTime";public static fin
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    public TtBackupType getBackupType() {
+        return backupType;
+    }
+
+    public void setBackupType(TtBackupType backupType) {
+        this.backupType = backupType;
     }
 }

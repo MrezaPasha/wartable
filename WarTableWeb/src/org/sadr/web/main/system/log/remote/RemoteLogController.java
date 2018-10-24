@@ -1,17 +1,25 @@
 package org.sadr.web.main.system.log.remote;
 
 import org.hibernate.criterion.Restrictions;
+import org.sadr._core._type.TtDataType;
+import org.sadr._core._type.TtGbColumnFetch;
+import org.sadr._core._type.TtRestrictionOperator;
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GB;
 import org.sadr._core.meta.generic.GenericControllerImpl;
 import org.sadr._core.meta.generic.JB;
 import org.sadr._core.utils.JsonBuilder;
+import org.sadr._core.utils.Searchee;
 import org.sadr._core.utils.SpringMessager;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.meta.annotation.LogManagerTask;
 import org.sadr.web.main._core.meta.annotation.MenuIdentity;
+import org.sadr.web.main._core.utils.Ixporter;
 import org.sadr.web.main._core.utils.Notice2;
 import org.sadr.web.main._core.utils.Referer;
+import org.sadr.web.main._core.utils._type.TtIxportRowIndex;
+import org.sadr.web.main._core.utils._type.TtIxportSubStrategy;
+import org.sadr.web.main._core.utils._type.TtIxportTtStrategy;
 import org.sadr.web.main._core.utils._type.TtNotice;
 import org.sadr.web.main.system._type.TtHttpErrorCode___;
 import org.sadr.web.main.system._type.TtIrrorLevel;
@@ -36,12 +44,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author masoud
  */
 @RestController
@@ -95,8 +101,32 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
     @MenuIdentity(TtTile___.p_sys_log_remote_list)
     @PersianName("لیست رویدادها")
     @RequestMapping(value = _PANEL_URL + "/list")
-    public ModelAndView list(Model model
+    public ModelAndView pList(Model model
     ) {
+
+        Searchee.getInstance().setAttributeArray(
+                model,
+                "f_userId",
+                TtDataType.Long,
+                TtRestrictionOperator.Equal,
+                false,
+                RemoteLog.USER_ID);
+        Searchee.getInstance().setAttributeArray(
+                model,
+                "f_fromDate",
+                TtDataType.String,
+                TtRestrictionOperator.GreaterEqual,
+                false,
+                RemoteLog.CREATE_DATE_TIME);
+
+        Searchee.getInstance().setAttributeArray(
+                model,
+                "f_toDate",
+                TtDataType.String,
+                TtRestrictionOperator.LessEqual,
+                false,
+                RemoteLog.CREATE_DATE_TIME);
+
         GB.searchTableColumns(model,
                 RemoteLog.class,
                 GB.col(RemoteLog.ID),
@@ -108,18 +138,68 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
                 GB.col(RemoteLog.SENSITIVITY),
                 GB.col(RemoteLog.IMPORTANCE_LEVEL),
                 GB.col(RemoteLog.URL),
+                GB.col(RemoteLog.REQUEST_METHOD),
                 GB.col(RemoteLog.PORT_NUMBER)
         );
         return TtTile___.p_sys_log_remote_list.___getDisModel();
     }
 
+//    @LogManagerTask
+//    @RequestMapping(value = _PANEL_URL + "/list", method = RequestMethod.POST)
+//    public @ResponseBody
+//    ResponseEntity<String> list(
+//            @RequestParam(value = "ap", required = false) String ajaxParam,
+//            HttpServletRequest request,
+//            HttpSession session,
+//            HttpServletResponse response) {
+//        try {
+//            GB gb = GB.init(RemoteLog.class)
+//                    .set(
+//                            RemoteLog.CREATE_DATE_TIME,
+//                            RemoteLog.TASK_TITLE,
+//                            RemoteLog.SENSITIVITY,
+//                            RemoteLog.PORT_NUMBER,
+//                            RemoteLog.URL,
+//                            RemoteLog.PORT_NUMBER,
+//                            RemoteLog.IMPORTANCE_LEVEL,
+//                            RemoteLog.USER_ID,
+//                            RemoteLog.USER_GROUP_ID,
+//                            RemoteLog.USER_LEVEL
+//                    )
+//                    .setSearchParams(ajaxParam);
+//
+//            JB jb = JB.init()
+//                    .set(
+//                            RemoteLog.CREATE_DATE_TIME,
+//                            RemoteLog.TASK_TITLE,
+//                            RemoteLog.SENSITIVITY,
+//                            RemoteLog.PORT_NUMBER,
+//                            RemoteLog.URL,
+//                            RemoteLog.PORT_NUMBER,
+//                            RemoteLog.IMPORTANCE_LEVEL,
+//                            RemoteLog.USER_ID,
+//                            RemoteLog.USER_GROUP_ID,
+//                            RemoteLog.USER_LEVEL
+//                    );
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.add("Content-Type", "application/json; charset=utf-8");
+//            return new ResponseEntity<>(this.service.findAllJson(gb, jb), headers, HttpStatus.OK);
+//        } catch (Exception e) {
+//            irrorService.submit(e, request, TtIrrorPlace.Controller, TtIrrorLevel.Warn);
+//        }
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Content-Type", "application/json; charset=utf-8");
+//        return new ResponseEntity<>("", headers, HttpStatus.OK);
+//    }
+
     @LogManagerTask
     @RequestMapping(value = _PANEL_URL + "/list", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<String> list(
+    ResponseEntity<String> pList(
             @RequestParam(value = "ap", required = false) String ajaxParam,
+            @RequestParam(value = "submit", required = false) String submit,
             HttpServletRequest request,
-            HttpSession session,
             HttpServletResponse response) {
         try {
             GB gb = GB.init(RemoteLog.class)
@@ -129,7 +209,7 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
                             RemoteLog.SENSITIVITY,
                             RemoteLog.PORT_NUMBER,
                             RemoteLog.URL,
-                            RemoteLog.PORT_NUMBER,
+                            RemoteLog.REQUEST_METHOD,
                             RemoteLog.IMPORTANCE_LEVEL,
                             RemoteLog.USER_ID,
                             RemoteLog.USER_GROUP_ID,
@@ -144,7 +224,7 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
                             RemoteLog.SENSITIVITY,
                             RemoteLog.PORT_NUMBER,
                             RemoteLog.URL,
-                            RemoteLog.PORT_NUMBER,
+                            RemoteLog.REQUEST_METHOD,
                             RemoteLog.IMPORTANCE_LEVEL,
                             RemoteLog.USER_ID,
                             RemoteLog.USER_GROUP_ID,
@@ -152,8 +232,24 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
                     );
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", "application/json; charset=utf-8");
-            return new ResponseEntity<>(this.service.findAllJson(gb, jb), headers, HttpStatus.OK);
+            String json = this.service.findAllJson(gb, jb);
+
+            if (submit != null && submit.equals("export")) {
+                gb = GB.init(RemoteLog.class)
+                        .set(TtGbColumnFetch.All
+                        )
+                        .setSearchParams(ajaxParam);
+                gb.getPaging().setSize(-1);
+                gb.getPaging().setIndex(1);
+                List<RemoteLog> all = this.service.findAll(gb);
+
+                new Ixporter(RemoteLog.class)
+                        .exportToFile(all, response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On);
+            }
+
+            return new ResponseEntity<>(json, headers, HttpStatus.OK);
         } catch (Exception e) {
+            e.printStackTrace();
             irrorService.submit(e, request, TtIrrorPlace.Controller, TtIrrorLevel.Warn);
         }
 
@@ -285,7 +381,7 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
     @PersianName("فعالسازی رویدادنگاری برخط عملیاتها")
     @RequestMapping(value = _PANEL_URL + "/task/online/logging/{mid}")
     public ModelAndView pActiveOnlineLogging(org.springframework.ui.Model model,
-                                             @PathVariable("mid") int mid,
+                                             @PathVariable("mid") long mid,
                                              final RedirectAttributes redirectAttributes
     ) {
 

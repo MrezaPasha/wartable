@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_wartableweb" default="compile.module.wartableweb">
+  <dirname property="module.wartableweb.basedir" file="${ant.file.module_wartableweb}"/>
+  
+  <property name="module.jdk.home.wartableweb" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.wartableweb" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.wartableweb" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.wartableweb" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="wartableweb.output.dir" value="${module.wartableweb.basedir}/../out/production/WarTableWeb"/>
+  <property name="wartableweb.testoutput.dir" value="${module.wartableweb.basedir}/../out/test/WarTableWeb"/>
+  
+  <path id="wartableweb.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="wartableweb.module.production.classpath">
+    <path refid="${module.jdk.classpath.wartableweb}"/>
+    <pathelement location="${wartabledatashare.output.dir}"/>
+    <pathelement location="${wartablecore.output.dir}"/>
+    <path refid="library._libs.classpath"/>
+  </path>
+  
+  <path id="wartableweb.runtime.production.module.classpath">
+    <pathelement location="${wartableweb.output.dir}"/>
+    <pathelement location="${wartabledatashare.output.dir}"/>
+    <pathelement location="${wartablecore.output.dir}"/>
+    <path refid="library._libs.classpath"/>
+  </path>
+  
+  <path id="wartableweb.module.classpath">
+    <path refid="${module.jdk.classpath.wartableweb}"/>
+    <pathelement location="${wartableweb.output.dir}"/>
+    <pathelement location="${wartabledatashare.testoutput.dir}"/>
+    <pathelement location="${wartabledatashare.output.dir}"/>
+    <pathelement location="${wartablecore.testoutput.dir}"/>
+    <pathelement location="${wartablecore.output.dir}"/>
+    <path refid="library._libs.classpath"/>
+  </path>
+  
+  <path id="wartableweb.runtime.module.classpath">
+    <pathelement location="${wartableweb.testoutput.dir}"/>
+    <pathelement location="${wartableweb.output.dir}"/>
+    <pathelement location="${wartabledatashare.testoutput.dir}"/>
+    <pathelement location="${wartabledatashare.output.dir}"/>
+    <pathelement location="${wartablecore.testoutput.dir}"/>
+    <pathelement location="${wartablecore.output.dir}"/>
+    <path refid="library._libs.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.wartableweb">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.wartableweb">
+    <patternset refid="excluded.from.module.wartableweb"/>
+  </patternset>
+  
+  <path id="wartableweb.module.sourcepath">
+    <dirset dir="${module.wartableweb.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.wartableweb" depends="compile.module.wartableweb.production,compile.module.wartableweb.tests" description="Compile module WarTableWeb"/>
+  
+  <target name="compile.module.wartableweb.production" depends="register.custom.compilers,compile.module.wartabledatashare" description="Compile module WarTableWeb; production classes">
+    <mkdir dir="${wartableweb.output.dir}"/>
+    <javac2 destdir="${wartableweb.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.wartableweb}/javac">
+      <compilerarg line="${compiler.args.wartableweb}"/>
+      <bootclasspath refid="wartableweb.module.bootclasspath"/>
+      <classpath refid="wartableweb.module.production.classpath"/>
+      <src refid="wartableweb.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.wartableweb"/>
+    </javac2>
+    
+    <copy todir="${wartableweb.output.dir}">
+      <fileset dir="${module.wartableweb.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.wartableweb.tests" depends="register.custom.compilers,compile.module.wartableweb.production" description="compile module WarTableWeb; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.wartableweb" description="cleanup module">
+    <delete dir="${wartableweb.output.dir}"/>
+    <delete dir="${wartableweb.testoutput.dir}"/>
+  </target>
+</project>

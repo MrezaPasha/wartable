@@ -4,6 +4,7 @@ import com.captcha.botdetect.web.servlet.SimpleCaptcha;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.sadr._core._type.TtDataType;
+import org.sadr._core._type.TtEntityState;
 import org.sadr._core._type.TtRestrictionOperator;
 import org.sadr._core.meta.annotation.Front;
 import org.sadr._core.meta.annotation.PersianName;
@@ -25,8 +26,7 @@ import org.sadr.web.main._core.propertor.PropertorInWeb;
 import org.sadr.web.main._core.propertor._type.TtPropertorInWebList;
 import org.sadr.web.main._core.tools.listener.SessionListener;
 import org.sadr.web.main._core.utils.*;
-import org.sadr.web.main._core.utils._type.TtIsonStatus;
-import org.sadr.web.main._core.utils._type.TtNotice;
+import org.sadr.web.main._core.utils._type.*;
 import org.sadr.web.main.admin._type.TtUserAttemptType;
 import org.sadr.web.main.admin._type.TtUserIpRangeType;
 import org.sadr.web.main.admin._type.TtUserLevel;
@@ -35,11 +35,7 @@ import org.sadr.web.main.admin.user.confirm.UserConfirm;
 import org.sadr.web.main.admin.user.confirm.UserConfirmService;
 import org.sadr.web.main.admin.user.group.UserGroup;
 import org.sadr.web.main.admin.user.group.UserGroupService;
-import org.sadr.web.main.admin.user.uuid.UserUuidService;
-import org.sadr.web.main.system._type.TtHttpErrorCode___;
-import org.sadr.web.main.system._type.TtIrrorLevel;
-import org.sadr.web.main.system._type.TtIrrorPlace;
-import org.sadr.web.main.system._type.TtSigninLogStatus;
+import org.sadr.web.main.system._type.*;
 import org.sadr.web.main.system.irror.IrrorService;
 import org.sadr.web.main.system.log.attempt.UserAttempt;
 import org.sadr.web.main.system.log.attempt.UserAttemptService;
@@ -83,7 +79,6 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     }
 
     ////////////////////
-    private UserUuidService uuidService;
     private TaskService taskService;
     private ModuleService moduleService;
     private UserGroupService userGroupService;
@@ -118,11 +113,6 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     }
 
     @Autowired
-    public void setUuidService(UserUuidService uuidService) {
-        this.uuidService = uuidService;
-    }
-
-    @Autowired
     public void setModuleService(ModuleService moduleService) {
         this.moduleService = moduleService;
     }
@@ -138,9 +128,20 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             @Override
             protected Object convertElement(Object element) {
                 if (element != null) {
-                    int id = new Integer((String) element);
-                    Task role = taskService.findById(id);
-                    return role;
+                    return taskService.findById(new Integer((String) element));
+                }
+                return null;
+            }
+        });
+    }
+
+    @InitBinder
+    protected void initBinderGroup(HttpServletRequest request, ServletRequestDataBinder binder) {
+        binder.registerCustomEditor(Set.class, "userGroups", new CustomCollectionEditor(Set.class) {
+            @Override
+            protected Object convertElement(Object element) {
+                if (element != null) {
+                    return userGroupService.findById(new Integer((String) element));
                 }
                 return null;
             }
@@ -159,7 +160,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         }
         model.addAttribute("user", u);
         model.addAttribute("uglist", this.userGroupService.findAll());
-        return TtTile___.p_user_create.___getDisModel(_PANEL_URL + "/create");
+        return TtTile___.p_user_create.___getDisModel(_PANEL_URL + "/create", TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Success);
     }
 
     @RequestMapping(value = _PANEL_URL + "/create", method = RequestMethod.POST)
@@ -171,28 +172,28 @@ public class UserController extends GenericControllerImpl<User, UserService> {
 
 
         if (userBindingResult.hasErrors()) {
-            return Referer.redirectBindingError(request, redirectAttributes, userBindingResult, fuser);
+            return Referer.redirectBindingError(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Error, request, redirectAttributes, userBindingResult, fuser);
         }
 
         if (fuser == null || fuser.getIdi() != 0) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.register.error")));
-            return Referer.redirectObjects(request, redirectAttributes, fuser);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.register.error")));
+            return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Error, notice2s, request, redirectAttributes, fuser);
         }
 
         User dbu;
         // =========== username
         dbu = service.findBy(Restrictions.eq(User.USERNAME, fuser.getUsername()));
         if (dbu != null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.username.registered", fuser.getSecretNote(), TtNotice.Warning, dbu.getFullName())));
-            return Referer.redirectObjects(request, redirectAttributes, fuser);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.username.registered", fuser.getSecretNote(), TtNotice.Warning, dbu.getFullName())));
+            return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
         }
 
         // =========== user code
         if (fuser.getUserCode() != null && !fuser.getUserCode().isEmpty()) {
             dbu = service.findBy(Restrictions.eq(User.USER_CODE, fuser.getUserCode()));
             if (dbu != null) {
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.code.registered", fuser.getSecretNote(), TtNotice.Warning, dbu.getFullName())));
-                return Referer.redirectObjects(request, redirectAttributes, fuser);
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.code.registered", fuser.getSecretNote(), TtNotice.Warning, dbu.getFullName())));
+                return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
             }
         }
 
@@ -200,8 +201,8 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         fuser.setIsNeedToChangePassword(true);
         this.service.save(fuser);
 
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.register.success", fuser.getSecretNote(), TtNotice.Success)));
-        return Referer.redirect(_PANEL_URL + "/edit/" + fuser.getIdi());
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.register.success", fuser.getSecretNote(), TtNotice.Success)));
+        return Referer.redirect(_PANEL_URL + "/edit/" + fuser.getIdi(), TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Success, notice2s);
     }
 
     //=========================== edit
@@ -218,7 +219,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         }
         if (dbuser == null) {
             Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + uid), TtNotice.Warning));
-            return Referer.redirect(_PANEL_URL + "/list", request);
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Error);
         }
         List<UserGroup> eeclist = new ArrayList<>();
         boolean isExist;
@@ -237,7 +238,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         model.addAttribute("uglist", eeclist);
 
         model.addAttribute("user", dbuser);
-        return TtTile___.p_user_edit.___getDisModel(_PANEL_URL + "/edit");
+        return TtTile___.p_user_edit.___getDisModel(_PANEL_URL + "/edit", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
     }
 
     @RequestMapping(value = _PANEL_URL + "/edit", method = RequestMethod.POST)
@@ -247,9 +248,8 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             BindingResult userBindingResult,
             HttpServletRequest request,
             RedirectAttributes redirectAttributes, HttpSession session) {
-
         if (userBindingResult.hasErrors()) {
-            return Referer.redirectBindingError(request, redirectAttributes, userBindingResult, fuser);
+            return Referer.redirectBindingError(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Error, request, redirectAttributes, userBindingResult, fuser);
         }
 
         User dbuser;
@@ -262,8 +262,8 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                 )
         );
         if (dbuser != null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.username.registered", fuser.getSecretNote(), TtNotice.Warning, dbuser.getFullName())));
-            return Referer.redirectObjects(request, redirectAttributes, fuser);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.username.registered", fuser.getSecretNote(), TtNotice.Warning, dbuser.getFullName())));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
         }
 
         //============= user code
@@ -275,16 +275,16 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                     )
             );
             if (dbuser != null) {
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.code.registered", fuser.getSecretNote(), TtNotice.Warning, dbuser.getFullName())));
-                return Referer.redirectObjects(request, redirectAttributes, fuser);
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.code.registered", fuser.getSecretNote(), TtNotice.Warning, dbuser.getFullName())));
+                return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
             }
         }
 
 
         dbuser = this.service.findById(fuser.getId());
         if (dbuser == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found")));
-            return Referer.redirectObjects(request, redirectAttributes, fuser);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found")));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
         }
         //----------- verify super admin
         User suser = (User) session.getAttribute("sUser");
@@ -292,24 +292,22 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             return TtHttpErrorCode___.Unauthorized_401.___getFrontDisModel();
         }
         if (!suser.getIsSuperAdmin() && dbuser.getIsSuperAdmin()) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.edit.impossible", fuser.getSecretNote(), TtNotice.Danger, dbuser.getFullName())));
-            return Referer.redirectObjects(request, redirectAttributes, fuser);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.edit.impossible", fuser.getSecretNote(), TtNotice.Danger, dbuser.getFullName())));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
         }
 
-        if (dbuser.getLevel() != fuser.getLevel()) {
-            if (suser.getLevel() != TtUserLevel.Administrator
-                    && dbuser.getLevel() == TtUserLevel.Administrator) {
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.edit.level.not.allowed", suser.getSecretNote(), TtNotice.Warning)));
-            } else {
-                dbuser.setLevel(fuser.getLevel());
+        if ((dbuser.getLevel() != TtUserLevel.Administrator || !dbuser.getIsSuperAdmin()) && !dbuser.getIsLogManager()) {
+            dbuser.setUsername(fuser.getUsername());
+            if (dbuser.getLevel() != fuser.getLevel()) {
+                if (suser.getLevel() != TtUserLevel.Administrator
+                        && dbuser.getLevel() == TtUserLevel.Administrator) {
+                    Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.edit.level.not.allowed", suser.getSecretNote(), TtNotice.Warning)));
+                } else {
+                    dbuser.setLevel(fuser.getLevel());
+                }
             }
         }
-        if (dbuser.getLevel() != TtUserLevel.Administrator && !dbuser.getIsLogManager()) {
-            dbuser.setUsername(fuser.getUsername());
-        }
-        if (dbuser.getLevel() != TtUserLevel.Administrator && !dbuser.getIsLogManager()) {
-            dbuser.setUsername(fuser.getUsername());
-        }
+
         dbuser.setFirstName(fuser.getFirstName());
         dbuser.setGender(fuser.getGender());
         dbuser.setLastName(fuser.getLastName());
@@ -331,12 +329,13 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         dbuser.setAccessLimitYearlyStart(fuser.getAccessLimitYearlyStart());
         this.service.update(dbuser);
 
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.edit.success", fuser.getSecretNote(), TtNotice.Success, dbuser.getFullName())));
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.edit.success", fuser.getSecretNote(), TtNotice.Success, dbuser.getFullName())));
 
         SessionListener.invalidate(dbuser.getId());
-        return Referer.redirect(_PANEL_URL + "/edit/" + dbuser.getIdi());
+        return Referer.redirect(_PANEL_URL + "/edit/" + dbuser.getIdi(), TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success, notice2s);
     }
 
+    @TaskAccessLevel(TtTaskAccessLevel.Free4Users)
     @PersianName("ویرایش اطلاعات کاربری")
     @RequestMapping(value = _PANEL_URL + "/your-edit")
     public ModelAndView pEditYourUser(Model model, HttpSession session,
@@ -349,14 +348,15 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         }
 
         if (dbuser == null) {
-            Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.user.not.found", TtNotice.Warning));
-            return Referer.redirect(_PANEL_URL + "/", request);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.user.not.found", TtNotice.Warning));
+            return Referer.redirect(_PANEL_URL + "/", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s);
         }
 
         model.addAttribute("user", dbuser);
-        return TtTile___.p_user_yourEdit.___getDisModel(_PANEL_URL + "/your-edit");
+        return TtTile___.p_user_yourEdit.___getDisModel(_PANEL_URL + "/your-edit", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
     }
 
+    @TaskAccessLevel(TtTaskAccessLevel.Free4Users)
     @RequestMapping(value = _PANEL_URL + "/your-edit", method = RequestMethod.POST)
     public ModelAndView pEditYourUser(
             @ModelAttribute("user")
@@ -367,20 +367,22 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             RedirectAttributes redirectAttributes) {
 
         if (userBindingResult.hasErrors()) {
-            return Referer.redirectBindingError(request, redirectAttributes, userBindingResult, fuser);
+            return Referer.redirectBindingError(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Error, request, redirectAttributes, userBindingResult, fuser);
         }
 
         User dbuser;
         dbuser = this.service.findById(fuser.getId());
         if (dbuser == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found")));
-            return Referer.redirectObjects(request, redirectAttributes, fuser);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found")));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
         }
         if (this.service.isDuplicateWith(Restrictions.eq(User.USERNAME, fuser.getUsername()), dbuser.getId())) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.username.invalid", fuser.getSecretNote())));
-            return Referer.redirectObjects(request, redirectAttributes, fuser);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.username.invalid", fuser.getSecretNote())));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
         }
-        dbuser.setUsername(fuser.getUsername());
+        if ((dbuser.getLevel() != TtUserLevel.Administrator || !dbuser.getIsSuperAdmin()) && !dbuser.getIsLogManager()) {
+            dbuser.setUsername(fuser.getUsername());
+        }
         dbuser.setFirstName(fuser.getFirstName());
         dbuser.setGender(fuser.getGender());
         dbuser.setLastName(fuser.getLastName());
@@ -388,8 +390,8 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         this.service.update(dbuser);
 
         this.service.updateUserSession(session, dbuser);
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.edit.success", fuser.getSecretNote(), TtNotice.Success, dbuser.getFullName())));
-        return Referer.redirect(_PANEL_URL + "/your-edit");
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.edit.success", fuser.getSecretNote(), TtNotice.Success, dbuser.getFullName())));
+        return Referer.redirect(_PANEL_URL + "/your-edit", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success, notice2s);
     }
 
     //=========================== password
@@ -709,6 +711,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                 GB.col(User.USERNAME),
                 GB.col(User.LEVEL),
                 GB.col(User.STATUS),
+                GB.col(User.USER_CODE),
                 GB.col(User.LAST_SIGNIN_DATE_TIME),
                 GB.col(User.PASSWORD_DATE_TIME),
                 GB.col(User.CREATE_DATE_TIME)
@@ -722,7 +725,9 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     @RequestMapping(value = _PANEL_URL + "/list", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<String> pList(HttpServletRequest request,
-                                 @RequestParam(value = "ap", required = false) String ajaxParam) {
+                                 @RequestParam(value = "ap", required = false) String ajaxParam,
+                                 @RequestParam(value = "submit", required = false) String submit,
+                                 HttpServletResponse response) {
         try {
             GB gb = GB.init(User.class)
                     .set(
@@ -731,13 +736,16 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                             User.FIRST_NAME,
                             User.LAST_NAME,
                             User.USERNAME,
+                            User.USER_CODE,
                             User.STATUS,
                             User.LEVEL,
+                            User.IS_LOG_MANAGER,
                             User.LAST_SIGNIN_DATE_TIME,
                             User.PASSWORD_DATE_TIME,
                             User.IS_BLOCKED
                     )
                     .setSearchParams(ajaxParam);
+
             JB jb = JB.init()
                     .set(
                             User.CREATE_DATE_TIME,
@@ -745,25 +753,57 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                             User.FIRST_NAME,
                             User.LAST_NAME,
                             User.USERNAME,
+                            User.USER_CODE,
                             User.STATUS,
                             User.LEVEL,
+                            User.IS_LOG_MANAGER,
                             User.$FULL_NAME,
                             User.$IS_MASTER,
                             User.$IS_NOT_CLIENT,
                             User.LAST_SIGNIN_DATE_TIME,
                             User.PASSWORD_DATE_TIME
-//                    ,
-//                    User.$IS_BLOCKED_Y
                     );
 
             String json = this.service.findAllJson(gb, jb);
+
+            if (submit != null && submit.equals("export")) {
+                gb = GB.init(User.class)
+                        .set(
+                                User.ID,
+                                User.CREATE_DATE_TIME,
+                                User.GENDER,
+                                User.FIRST_NAME,
+                                User.LAST_NAME,
+                                User.USERNAME,
+                                User.STATUS,
+                                User.LEVEL,
+                                User.LAST_SIGNIN_DATE_TIME,
+                                User.PASSWORD_DATE_TIME,
+                                User.IS_BLOCKED,
+                                User.IP_RANGE_TYPE,
+                                User.IP_ADDRESS,
+                                User.IP_ADDRESS_FIRST_SIGNIN,
+                                User.IP_ADDRESS_START,
+                                User.IP_ADDRESS_END
+                        )
+                        .setSearchParams(ajaxParam);
+                gb.getPaging().setSize(-1);
+                gb.getPaging().setIndex(1);
+                List<User> all = this.service.findAll(gb);
+
+                new Ixporter(User.class)
+                        .exportToFile(all, response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On);
+            }
+
             HttpHeaders headers = new HttpHeaders();
 
             headers.add("Content-Type", "application/json; charset=utf-8");
             return new ResponseEntity<>(json, headers, HttpStatus.OK);
         } catch (Exception e) {
             irrorService.submit(e, request, TtIrrorPlace.Controller, TtIrrorLevel.Error);
+            e.printStackTrace();
         }
+
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
@@ -838,14 +878,16 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                                     @PathVariable("id") int id,
                                     final RedirectAttributes redirectAttributes) {
         if (id == 0) {
-            model.addAttribute("ulist", this.service.findAllBy(Restrictions.eq("level", TtUserLevel.Master)));
-            model.addAttribute("selectedUser", new User());
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + id), TtNotice.Danger)));
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Error, notice2s);
         } else {
             User user = this.service.findById(id, User._TASKS, User._TASKS + "." + Task._MODULE);
             if (user == null) {
-                model.addAttribute("ulist", this.service.findAllBy(Restrictions.eq("level", TtUserLevel.Master)));
-                model.addAttribute("selectedUser", new User());
-                Notice2.initModelAttr(model, Notice2.addNotices(new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + id), TtNotice.Warning)));
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + id), TtNotice.Danger)));
+                return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Error, notice2s);
+            } else if (user.getIsLogManager()) {
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.log.manager.not.allowed", JsonBuilder.toJson("userId", "" + id), TtNotice.Warning)));
+                return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Error, notice2s);
             } else {
                 List<Module> moduless = this.moduleService.findAll(Module._TASKS);
                 List<Module> modules = new ArrayList<>();
@@ -878,9 +920,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                 model.addAttribute("user", user);
             }
         }
-        return TtTile___.p_user_access_list.___getDisModel();
-
-
+        return TtTile___.p_user_access_list.___getDisModel(TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Success);
     }
 
     @PersianName("سطح دسترسی")
@@ -892,18 +932,21 @@ public class UserController extends GenericControllerImpl<User, UserService> {
 
         User us;
         if (uid == 0 || mid == 0) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.not.found", JsonBuilder.toJson("moduleId", "" + mid, "userId", "" + uid), TtNotice.Warning)));
-            return new ModelAndView("redirect:/panel/user/list");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.not.found", JsonBuilder.toJson("moduleId", "" + mid, "userId", "" + uid), TtNotice.Warning)));
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Error, notice2s);
         }
         us = this.service.findById(uid, User._TASKS);
         if (us == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.not.found", JsonBuilder.toJson("moduleId", "" + mid, "userId", "" + uid), TtNotice.Warning)));
-            return new ModelAndView("redirect:/panel/user/list");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.not.found", JsonBuilder.toJson("moduleId", "" + mid, "userId", "" + uid), TtNotice.Warning)));
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Error, notice2s);
+        } else if (us.getIsLogManager()) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.log.manager.not.allowed", TtNotice.Warning)));
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Error, notice2s);
         }
         Module mud = this.moduleService.findById(mid);
         if (mud == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.not.found", JsonBuilder.toJson("moduleId", "" + mid, "userId", "" + uid), TtNotice.Warning)));
-            return new ModelAndView("redirect:/panel/user/list");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.not.found", JsonBuilder.toJson("moduleId", "" + mid, "userId", "" + uid), TtNotice.Warning)));
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Error, notice2s);
         }
 
         if (us.getTasks().size() > 0) {
@@ -985,6 +1028,9 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             if (dbU == null) {
                 Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.not.found", JsonBuilder.toJson("moduleId", "" + sid), TtNotice.Warning)));
                 return new ModelAndView("redirect:/panel/user/list");
+            } else if (dbU.getIsLogManager()) {
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.log.manager.not.allowed", TtNotice.Warning)));
+                return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Error, notice2s);
             }
             Set<Task> tasks = new HashSet<>();
             for (Task dt : dbU.getTasks()) {
@@ -1099,11 +1145,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     public ModelAndView pTrash(@PathVariable("id") int id,
                                final RedirectAttributes redirectAttributes, HttpSession session) {
 
-        User dbus = this.service.find(id,
-                GB.init(User.class)
-                        .set(
-                                User.GENDER, User.FIRST_NAME, User.LAST_NAME)
-        );
+        User dbus = this.service.findById(id, User._TASKS);
         if (dbus == null) {
             Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + id))));
             return new ModelAndView("redirect:/panel/user/list");
@@ -1113,11 +1155,15 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         if (suser == null) {
             return TtHttpErrorCode___.Unauthorized_401.___getFrontDisModel();
         }
-        if (!suser.getIsSuperAdmin() && dbus.getIsSuperAdmin()) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.edit.impossible", dbus.getSecretNote(), TtNotice.Danger, dbus.getFullName())));
+        if (!suser.getIsSuperAdmin() && (dbus.getIsSuperAdmin() || dbus.getIsLogManager())) {
+            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.trash.impossible", dbus.getSecretNote(), TtNotice.Danger, dbus.getFullName())));
             return new ModelAndView("redirect:/panel/user/list");
         }
-        this.service.trash(id);
+
+        dbus.setTasks(null);
+        dbus.setEntityState(TtEntityState.Trash);
+        this.service.update(dbus);
+        SessionListener.invalidate(id);
         Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.trash.success", dbus.getSecretNote(), TtNotice.Success, dbus.getFullName())));
         return new ModelAndView("redirect:/panel/user/list");
     }

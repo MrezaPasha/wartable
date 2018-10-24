@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="wswartable" default="all">
+  
+  
+  <property file="wswartable.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.egg"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+    <include name="*.swc"/>
+    <include name="*.war"/>
+    <include name="*.zip"/>
+    <include name="*.ane"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+  <path id="jdk.classpath.1.8">
+    <fileset dir="${jdk.home.1.8}">
+      <include name="jre/lib/charsets.jar"/>
+      <include name="jre/lib/deploy.jar"/>
+      <include name="jre/lib/ext/access-bridge-64.jar"/>
+      <include name="jre/lib/ext/cldrdata.jar"/>
+      <include name="jre/lib/ext/dnsns.jar"/>
+      <include name="jre/lib/ext/jaccess.jar"/>
+      <include name="jre/lib/ext/jfxrt.jar"/>
+      <include name="jre/lib/ext/localedata.jar"/>
+      <include name="jre/lib/ext/nashorn.jar"/>
+      <include name="jre/lib/ext/sunec.jar"/>
+      <include name="jre/lib/ext/sunjce_provider.jar"/>
+      <include name="jre/lib/ext/sunmscapi.jar"/>
+      <include name="jre/lib/ext/sunpkcs11.jar"/>
+      <include name="jre/lib/ext/zipfs.jar"/>
+      <include name="jre/lib/javaws.jar"/>
+      <include name="jre/lib/jce.jar"/>
+      <include name="jre/lib/jfr.jar"/>
+      <include name="jre/lib/jfxswt.jar"/>
+      <include name="jre/lib/jsse.jar"/>
+      <include name="jre/lib/management-agent.jar"/>
+      <include name="jre/lib/plugin.jar"/>
+      <include name="jre/lib/resources.jar"/>
+      <include name="jre/lib/rt.jar"/>
+      <include name="jre/lib/tomcat-juli.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library._libs.classpath">
+    <fileset dir="${basedir}/_libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  
+  <!-- Application Server Libraries -->
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <fileset dir="${javac2.home}">
+      <include name="javac2.jar"/>
+      <include name="jdom.jar"/>
+      <include name="asm-all*.jar"/>
+      <include name="forms-*.jar"/>
+    </fileset>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  <import file="${basedir}/WarTableCore/module_wartablecore.xml"/>
+  
+  <import file="${basedir}/WarTableDataShare/module_wartabledatashare.xml"/>
+  
+  <import file="${basedir}/WarTableWeb/module_wartableweb.xml"/>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.wartablecore, clean.module.wartabledatashare, clean.module.wartableweb, clean.artifact.wartableweb" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.wartablecore, compile.module.wartabledatashare, compile.module.wartableweb" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.wartableweb" value="${basedir}/_out/artifacts/WarTableWeb"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="clean.artifact.wartableweb" description="clean WarTableWeb artifact output">
+    <delete dir="${artifact.output.wartableweb}"/>
+  </target>
+  
+  <target name="artifact.wartableweb" depends="init.artifacts, compile.module.wartableweb, compile.module.wartabledatashare, compile.module.wartablecore" description="Build &#39;WarTableWeb&#39; artifact">
+    <mkdir dir="${artifact.output.wartableweb}"/>
+    <mkdir dir="${artifact.output.wartableweb}/WEB-INF"/>
+    <mkdir dir="${artifact.output.wartableweb}/WEB-INF/classes"/>
+    <copy todir="${artifact.output.wartableweb}/WEB-INF/classes">
+      <fileset dir="${wartableweb.output.dir}"/>
+    </copy>
+    <copy todir="${artifact.output.wartableweb}/WEB-INF/classes">
+      <fileset dir="${wartabledatashare.output.dir}"/>
+    </copy>
+    <copy todir="${artifact.output.wartableweb}/WEB-INF/classes">
+      <fileset dir="${wartablecore.output.dir}"/>
+    </copy>
+    <mkdir dir="${artifact.output.wartableweb}/WEB-INF/lib"/>
+    <copy file="${basedir}/_libs/client.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/client.jar"/>
+    <copy file="${basedir}/_libs/sac-1.3.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/sac-1.3.jar"/>
+    <copy file="${basedir}/_libs/jstl-1.2.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jstl-1.2.jar"/>
+    <copy file="${basedir}/_libs/jstl-api.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jstl-api.jar"/>
+    <copy file="${basedir}/_libs/jna-4.1.0.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jna-4.1.0.jar"/>
+    <copy file="${basedir}/_libs/jstl-impl.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jstl-impl.jar"/>
+    <copy file="${basedir}/_libs/gson-2.8.0.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/gson-2.8.0.jar"/>
+    <copy file="${basedir}/_libs/guava-21.0.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/guava-21.0.jar"/>
+    <copy file="${basedir}/_libs/guava-22.0.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/guava-22.0.jar"/>
+    <copy file="${basedir}/_libs/javax.mail.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/javax.mail.jar"/>
+    <copy file="${basedir}/_libs/jaxrpc-spi.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jaxrpc-spi.jar"/>
+    <copy file="${basedir}/_libs/junit-4.12.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/junit-4.12.jar"/>
+    <copy file="${basedir}/_libs/antlr-2.7.7.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/antlr-2.7.7.jar"/>
+    <copy file="${basedir}/_libs/dom4j-1.6.1.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/dom4j-1.6.1.jar"/>
+    <copy file="${basedir}/_libs/jaxrpc-impl.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jaxrpc-impl.jar"/>
+    <copy file="${basedir}/_libs/jsoup-1.9.1.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jsoup-1.9.1.jar"/>
+    <copy file="${basedir}/_libs/tomcat-dbcp.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tomcat-dbcp.jar"/>
+    <copy file="${basedir}/_libs/xalan-2.7.2.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/xalan-2.7.2.jar"/>
+    <copy file="${basedir}/_libs/flexjson-3.3.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/flexjson-3.3.jar"/>
+    <copy file="${basedir}/_libs/hsqldb-2.3.4.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/hsqldb-2.3.4.jar"/>
+    <copy file="${basedir}/_libs/jasypt-1.9.2.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jasypt-1.9.2.jar"/>
+    <copy file="${basedir}/_libs/pdfbox-2.0.3.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/pdfbox-2.0.3.jar"/>
+    <copy file="${basedir}/_libs/fontbox-2.0.3.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/fontbox-2.0.3.jar"/>
+    <copy file="${basedir}/_libs/htmlunit-2.26.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/htmlunit-2.26.jar"/>
+    <copy file="${basedir}/_libs/commons-io-2.4.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/commons-io-2.4.jar"/>
+    <copy file="${basedir}/_libs/commons-io-2.5.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/commons-io-2.5.jar"/>
+    <copy file="${basedir}/_libs/httpcore-4.4.6.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/httpcore-4.4.6.jar"/>
+    <copy file="${basedir}/_libs/httpmime-4.5.3.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/httpmime-4.5.3.jar"/>
+    <copy file="${basedir}/_libs/javax.json-1.0.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/javax.json-1.0.jar"/>
+    <copy file="${basedir}/_libs/tiles-el-3.0.5.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-el-3.0.5.jar"/>
+    <copy file="${basedir}/_libs/xmlbeans-2.6.0.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/xmlbeans-2.6.0.jar"/>
+    <copy file="${basedir}/_libs/aopalliance-1.0.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/aopalliance-1.0.jar"/>
+    <copy file="${basedir}/_libs/saaj-impl-1.3.4.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/saaj-impl-1.3.4.jar"/>
+    <copy file="${basedir}/_libs/slf4j-api-1.6.1.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/slf4j-api-1.6.1.jar"/>
+    <copy file="${basedir}/_libs/slf4j-api-1.7.6.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/slf4j-api-1.7.6.jar"/>
+    <copy file="${basedir}/_libs/tiles-api-3.0.5.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-api-3.0.5.jar"/>
+    <copy file="${basedir}/_libs/tiles-jsp-3.0.5.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-jsp-3.0.5.jar"/>
+    <copy file="${basedir}/_libs/xml-apis-1.4.01.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/xml-apis-1.4.01.jar"/>
+    <copy file="${basedir}/_libs/commons-exec-1.3.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/commons-exec-1.3.jar"/>
+    <copy file="${basedir}/_libs/cssparser-0.9.22.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/cssparser-0.9.22.jar"/>
+    <copy file="${basedir}/_libs/httpclient-4.5.3.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/httpclient-4.5.3.jar"/>
+    <copy file="${basedir}/_libs/imgscalr-lib-4.2.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/imgscalr-lib-4.2.jar"/>
+    <copy file="${basedir}/_libs/serializer-2.7.2.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/serializer-2.7.2.jar"/>
+    <copy file="${basedir}/_libs/tiles-core-3.0.5.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-core-3.0.5.jar"/>
+    <copy file="${basedir}/_libs/tiles-mvel-3.0.5.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-mvel-3.0.5.jar"/>
+    <copy file="${basedir}/_libs/tiles-ognl-3.0.5.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-ognl-3.0.5.jar"/>
+    <copy file="${basedir}/_libs/amqp-client-3.5.4.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/amqp-client-3.5.4.jar"/>
+    <copy file="${basedir}/_libs/cglib-nodep-3.2.4.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/cglib-nodep-3.2.4.jar"/>
+    <copy file="${basedir}/_libs/commons-dbcp2-2.1.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/commons-dbcp2-2.1.jar"/>
+    <copy file="${basedir}/_libs/commons-lang3-3.5.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/commons-lang3-3.5.jar"/>
+    <copy file="${basedir}/_libs/FastInfoset-1.2.9.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/FastInfoset-1.2.9.jar"/>
+    <copy file="${basedir}/_libs/hamcrest-core-1.3.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/hamcrest-core-1.3.jar"/>
+    <copy file="${basedir}/_libs/poi-3.12-20150511.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/poi-3.12-20150511.jar"/>
+    <copy file="${basedir}/_libs/postgresql-42.2.4.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/postgresql-42.2.4.jar"/>
+    <copy file="${basedir}/_libs/xercesImpl-2.11.0.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/xercesImpl-2.11.0.jar"/>
+    <copy file="${basedir}/_libs/bcprov-jdk15on-154.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/bcprov-jdk15on-154.jar"/>
+    <copy file="${basedir}/_libs/com.ibm.icu-52.1.1.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/com.ibm.icu-52.1.1.jar"/>
+    <copy file="${basedir}/_libs/commons-codec-1.10.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/commons-codec-1.10.jar"/>
+    <copy file="${basedir}/_libs/ehcache-core-2.4.3.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/ehcache-core-2.4.3.jar"/>
+    <copy file="${basedir}/_libs/jackson-core-2.9.4.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jackson-core-2.9.4.jar"/>
+    <copy file="${basedir}/_libs/jandex-2.0.0.Final.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jandex-2.0.0.Final.jar"/>
+    <copy file="${basedir}/_libs/jna-platform-4.1.0.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jna-platform-4.1.0.jar"/>
+    <copy file="${basedir}/_libs/neko-htmlunit-2.25.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/neko-htmlunit-2.25.jar"/>
+    <copy file="${basedir}/_libs/pdfbox-tools-2.0.3.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/pdfbox-tools-2.0.3.jar"/>
+    <copy file="${basedir}/_libs/tiles-compat-3.0.5.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-compat-3.0.5.jar"/>
+    <copy file="${basedir}/_libs/tiles-extras-3.0.5.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-extras-3.0.5.jar"/>
+    <copy file="${basedir}/_libs/aspectjweaver-1.8.2.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/aspectjweaver-1.8.2.jar"/>
+    <copy file="${basedir}/_libs/commons-logging-1.2.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/commons-logging-1.2.jar"/>
+    <copy file="${basedir}/_libs/javassist-3.18.1-GA.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/javassist-3.18.1-GA.jar"/>
+    <copy file="${basedir}/_libs/javax.ws.rs-api-2.0.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/javax.ws.rs-api-2.0.jar"/>
+    <copy file="${basedir}/_libs/tiles-servlet-3.0.5.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-servlet-3.0.5.jar"/>
+    <copy file="${basedir}/_libs/UserAgentUtils-1.20.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/UserAgentUtils-1.20.jar"/>
+    <copy file="${basedir}/_libs/yuicompressor-2.4.8.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/yuicompressor-2.4.8.jar"/>
+    <copy file="${basedir}/_libs/commons-digester-2.0.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/commons-digester-2.0.jar"/>
+    <copy file="${basedir}/_libs/htmlcompressor-1.5.3.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/htmlcompressor-1.5.3.jar"/>
+    <copy file="${basedir}/_libs/htmlunit-driver-2.26.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/htmlunit-driver-2.26.jar"/>
+    <copy file="${basedir}/_libs/jasypt-1.9.2-javadoc.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jasypt-1.9.2-javadoc.jar"/>
+    <copy file="${basedir}/_libs/jcl-over-slf4j-1.7.6.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jcl-over-slf4j-1.7.6.jar"/>
+    <copy file="${basedir}/_libs/tiles-template-3.0.5.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-template-3.0.5.jar"/>
+    <copy file="${basedir}/_libs/tiles-velocity-3.0.5.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-velocity-3.0.5.jar"/>
+    <copy file="${basedir}/_libs/botdetect-4.0.beta3.4.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/botdetect-4.0.beta3.4.jar"/>
+    <copy file="${basedir}/_libs/htmlunit-core-js-2.26.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/htmlunit-core-js-2.26.jar"/>
+    <copy file="${basedir}/_libs/javax.xml.rpc-api-1.1.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/javax.xml.rpc-api-1.1.jar"/>
+    <copy file="${basedir}/_libs/phantomjsdriver-1.4.0.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/phantomjsdriver-1.4.0.jar"/>
+    <copy file="${basedir}/_libs/jackson-databind-2.9.4.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jackson-databind-2.9.4.jar"/>
+    <copy file="${basedir}/_libs/tiles-freemarker-3.0.5.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-freemarker-3.0.5.jar"/>
+    <copy file="${basedir}/_libs/urlrewritefilter-4.0.3.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/urlrewritefilter-4.0.3.jar"/>
+    <copy file="${basedir}/_libs/commons-beanutils-1.8.0.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/commons-beanutils-1.8.0.jar"/>
+    <copy file="${basedir}/_libs/jasypt-hibernate4-1.9.2.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jasypt-hibernate4-1.9.2.jar"/>
+    <copy file="${basedir}/_libs/javax.servlet-api-3.1.0.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/javax.servlet-api-3.1.0.jar"/>
+    <copy file="${basedir}/_libs/poi-ooxml-3.12-20150511.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/poi-ooxml-3.12-20150511.jar"/>
+    <copy file="${basedir}/_libs/spring-tx-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-tx-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/tiles-request-api-1.0.6.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-request-api-1.0.6.jar"/>
+    <copy file="${basedir}/_libs/tiles-request-jsp-1.0.6.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-request-jsp-1.0.6.jar"/>
+    <copy file="${basedir}/_libs/commons-fileupload-1.3.1.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/commons-fileupload-1.3.1.jar"/>
+    <copy file="${basedir}/_libs/jetty-io-9.4.1.v20170120.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jetty-io-9.4.1.v20170120.jar"/>
+    <copy file="${basedir}/_libs/spring-aop-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-aop-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-jms-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-jms-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-orm-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-orm-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-oxm-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-oxm-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-web-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-web-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/amqp-client-3.5.4-javadoc.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/amqp-client-3.5.4-javadoc.jar"/>
+    <copy file="${basedir}/_libs/amqp-client-3.5.4-sources.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/amqp-client-3.5.4-sources.jar"/>
+    <copy file="${basedir}/_libs/commons-dbcp2-2.1-javadoc.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/commons-dbcp2-2.1-javadoc.jar"/>
+    <copy file="${basedir}/_libs/jackson-annotations-2.9.4.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jackson-annotations-2.9.4.jar"/>
+    <copy file="${basedir}/_libs/javax.validation-1.0.0.GA.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/javax.validation-1.0.0.GA.jar"/>
+    <copy file="${basedir}/_libs/jboss-logging-3.3.0.Final.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jboss-logging-3.3.0.Final.jar"/>
+    <copy file="${basedir}/_libs/mariadb-java-client-1.5.9.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/mariadb-java-client-1.5.9.jar"/>
+    <copy file="${basedir}/_libs/spring-boot-1.2.4.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-boot-1.2.4.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-core-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-core-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-jdbc-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-jdbc-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-test-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-test-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/jetty-util-9.4.1.v20170120.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jetty-util-9.4.1.v20170120.jar"/>
+    <copy file="${basedir}/_libs/spring-beans-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-beans-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/botdetect-jsp20-4.0.beta3.4.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/botdetect-jsp20-4.0.beta3.4.jar"/>
+    <copy file="${basedir}/_libs/geronimo-jta_1.1_spec-1.1.1.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/geronimo-jta_1.1_spec-1.1.1.jar"/>
+    <copy file="${basedir}/_libs/hibernate-core-5.0.12.Final.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/hibernate-core-5.0.12.Final.jar"/>
+    <copy file="${basedir}/_libs/spring-webmvc-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-webmvc-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/tiles-request-servlet-1.0.6.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-request-servlet-1.0.6.jar"/>
+    <copy file="${basedir}/_libs/client-combined-3.4.0-nodeps.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/client-combined-3.4.0-nodeps.jar"/>
+    <copy file="${basedir}/_libs/spring-aspects-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-aspects-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-context-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-context-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/tiles-request-mustache-1.0.6.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-request-mustache-1.0.6.jar"/>
+    <copy file="${basedir}/_libs/tiles-request-velocity-1.0.6.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-request-velocity-1.0.6.jar"/>
+    <copy file="${basedir}/_libs/botdetect-servlet-4.0.beta3.4.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/botdetect-servlet-4.0.beta3.4.jar"/>
+    <copy file="${basedir}/_libs/websocket-api-9.4.3.v20170317.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/websocket-api-9.4.3.v20170317.jar"/>
+    <copy file="${basedir}/_libs/hibernate-ehcache-5.0.12.Final.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/hibernate-ehcache-5.0.12.Final.jar"/>
+    <copy file="${basedir}/_libs/spring-messaging-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-messaging-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-websocket-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-websocket-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/tiles-request-freemarker-1.0.6.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-request-freemarker-1.0.6.jar"/>
+    <copy file="${basedir}/_libs/hibernate-validator-4.3.0.Final.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/hibernate-validator-4.3.0.Final.jar"/>
+    <copy file="${basedir}/_libs/jasypt-hibernate4-1.9.2-javadoc.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/jasypt-hibernate4-1.9.2-javadoc.jar"/>
+    <copy file="${basedir}/_libs/poi-ooxml-schemas-3.12-20150511.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/poi-ooxml-schemas-3.12-20150511.jar"/>
+    <copy file="${basedir}/_libs/spring-expression-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-expression-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-instrument-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-instrument-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-websocket-4.3.16.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-websocket-4.3.16.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/tiles-autotag-core-runtime-1.1.0.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-autotag-core-runtime-1.1.0.jar"/>
+    <copy file="${basedir}/_libs/websocket-client-9.4.3.v20170317.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/websocket-client-9.4.3.v20170317.jar"/>
+    <copy file="${basedir}/_libs/websocket-common-9.4.3.v20170317.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/websocket-common-9.4.3.v20170317.jar"/>
+    <copy file="${basedir}/_libs/hibernate-jpa-2.1-api-1.0.0.Final.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/hibernate-jpa-2.1-api-1.0.0.Final.jar"/>
+    <copy file="${basedir}/_libs/spring-boot-starter-1.2.4.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-boot-starter-1.2.4.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-webmvc-portlet-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-webmvc-portlet-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/tiles-request-servlet-wildcard-1.0.6.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/tiles-request-servlet-wildcard-1.0.6.jar"/>
+    <copy file="${basedir}/_libs/spring-boot-starter-web-1.2.4.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-boot-starter-web-1.2.4.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-boot-starter-test-1.2.4.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-boot-starter-test-1.2.4.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-instrument-tomcat-4.3.7.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-instrument-tomcat-4.3.7.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-boot-autoconfigure-1.2.4.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-boot-autoconfigure-1.2.4.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/hibernate-commons-annotations-5.0.1.Final.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/hibernate-commons-annotations-5.0.1.Final.jar"/>
+    <copy file="${basedir}/_libs/spring-boot-starter-actuator-1.2.4.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-boot-starter-actuator-1.2.4.RELEASE.jar"/>
+    <copy file="${basedir}/_libs/spring-boot-configuration-processor-1.2.4.RELEASE.jar" tofile="${artifact.output.wartableweb}/WEB-INF/lib/spring-boot-configuration-processor-1.2.4.RELEASE.jar"/>
+    <copy todir="${artifact.output.wartableweb}">
+      <fileset dir="${basedir}/WarTableWeb/web"/>
+    </copy>
+    <mkdir dir="${artifact.output.wartableweb}/WEB-INF"/>
+    <copy file="${basedir}/WarTableWeb/web/WEB-INF/conf/system/web.xml" tofile="${artifact.output.wartableweb}/WEB-INF/web.xml"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.wartableweb" description="Build all artifacts">
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>

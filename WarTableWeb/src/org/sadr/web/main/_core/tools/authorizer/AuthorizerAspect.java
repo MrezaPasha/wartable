@@ -4,9 +4,9 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.hibernate.criterion.Restrictions;
 import org.sadr._core.meta.annotation.Front;
 import org.sadr._core.meta.annotation.PersianName;
+import org.sadr.web.main._core._type.TtTaskAccessLevel;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.meta.annotation.OverActiveTask;
 import org.sadr.web.main._core.meta.annotation.OverChangePassword;
@@ -108,36 +108,48 @@ public class AuthorizerAspect {
         return Referer.redirect("/panel/user/your-pass?expired=true");
     }
 
-    private ModelAndView guest(HttpServletRequest request, User u, ProceedingJoinPoint joinPoint) throws Throwable {
-        //#########(developing mode)######### guest
+    private ModelAndView guest(HttpServletRequest request, User u, ProceedingJoinPoint joinPoint, Task task) throws Throwable {
+
+        ModelAndView andView;
+        // guest > ================================  Developing
         if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.SiteInDevelopingForGuests)
                 && !((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(OverDevelopingMode.class)) {
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogGuest)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Guest- Dispatched to < " + TtTile___.f_develop_developing.getCode() + " > [Developing]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             return fillAndView(request, TtTile___.f_develop_developing.___getDisModel());
         }
-        ModelAndView andView;
-        Task task;
-        task = taskService.fetchGuestTask(joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
-        if (task != null) {
+
+        // guest > ================================  OK
+        if (task != null && (task.getAccessLevel() == TtTaskAccessLevel.Free4Gusts || task.getAccessLevel() == TtTaskAccessLevel.OnlyFree4Gusts)) {
             andView = (ModelAndView) joinPoint.proceed();
             //*********(log)********* guest
             if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogGuest)) {
-                this.logService.log(new Log(
-                        joinPoint,
-                        request,
-                        "As Guest- Dispatched to <" + andView.getViewName() + ">",
-                        TtLogHandler.AuthorizerAspect,
-                        task, u));
+                this.logService.log(
+                        new Log(
+                                andView, request,
+                                "As Guest- Dispatched to <" + andView.getViewName() + ">",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
             }
             return fillAndView(request, andView);
         }
+
+        // guest > ================================  Forbidden
         //*********(log)********* invalid guest
-//        if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogGuest)) {
-//            this.logService.log(new Log(
-//                    joinPoint, request,
-//                    "As Guest- Dispatched to <" + joinPoint.getSignature().getName() + "> User is null.401. #1 ",
-//                    TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                    TtLogLevel.Trace, TtSecurityThreatLevel.Substantial, u));
-//        }
+        if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogGuest)) {
+            this.logService.log(
+                    new Log(
+                            null, request,
+                            "As Guest- Dispatched to <" + joinPoint.getSignature().getName() + "> [401: User is null] ",
+                            TtLogHandler.AuthorizerAspect, task, u)
+            );
+        }
         String cname = joinPoint.getSignature().getDeclaringTypeName();
         int ix = cname.lastIndexOf('.') + 1;
         cname = cname.substring(ix, ix + 1).toLowerCase()
@@ -148,400 +160,431 @@ public class AuthorizerAspect {
 
     }
 
-    private ModelAndView client(HttpServletRequest request, User u, ProceedingJoinPoint joinPoint) throws Throwable {
-        //#########(developing mode)######### client
+    private ModelAndView client(HttpServletRequest request, User u, ProceedingJoinPoint joinPoint, Task task) throws Throwable {
+        // client > ================================  Developing
         if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.SiteInDevelopingForClient)
                 && !((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(OverDevelopingMode.class)) {
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Client- Dispatched to <f.developing>",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
-//            }
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Client- Dispatched to < " + TtTile___.f_develop_developing.getCode() + " > [Developing]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             return fillAndView(request, TtTile___.f_develop_developing.___getDisModel());
         }
+
+        // client > ================================  Access Limit
         if (userService.isAccessLimitPassed(u)) {
             //*********(log)********* limit client
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Client- Dispatched to < Access Limit Time>.",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
-//            }
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Client- Dispatched to < " + TtTile___.f_user_signin.getCode() + " > [Access Limit]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             SessionListener.invalidate(u.getId());
             return Referer.redirect("/signin?limit=true");
         }
-        //==========================  CHANGE PASSWORD
-        if (u.getIsNeedToChangePassword() == true
-                && !((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(OverChangePassword.class)) {
-            //*********(log)********* change password client
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Client- Dispatched to < change password >.",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
-//            }
-            return fillPasswordForm(request);
 
-        }
-
-        //==========================  BLOCKED CLIENT
+        // client > ================================  Blocked
         if (u.getIsBlocked() == true) {
             //*********(log)********* blocked client
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Client- Dispatched to <" + TtHttpErrorCode___.Forbidden_403.getFrontTile() + "> User is blocked.403.",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Substantial, u));
-//            }
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Client- Dispatched to < " + TtHttpErrorCode___.Forbidden_403.getFrontTile() + " > [Blocked User]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             return TtHttpErrorCode___.Forbidden_403.___getFrontDisModel();
         }
 
-        //==========================  DEACTIVED CLIENT
+        // client > ================================  Deactivated
         if (u.getStatus() == TtUserStatus.Deactive
                 && !((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(OverActiveTask.class)) {
-            //*********(log)********* diactived client
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Client- Dispatched to <" + TtHttpErrorCode___.Forbidden_403.getFrontTile() + "> User is deactived.",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Moderate, u));
-//            }
-
+            //*********(log)********* deactivated client
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Client- Dispatched to < " + TtHttpErrorCode___.Forbidden_403.getFrontTile() + " > [Deactivated User]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             SessionListener.invalidate(u.getId());
             return Referer.redirect("/signin?inactive=true");
         }
 
+        // client > ================================  Change Password
+        if (u.getIsNeedToChangePassword() == true
+                && !((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(OverChangePassword.class)) {
+            //*********(log)********* change password client
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Client- Dispatched to < " + TtTile___.p_user_changeYourPass.getCode() + " > [Change Password]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
+            return fillPasswordForm(request);
+        }
+
+        // client > ================================  OK
         ModelAndView andView;
-        String taskSignature = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
-        if (taskService.authorizeGuest(taskSignature)) {
+        if (task != null && task.getAccessLevel() == TtTaskAccessLevel.Free4Gusts) {
             andView = (ModelAndView) joinPoint.proceed();
-            //*********(log)********* guest
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Client- Dispatched to <" + andView.getViewName() + ">",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
-//            }
+            //*********(log)********* client with guest task
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
+                this.logService.log(
+                        new Log(
+                                 andView, request,
+                                "As Client With Guest Task- Dispatched to <" + andView.getViewName() + ">",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             return fillAndView(request, andView);
         }
-        if (taskService.authorizeUser(taskSignature)) {
-            if (taskService.isNeedToConfirm(taskSignature) && !userConfirmService.isConfirmed(u, taskSignature)) {
-                //*********(log)********* guest
-//                if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
-//                    this.logService.log(new Log(
-//                            joinPoint, request,
-//                            "As Client- Dispatched to < ReSignin >",
-//                            TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                            TtLogLevel.Trace, TtSecurityThreatLevel.Moderate, u));
-//                }
-                return fillNeedTwoLevelConfirm(taskSignature, request);
+        if (task != null && task.getAccessLevel() == TtTaskAccessLevel.Free4Users) {
+            // client > ================================  Two step confirm
+            if (task.getIsTwoLevelConfirm() && !userConfirmService.isConfirmed(u, task.getSignature())) {
+                //*********(log)********* client
+                if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
+                    this.logService.log(
+                            new Log(
+                                    null, request,
+                                    "As Client- Dispatched to <" + TtTile___.p_user_reSignin + "> [Need Two Step Confirm]",
+                                    TtLogHandler.AuthorizerAspect, task, u)
+                    );
+                }
+                return fillNeedTwoLevelConfirm(task.getSignature(), request);
             }
 
+            // client > ================================  OK
             andView = (ModelAndView) joinPoint.proceed();
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "Client Activity: Dispatched to <" + andView.getViewName() + ">",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
-//            }
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
+                this.logService.log(
+                        new Log(
+                                andView, request,
+                                "As Client- Dispatched to <" + andView.getViewName() + ">",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             return fillAndView(request, andView);
+        }
+
+        // client > ================================  Forbidden
+        if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
+            this.logService.log(
+                    new Log(
+                            null, request,
+                            "As Client- Dispatched to <" + TtHttpErrorCode___.Unauthorized_401.getFrontTile() + "> [401: Not Access]",
+                            TtLogHandler.AuthorizerAspect, task, u));
         }
         return TtHttpErrorCode___.Unauthorized_401.___getFrontDisModel()
                 .addObject("returnToUrl", request.getServletPath() + request.getQueryString() == null ? "" : ("?" + request.getQueryString()));
     }
 
-    private ModelAndView master(HttpServletRequest request, User u, ProceedingJoinPoint joinPoint) throws Throwable {
-        //#########(developing mode)######### master
+    private ModelAndView master(HttpServletRequest request, User u, ProceedingJoinPoint joinPoint, Task task) throws Throwable {
+        ModelAndView andView;
+        // master > ================================  Developing
         if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.SiteInDevelopingForMasters)) {
             //*********(log)********* developing user
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Master- Dispatched to <f.developing>",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
-//            }
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Master- Dispatched to < " + TtTile___.f_develop_developing.getCode() + " > [Developing]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             return fillAndView(request, TtTile___.f_develop_developing.___getDisModel());
         }
+
+        // master > ================================  Access limit
         if (userService.isAccessLimitPassed(u)) {
             //*********(log)********* limit master
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Master- Dispatched to < Access Limit Time>.",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
-//            }
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Master- Dispatched to < " + TtTile___.f_user_signin.getCode() + " > [Access Limit]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             SessionListener.invalidate(u.getId());
             return Referer.redirect("/signin?limit=true");
         }
-        //==========================  CHANGE PASSWORD
-        if (u.getIsNeedToChangePassword() == true
-                && !((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(OverChangePassword.class)) {
-            //*********(log)********* change password master
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Master- Dispatched to < change password >.",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
-//            }
-            return fillPasswordForm(request);
-        }
-        //==========================  BLOCKED MASTER
+
+        // master > ================================  Blocked
         if (u.getIsBlocked() == true) {
             //*********(log)********* blocked master
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Master- Dispatched to <" + TtHttpErrorCode___.Forbidden_403.getFrontTile() + "> User is blocked.403.",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Substantial, u));
-//            }
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Master- Dispatched to < " + TtHttpErrorCode___.Forbidden_403.getFrontTile() + " > [Blocked User]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             return TtHttpErrorCode___.Forbidden_403.___getFrontDisModel();
         }
-        //==========================  DEACTIVED MASTER
+
+        // master > ================================  Deactivated
         if (u.getStatus() == TtUserStatus.Deactive
                 && !((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(OverActiveTask.class)) {
-            //*********(log)********* diactived master
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Master- Dispatched to <" + TtHttpErrorCode___.Forbidden_403.getFrontTile() + "> User is deactived.",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Moderate, u));
-//            }
+            //*********(log)********* deactivated master
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Master- Dispatched to < " + TtHttpErrorCode___.Forbidden_403.getFrontTile() + " > [Deactivated User]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             SessionListener.invalidate(u.getId());
             return Referer.redirect("/signin?inactive=true");
         }
 
-        ModelAndView andView;
-        String taskSignature = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
-        if (taskService.authorizeGuest(taskSignature)) {
-            andView = (ModelAndView) joinPoint.proceed();
-            //*********(log)********* guest
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Master- Dispatched to <" + andView.getViewName() + ">",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
-//            }
-            return fillAndView(request, andView);
+        // master > ================================  Change Password
+        if (u.getIsNeedToChangePassword() == true
+                && !((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(OverChangePassword.class)) {
+            //*********(log)********* change password master
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Master- Dispatched to < " + TtTile___.p_user_changeYourPass.getCode() + " > [Change Password]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
+            return fillPasswordForm(request);
         }
-        if (taskService.authorizeUser(taskSignature)) {
-            if (taskService.isNeedToConfirm(taskSignature) && !userConfirmService.isConfirmed(u, taskSignature)) {
+
+        // master > ================================  Two step confirm
+        if (task.getAccessLevel() == TtTaskAccessLevel.Free4Gusts || task.getAccessLevel() == TtTaskAccessLevel.Free4Users) {
+            if (task.getIsTwoLevelConfirm() && !userConfirmService.isConfirmed(u, task.getSignature())) {
                 //*********(log)********* Master
-//                if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
-//                    this.logService.log(new Log(
-//                            joinPoint, request,
-//                            "As Master- Dispatched to < ReSignin >",
-//                            TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                            TtLogLevel.Trace, TtSecurityThreatLevel.Moderate, u));
-//                }
-                return fillNeedTwoLevelConfirm(taskSignature, request);
+                if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
+                    this.logService.log(
+                            new Log(
+                                    null, request,
+                                    "As Master- Dispatched to <" + TtTile___.p_user_reSignin + "> [Need Two Step Confirm]",
+                                    TtLogHandler.AuthorizerAspect, task, u)
+                    );
+                }
+                return fillNeedTwoLevelConfirm(task.getSignature(), request);
             }
 
+            // master > ================================  OK
             andView = (ModelAndView) joinPoint.proceed();
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "Client Activity: Dispatched to <" + andView.getViewName() + ">",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
-//            }
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
+                this.logService.log(
+                        new Log(
+                                andView, request,
+                                "As Master- Dispatched to <" + andView.getViewName() + ">",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             return fillAndView(request, andView);
         }
         ///////////////////////////
-        for (Task tk : u.getTasks()) {
-            if (tk.getSignature().equals(taskSignature)) {
-                if (taskService.isNeedToConfirm(taskSignature) && !userConfirmService.isConfirmed(u, taskSignature)) {
-                    //*********(log)********* Master
-//                    if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
-//                        this.logService.log(new Log(
-//                                joinPoint, request,
-//                                "As Master- Dispatched to < ReSignin >",
-//                                TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                                TtLogLevel.Trace, TtSecurityThreatLevel.Moderate, u));
-//                    }
-                    return fillNeedTwoLevelConfirm(taskSignature, request);
-                }
-
-                andView = (ModelAndView) joinPoint.proceed();
-                //*********(log)********* master user
-//                if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
-//                    this.logService.log(new Log(
-//                            joinPoint, request,
-//                            "Master Activity: Dispatched to <" + andView.getViewName() + ">",
-//                            TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                            TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
-//                }
-                return fillAndView(request, andView);
-            }
-        }
-        for (UserGroup ug : u.getUserGroups()) {
-            UserGroup group = this.userGroupService.findById(ug.getId(), UserGroup._TASKS);
-            for (Task tk : group.getTasks()) {
-                if (tk.getSignature().equals(taskSignature)) {
-                    if (taskService.isNeedToConfirm(taskSignature) && !userConfirmService.isConfirmed(u, taskSignature)) {
-                        //*********(log)********* Master
-//                        if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
-//                            this.logService.log(new Log(
-//                                    joinPoint, request,
-//                                    "As Master- Dispatched to < ReSignin >",
-//                                    TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                                    TtLogLevel.Trace, TtSecurityThreatLevel.Moderate, u));
-//                        }
-                        return fillNeedTwoLevelConfirm(taskSignature, request);
+        if (task.getAccessLevel() == TtTaskAccessLevel.Grant) {
+            for (Task tk : u.getTasks()) {
+                if (tk.getIdi() == task.getIdi()) {
+                    // master > ================================  Two step confirm
+                    if (task.getIsTwoLevelConfirm() && !userConfirmService.isConfirmed(u, task.getSignature())) {
+                        //*********(log)********* master user
+                        if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
+                            this.logService.log(
+                                    new Log(
+                                            null, request,
+                                            "As Master- Dispatched to <" + TtTile___.p_user_reSignin + "> [Need Two Step Confirm]",
+                                            TtLogHandler.AuthorizerAspect, task, u)
+                            );
+                        }
+                        return fillNeedTwoLevelConfirm(task.getSignature(), request);
                     }
 
+                    // master > ================================  OK
                     andView = (ModelAndView) joinPoint.proceed();
-                    //*********(log)********* master master
-//                    if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
-//                        this.logService.log(new Log(
-//                                joinPoint, request,
-//                                "Master Group Activity: Dispatched to <" + andView.getViewName() + ">",
-//                                TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                                TtLogLevel.Trace, TtSecurityThreatLevel.Low, u, ug));
-//                    }
-                    //     OutLog.pl("");
+                    //*********(log)********* master user
+                    this.logService.log(
+                            new Log(
+                                    andView, request,
+                                    "As Master- Dispatched to <" + andView.getViewName() + ">",
+                                    TtLogHandler.AuthorizerAspect, task, u)
+                    );
                     return fillAndView(request, andView);
                 }
             }
+            for (UserGroup ug : u.getUserGroups()) {
+                UserGroup group = this.userGroupService.findById(ug.getId(), UserGroup._TASKS);
+                for (Task tk : group.getTasks()) {
+                    if (tk.getIdi() == task.getIdi()) {
+                        // master > ================================  Two step confirm
+                        if (task.getIsTwoLevelConfirm() && !userConfirmService.isConfirmed(u, task.getSignature())) {
+                            //*********(log)********* Master
+                            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
+                                this.logService.log(
+                                        new Log(
+                                                null, request,
+                                                "As Master- Dispatched to <" + TtTile___.p_user_reSignin + "> [Need Two Step Confirm]",
+                                                TtLogHandler.AuthorizerAspect, task, u)
+                                );
+                            }
+                            return fillNeedTwoLevelConfirm(task.getSignature(), request);
+                        }
+
+                        // master > ================================  OK
+                        andView = (ModelAndView) joinPoint.proceed();
+                        //*********(log)********* master master
+                        this.logService.log(
+                                new Log(
+                                        andView, request,
+                                        "As Master (Group Access)- Dispatched to <" + andView.getViewName() + ">",
+                                        TtLogHandler.AuthorizerAspect, task, u)
+                        );
+                        return fillAndView(request, andView);
+                    }
+                }
+            }
         }
+
+        // master > ================================  Forbidden
         if (((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(Front.class)) {
             //*********(log)********* master
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "Unauthorized Master Front.401. #2",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing, TtLogLevel.Trace,
-//                        TtSecurityThreatLevel.Moderate, u));
-//            }
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Master- Dispatched to <" + TtHttpErrorCode___.Unauthorized_401.getFrontTile() + "> [401: Not Access]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             return TtHttpErrorCode___.Unauthorized_401.___getFrontDisModel()
                     .addObject("returnToUrl", request.getServletPath() + (request.getQueryString() == null ? "" : "?" + request.getQueryString()));
         } else {
             //*********(log)********* master
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "Unauthorized Master panel.401. #3",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Moderate, u));
-//            }
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogMaster)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Master- Dispatched to <" + TtHttpErrorCode___.Unauthorized_401.getPanelTile() + "> [401: Not Access]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             return TtHttpErrorCode___.Unauthorized_401.___getPanelDisModel();
         }
 
     }
 
-    private ModelAndView admin(HttpServletRequest request, User u, ProceedingJoinPoint joinPoint) throws Throwable {
-        //#########(developing mode)######### admin
+    private ModelAndView admin(HttpServletRequest request, User u, ProceedingJoinPoint joinPoint, Task task) throws Throwable {
 
+        // admin > ================================  Developing
         if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.SiteInDevelopingForAdmins) && !u.getIsSuperAdmin()) {
             //*********(log)********* developing user
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogAdmin)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Admin- Dispatched to <f.developing>",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
-//            }
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogAdmin)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Admin- Dispatched to < " + TtTile___.f_develop_developing.getCode() + " > [Developing]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             return fillAndView(request, TtTile___.f_develop_developing.___getDisModel());
         }
+
+        // admin > ================================  Access limit
         if (userService.isAccessLimitPassed(u)) {
             //*********(log)********* limit master
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogClient)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Master- Dispatched to < Access Limit Time>.",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
-//            }
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogAdmin)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Admin- Dispatched to < " + TtTile___.f_user_signin.getCode() + " > [Access Limit]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             SessionListener.invalidate(u.getId());
             return Referer.redirect("/signin?limit=true");
         }
-        //==========================  CHANGE PASSWORD
-        if (u.getIsNeedToChangePassword() == true
-                && !((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(OverChangePassword.class)) {
-            //*********(log)********* change password master
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogAdmin)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Admin- Dispatched to < change password >.",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
-//            }
-            return fillPasswordForm(request);
-        }
-        //==========================  BLOCKED ADMIN
+
+        // admin > ================================  Blocked
         if (u.getIsBlocked() == true) {
             //*********(log)********* blocked admin
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogAdmin)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Admin- Dispatched to <" + TtHttpErrorCode___.Forbidden_403.getFrontTile() + "> User is blocked.403.",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Substantial, u));
-//            }
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogAdmin)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Admin- Dispatched to < " + TtHttpErrorCode___.Forbidden_403.getFrontTile() + " > [Blocked User]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             return TtHttpErrorCode___.Forbidden_403.___getFrontDisModel();
         }
 
-        //==========================  DEACTIVED ADMIN
+        // admin > ================================  Deactivated
         if (u.getStatus() == TtUserStatus.Deactive
                 && !((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(OverActiveTask.class)) {
-            //*********(log)********* diactived admin
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogAdmin)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Admin- Dispatched to <" + TtHttpErrorCode___.Forbidden_403.getFrontTile() + "> User is deactived.",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Moderate, u));
-//            }
+            //*********(log)********* deactivated admin
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogAdmin)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Admin- Dispatched to < " + TtHttpErrorCode___.Forbidden_403.getFrontTile() + " > [Deactivated User]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
             SessionListener.invalidate(u.getId());
             return Referer.redirect("/signin?inactive=true");
         }
 
-        String taskSignature = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
-        if (taskService.isNeedToConfirm(taskSignature) && !userConfirmService.isConfirmed(u, taskSignature)) {
-            //*********(log)********* Admin
-//            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogAdmin)) {
-//                this.logService.log(new Log(
-//                        joinPoint, request,
-//                        "As Admin- Dispatched to < ReSignin >",
-//                        TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                        TtLogLevel.Trace, TtSecurityThreatLevel.Moderate, u));
-//            }
-            return fillNeedTwoLevelConfirm(taskSignature, request);
+        // admin > ================================  Change password
+        if (u.getIsNeedToChangePassword() == true
+                && !((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(OverChangePassword.class)) {
+            //*********(log)********* change password master
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogAdmin)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Admin- Dispatched to < " + TtTile___.p_user_changeYourPass.getCode() + " > [Change Password]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
+            return fillPasswordForm(request);
         }
 
+        // admin > ================================  Two step confirm
+        if (task.getIsTwoLevelConfirm() && !userConfirmService.isConfirmed(u, task.getSignature())) {
+            //*********(log)********* Admin
+            if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogAdmin)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As Admin- Dispatched to <" + TtTile___.p_user_reSignin + "> [Need Two Step Confirm]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
+            }
+            return fillNeedTwoLevelConfirm(task.getSignature(), request);
+        }
 
+        // admin > ================================  OK
         ModelAndView andView = (ModelAndView) joinPoint.proceed();
-        //*********(log)*********  admin
-        Task task;
-        task = taskService.findBy(
-                Restrictions.eq(Task.SIGNATURE, joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName())
-        );
 
+        //*********(log)*********  admin
         if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogAdmin)) {
             this.logService.log(new Log(
-                    joinPoint,
+                    andView,
                     request,
-                    "As Guest- Dispatched to <" + andView.getViewName() + ">",
+                    "As Admin- Dispatched to <" + andView.getViewName() + ">",
                     TtLogHandler.AuthorizerAspect,
                     task, u));
-//            this.logService.log(new Log(
-//                    joinPoint, request,
-//                    "Admin Activity: Dispatched to <" + andView.getViewName() + ">",
-//                    TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                    TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
         }
         ///////////////////////////
         return fillAndView(request, andView);
@@ -644,20 +687,21 @@ public class AuthorizerAspect {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         User u = (User) request.getSession().getAttribute("sUser");
         try {
+            Task task = taskService.fetchTask(joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
             if (u == null) {
                 u = this.userService.autoLogin(request);
                 if (u == null) {
-                    return guest(request, u, joinPoint);
+                    return guest(request, u, joinPoint, task);
                 }
             }
             switch (u.getLevel()) {
                 case Client:
                 default:
-                    return client(request, u, joinPoint);
+                    return client(request, u, joinPoint, task);
                 case Master:
-                    return master(request, u, joinPoint);
+                    return master(request, u, joinPoint, task);
                 case Administrator:
-                    return admin(request, u, joinPoint);
+                    return admin(request, u, joinPoint, task);
             }
         } catch (Exception e) {
             return catchException(e, joinPoint, request, TtIrrorPlace.AspectMain);
@@ -709,7 +753,7 @@ public class AuthorizerAspect {
                 if (u.getLevel() == TtUserLevel.Administrator) {
                     return (ResponseEntity<String>) joinPoint.proceed();
                 }
-                if (taskService.authorizeUser(joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName())) {
+                if (taskService.authorizeClient(joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName())) {
                     return (ResponseEntity<String>) joinPoint.proceed();
                 }
                 if (u.getLevel() == TtUserLevel.Master) {
@@ -772,7 +816,7 @@ public class AuthorizerAspect {
                     //*********(log)********* Admin
 //                    if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogSuperAdmin)) {
 //                        this.logService.log(new Log(
-//                                joinPoint, request,
+//                                null, request,
 //                                "As SuperAdmin- Dispatched to < ReSignin >",
 //                                TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
 //                                TtLogLevel.Trace, TtSecurityThreatLevel.Moderate, u));
