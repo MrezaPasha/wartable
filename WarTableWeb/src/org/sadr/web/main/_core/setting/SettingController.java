@@ -12,16 +12,13 @@ import org.sadr.web.main._core.tools.listener.SessionListener;
 import org.sadr.web.main._core.utils.Notice2;
 import org.sadr.web.main._core.utils._type.TtNotice;
 import org.sadr.web.main.admin._type.TtGender;
+import org.sadr.web.main.admin._type.TtUserIpRangeType;
 import org.sadr.web.main.admin._type.TtUserLevel;
 import org.sadr.web.main.admin._type.TtUserStatus;
 import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.admin.user.user.UserService;
 import org.sadr.web.main.archive.directory.DirectoryService;
-import org.sadr.web.main.archive.file.file.FileService;
-import org.sadr.web.main.system.log.daily.DailyLogService;
-import org.sadr.web.main.system.model.ModelService;
 import org.sadr.web.main.system.module.ModuleService;
-import org.sadr.web.main.system.registery.RegisteryService;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -100,6 +97,7 @@ public class SettingController {
             user.setLastName("سامانه");
             user.setUsername("admin");
             user.setPassword(Digester.digestSHA1("admin"));
+            user.setIpRangeType(TtUserIpRangeType.All);
         }
         user.setLevel(TtUserLevel.Administrator);
         user.setGender(TtGender.Male);
@@ -125,6 +123,7 @@ public class SettingController {
         if (user == null) {
             user = new User();
             user.setPassword(Digester.digestSHA1("security"));
+            user.setIpRangeType(TtUserIpRangeType.All);
         }
         user.setLevel(TtUserLevel.Master);
         user.setGender(TtGender.Male);

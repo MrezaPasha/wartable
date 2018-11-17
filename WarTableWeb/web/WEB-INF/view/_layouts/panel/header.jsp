@@ -23,14 +23,18 @@
     </div>
     <script type="text/javascript">
         $(window).on('load', function () {
-            $('#signinModal').modal('show');
+            $('#signinModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+
         });
     </script>
 </c:if>
 <div class="modal fade" id="noteSyncModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <jsp:include page="note-sync-modal.jsp"/>
 </div>
-<div class="navbar navbar-inverse navbar-fixed-top">
+<div class="navbar navbar-inverse navbar-fixed-top" style="position: absolute">
     <div class="container">
         <div class="navbar-header">
             <button data-target=".navbar-collapse" data-toggle="collapse" class="navbar-toggle hidden-navbar-toggle" type="button">

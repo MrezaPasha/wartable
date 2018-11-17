@@ -11,23 +11,25 @@ import org.sadr._core.utils.Searchee;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.meta.annotation.MenuIdentity;
 import org.sadr.web.main._core.utils.Ixporter;
+import org.sadr.web.main._core.utils.Notice2;
+import org.sadr.web.main._core.utils.Referer;
 import org.sadr.web.main._core.utils._type.TtIxportRowIndex;
 import org.sadr.web.main._core.utils._type.TtIxportSubStrategy;
 import org.sadr.web.main._core.utils._type.TtIxportTtStrategy;
-import org.sadr.web.main.system._type.TtHttpErrorCode___;
+import org.sadr.web.main._core.utils._type.TtNotice;
 import org.sadr.web.main.system._type.TtIrrorLevel;
 import org.sadr.web.main.system._type.TtIrrorPlace;
+import org.sadr.web.main.system._type.TtTaskActionStatus;
+import org.sadr.web.main.system._type.TtTaskActionSubType;
 import org.sadr.web.main.system.irror.IrrorService;
-import org.sadr.web.main.system.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomCollectionEditor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,18 +46,10 @@ public class LogController extends GenericControllerImpl<Log, LogService> {
     ////////////////////
     private final String REQUEST_MAPPING_BASE = "/log";
     //===================================================
-    private final String _FRONT_URL = "" + REQUEST_MAPPING_BASE;
     private final String _PANEL_URL = "/panel" + REQUEST_MAPPING_BASE;
     ////////////////////
 
-
     private IrrorService irrorService;
-    private TaskService taskService;
-
-    @Autowired
-    public void setTaskService(TaskService taskService) {
-        this.taskService = taskService;
-    }
 
     @Autowired
     public void setIrrorService(IrrorService irrorService) {
@@ -65,18 +59,6 @@ public class LogController extends GenericControllerImpl<Log, LogService> {
     public LogController() {
     }
 
-    @InitBinder
-    protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) {
-        binder.registerCustomEditor(List.class, "tasks", new CustomCollectionEditor(List.class) {
-            @Override
-            protected Object convertElement(Object element) {
-                if (element != null) {
-                    return taskService.findById(Integer.parseInt((String) element));
-                }
-                return null;
-            }
-        });
-    }
 
     @MenuIdentity(TtTile___.p_sys_log_list)
     @PersianName("لیست رویدادها")
@@ -120,7 +102,7 @@ public class LogController extends GenericControllerImpl<Log, LogService> {
                 GB.col(Log.REQUEST_METHOD),
                 GB.col(Log.PORT_NUMBER)
         );
-        return TtTile___.p_sys_log_list.___getDisModel();
+        return TtTile___.p_sys_log_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
     }
 
     @RequestMapping(value = _PANEL_URL + "/list", method = RequestMethod.POST)
@@ -192,14 +174,16 @@ public class LogController extends GenericControllerImpl<Log, LogService> {
     @PersianName("نمایش جزئیات رویدادنگاری")
     @RequestMapping(value = _PANEL_URL + "/details/{id}")
     public ModelAndView pShow(Model model,
-                              @PathVariable("id") long id
+                              @PathVariable("id") long id,
+                              RedirectAttributes redirectAttributes
     ) {
         Log i = this.service.findById(id);
         if (i == null) {
-            return TtHttpErrorCode___.NotFound_404.___getPanelDisModel();
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.log.not.found", TtNotice.Danger)));
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Take_Report, TtTaskActionStatus.Failure, notice2s);
         }
         model.addAttribute("log", i);
-        return TtTile___.p_sys_log_details.___getDisModel();
+        return TtTile___.p_sys_log_details.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
     }
 
 }

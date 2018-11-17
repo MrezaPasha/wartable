@@ -49,11 +49,14 @@ public class UiController {
 
     public void init() {
         Registery registery = registeryService.findByKey(TtRegisteryKey.UiFont);
-        if (registery == null) {
-            return;
+        if (registery != null) {
+            SessionListener.setDefaultFont(registery.getValue());
+        }
+        registery = registeryService.findByKey(TtRegisteryKey.UiStyle);
+        if (registery != null) {
+            SessionListener.setDefaultStyle(registery.getValue());
         }
 
-        SessionListener.setDefaultFont(registery.getValue());
         SessionListener.refreshUiSetting();
     }
 
@@ -75,7 +78,7 @@ public class UiController {
             }
             uiBag.setFont(TtUiFonts.getByKey(registery.getValue()));
 
-             registery = registeryService.findByKey(TtRegisteryKey.UiStyle);
+            registery = registeryService.findByKey(TtRegisteryKey.UiStyle);
             if (registery == null) {
                 registery = new Registery();
                 registery.setKey(TtRegisteryKey.UiStyle.getKey());

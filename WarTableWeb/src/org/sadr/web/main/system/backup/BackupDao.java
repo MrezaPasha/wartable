@@ -1,7 +1,6 @@
 package org.sadr.web.main.system.backup;
 
 import org.sadr._core.meta.generic.GenericDao;
-import java.util.List;
 
 /**
  *

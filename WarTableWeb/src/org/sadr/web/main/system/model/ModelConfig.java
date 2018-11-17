@@ -26,7 +26,6 @@ public class ModelConfig extends WebMvcConfigurerAdapter {
     public ModelController modelController() {
         ModelController uc = new ModelController();
         uc.setService(modelServiceImp());
-        uc.setFieldService(new FieldConfig().fieldServiceImp());
         return uc;
     }
 

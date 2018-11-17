@@ -4,9 +4,6 @@ import com.captcha.botdetect.web.servlet.SimpleCaptchaServlet;
 import org.sadr._core.utils.Environment;
 import org.sadr._core.utils.OutLog;
 import org.sadr.share.config.ShareConfigHandler;
-import org.sadr.web.main._core.propertor.PropertorInBoot;
-import org.sadr.web.main._core.propertor._type.TtPropertorInBootList;
-import org.sadr.web.main._core.propertor._type.TtPropertorInBoot_DeployMode;
 import org.sadr.web.main._core.tools.filter.FilterHandler;
 import org.sadr.web.main._core.tools.listener.SessionAttributeListener;
 import org.sadr.web.main._core.tools.listener.SessionListener;
@@ -34,9 +31,6 @@ public class WebInitializer implements WebApplicationInitializer {
         OutLog.sl("  ----------<([ IN THE NAME OF ALLAH ])>----------\n\n\n ");
         OutLog.sl(Environment.getInstance().getProjectName());
         OutLog.sl("Starting WebInitializer...");
-        PropertorInBoot.getInstance().load();
-        PropertorInBoot.getInstance().updateProperties();
-        PropertorInBoot.getInstance().store();
 
         AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
         WebConfigHandler.loadConfigs();
@@ -74,16 +68,8 @@ public class WebInitializer implements WebApplicationInitializer {
 
         // addConfigClass custom filter  >  urlwriter
         FilterRegistration.Dynamic urlRewriteFilter = servletContext.addFilter("urlRewriteFilter", new UrlRewriteFilter());
-
-        String dm = PropertorInBoot.getInstance().getProperty(TtPropertorInBootList.DeployMode);
-        OutLog.po("Deploy Mode: " + dm);
-        if (TtPropertorInBoot_DeployMode.ServerReal.getTitle().equals(dm)) {
-            OutLog.p(TtPropertorInBoot_DeployMode.ServerReal.getTitle());
-            urlRewriteFilter.setInitParameter("confPath", "/WEB-INF/conf/system/urlrewrite.xml");
-        } else {
-            OutLog.p("urlrewrite_local");
+        String dm;
             urlRewriteFilter.setInitParameter("confPath", "/WEB-INF/conf/system/urlrewrite_local.xml");
-        }
         urlRewriteFilter.addMappingForUrlPatterns(dispatcherTypes, false, "/*");
 
         // Initing contex in ConfigHandler . 

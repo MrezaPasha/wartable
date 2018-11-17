@@ -8,7 +8,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ page session="false" %>
-<link rel="stylesheet" href="${cp}/resources/plugins/persian-datetimepicker/persian-datepicker-0.4.5.css?r=${rl2}">
+<link rel="stylesheet" href="${cp}/resources/plugins/persian-datetimepicker/persian-datepicker-0.4.5.css">
 
 <div class="container">
     <c:choose>
@@ -73,6 +73,7 @@
                             <c:set var="varName" value="note.dateTime"/>
                             <form:label path="${varName}" cssClass="control-label">
                                 <spring:message code="${varName}"/>
+                                <span class="symbol required"></span>
                                 <form:errors cssClass="form-validation-error" path="${varName}"/>
                             </form:label>
                             <form:input path="${varName}"
@@ -99,13 +100,13 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources/js/form-validation.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources/plugins/persian-datetimepicker/persian-date-0.1.8.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources/plugins/persian-datetimepicker/persian-datepicker-0.4.5.js?r=${rl2}"></script>
+<script type="text/javascript" src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
+<script type="text/javascript" src="${cp}/resources/js/form-validation.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js"></script>
+<script type="text/javascript" src="${cp}/resources/plugins/persian-datetimepicker/persian-date-0.1.8.js"></script>
+<script type="text/javascript" src="${cp}/resources/plugins/persian-datetimepicker/persian-datepicker-0.4.5.js"></script>
 
 <script>
     jQuery(document).ready(function () {

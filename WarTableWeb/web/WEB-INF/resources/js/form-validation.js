@@ -13,8 +13,7 @@ var FormValidator = function () {
             if (value.length == 10) {
 
                 var newValue = "";
-                for (var i = 0; i < value.length; i++)
-                {
+                for (var i = 0; i < value.length; i++) {
                     var ch = value.charCodeAt(i);
                     if (ch >= 1776 && ch <= 1785) /* For Persian digits.*/
                     {
@@ -31,28 +30,28 @@ var FormValidator = function () {
                 }
 
                 if (newValue == '1111111111' ||
-                        newValue == '0000000000' ||
-                        newValue == '2222222222' ||
-                        newValue == '3333333333' ||
-                        newValue == '4444444444' ||
-                        newValue == '5555555555' ||
-                        newValue == '6666666666' ||
-                        newValue == '7777777777' ||
-                        newValue == '8888888888' ||
-                        newValue == '9999999999') {
+                    newValue == '0000000000' ||
+                    newValue == '2222222222' ||
+                    newValue == '3333333333' ||
+                    newValue == '4444444444' ||
+                    newValue == '5555555555' ||
+                    newValue == '6666666666' ||
+                    newValue == '7777777777' ||
+                    newValue == '8888888888' ||
+                    newValue == '9999999999') {
                     return false;
                 }
 
                 c = parseInt(newValue.charAt(9));
                 n = parseInt(newValue.charAt(0)) * 10 +
-                        parseInt(newValue.charAt(1)) * 9 +
-                        parseInt(newValue.charAt(2)) * 8 +
-                        parseInt(newValue.charAt(3)) * 7 +
-                        parseInt(newValue.charAt(4)) * 6 +
-                        parseInt(newValue.charAt(5)) * 5 +
-                        parseInt(newValue.charAt(6)) * 4 +
-                        parseInt(newValue.charAt(7)) * 3 +
-                        parseInt(newValue.charAt(8)) * 2;
+                    parseInt(newValue.charAt(1)) * 9 +
+                    parseInt(newValue.charAt(2)) * 8 +
+                    parseInt(newValue.charAt(3)) * 7 +
+                    parseInt(newValue.charAt(4)) * 6 +
+                    parseInt(newValue.charAt(5)) * 5 +
+                    parseInt(newValue.charAt(6)) * 4 +
+                    parseInt(newValue.charAt(7)) * 3 +
+                    parseInt(newValue.charAt(8)) * 2;
                 r = n - parseInt(n / 11) * 11;
                 if ((r == 0 && r == c) || (r == 1 && c == 1) || (r > 1 && c == 11 - r)) {
                     return true;
@@ -84,294 +83,308 @@ var FormValidator = function () {
         $(".number-format").keypress(function (e) {
             var keycode = e.keyCode ? e.keyCode : e.which;
             return (keycode >= 48 && keycode <= 57)
-                    || (keycode >= 1776 && keycode <= 1785)
-                    || keycode == 9 || keycode == 8
-                    || keycode == 46 || keycode == 37 || keycode == 39
-                    || keycode == 17 || keycode == 86 || keycode == 67 || keycode == 99 || keycode == 91 || keycode == 118 || keycode == 83
+                || (keycode >= 1776 && keycode <= 1785)
+                || keycode == 9 || keycode == 8
+                || keycode == 46 || keycode == 37 || keycode == 39
+                || keycode == 17 || keycode == 86 || keycode == 67 || keycode == 99 || keycode == 91 || keycode == 118 || keycode == 83
         });
 
         $(".percent-format").keypress(function (e) {
             var keycode = e.keyCode ? e.keyCode : e.which;
             return (keycode >= 48 && keycode <= 57)
-                    || (keycode >= 1776 && keycode <= 1785)
-                    || keycode == 9 || keycode == 8
-                    || keycode == 46 || keycode == 37 || keycode == 39
+                || (keycode >= 1776 && keycode <= 1785)
+                || keycode == 9 || keycode == 8
+                || keycode == 46 || keycode == 37 || keycode == 39
         });
 
         $(".not-number").keypress(function (e) {
             var keycode = e.keyCode ? e.keyCode : e.which;
             return !((keycode >= 48 && keycode <= 57)
-                    || (keycode >= 1776 && keycode <= 1785));
+                || (keycode >= 1776 && keycode <= 1785));
         });
 
         $(".mobile-format").keypress(function (e) {
             var keycode = e.keyCode ? e.keyCode : e.which;
             return (keycode >= 48 && keycode <= 57)
-                    || (keycode >= 1776 && keycode <= 1785)
-                    || keycode == 9 || keycode == 8 || keycode == 13
-                    || keycode == 46 || keycode == 37 || keycode == 39
+                || (keycode >= 1776 && keycode <= 1785)
+                || keycode == 9 || keycode == 8 || keycode == 13
+                || keycode == 46 || keycode == 37 || keycode == 39
         });
         $(".shenasNameh-format").keypress(function (e) {
             var keycode = e.keyCode ? e.keyCode : e.which;
             return (keycode >= 48 && keycode <= 57)
-                    || (keycode >= 1776 && keycode <= 1785)
-                    || keycode == 9 || keycode == 8
-                    || keycode == 46 || keycode == 37 || keycode == 39
+                || (keycode >= 1776 && keycode <= 1785)
+                || keycode == 9 || keycode == 8
+                || keycode == 46 || keycode == 37 || keycode == 39
         });
         $(".shenSerialNum-format").keypress(function (e) {
             var keycode = e.keyCode ? e.keyCode : e.which;
             return (keycode >= 48 && keycode <= 57)
-                    || (keycode >= 1776 && keycode <= 1785)
-                    || keycode == 9 || keycode == 8
-                    || keycode == 46 || keycode == 37 || keycode == 39
+                || (keycode >= 1776 && keycode <= 1785)
+                || keycode == 9 || keycode == 8
+                || keycode == 46 || keycode == 37 || keycode == 39
         });
         $(".melliCode-format").keypress(function (e) {
             var keycode = e.keyCode ? e.keyCode : e.which;
             return (keycode >= 48 && keycode <= 57)
-                    || (keycode >= 1776 && keycode <= 1785)
-                    || keycode == 9 || keycode == 8
-                    || keycode == 46 || keycode == 37 || keycode == 39
+                || (keycode >= 1776 && keycode <= 1785)
+                || keycode == 9 || keycode == 8
+                || keycode == 46 || keycode == 37 || keycode == 39
         });
         $(".postalcode-format").keypress(function (e) {
             var keycode = e.keyCode ? e.keyCode : e.which;
             return (keycode >= 48 && keycode <= 57)
-                    || (keycode >= 1776 && keycode <= 1785)
-                    || keycode == 9 || keycode == 8
-                    || keycode == 46 || keycode == 37 || keycode == 39
+                || (keycode >= 1776 && keycode <= 1785)
+                || keycode == 9 || keycode == 8
+                || keycode == 46 || keycode == 37 || keycode == 39
         });
         /*  Validation Method Definition (Rules)*/
 
         $.validator.addMethod("melliCode",
-                function (value) {
-                    return  validateMelliCode(value);
-                },
-                "کد ملی وارد شده معتبر نمی باشد!");
+            function (value) {
+                return validateMelliCode(value);
+            },
+            "کد ملی وارد شده معتبر نمی باشد!");
 
         $.validator.addMethod("greatThan",
-                function (value, element) {
-                    var sval = $("#" + ($(element).data("great-dst"))).val();
-                    var eval = $(element).val();
-                    if (eval.length == 0 || sval.length == 0
-                            || Number(eval) > Number(sval)
-                            ) {
-                        return true;
-                    }
-                    return false;
-                },
-                "مقدار را بزرگتر از مقدار قبل وارد نمایید.");
+            function (value, element) {
+                var sval = $("#" + ($(element).data("great-dst"))).val();
+                var eval = $(element).val();
+                if (eval.length == 0 || sval.length == 0
+                    || Number(eval) > Number(sval)
+                ) {
+                    return true;
+                }
+                return false;
+            },
+            "مقدار را بزرگتر از مقدار قبل وارد نمایید.");
 
         $.validator.addMethod("mobile",
-                function (value) {
-                    return validateMobile(value);
-                },
-                "لطفا شماره موبایل را به صورت صحیح وارد نمایید - مثال ۰۹۱۳۳۳۳۳۳۳۳");
+            function (value) {
+                return validateMobile(value);
+            },
+            "لطفا شماره موبایل را به صورت صحیح وارد نمایید - مثال ۰۹۱۳۳۳۳۳۳۳۳");
 
         $.validator.addMethod("email",
-                function (value) {
-                    return validateEmail(value);
-                },
-                "لطفا آدرس ایمیل خود را به صورت صحیح وارد نمایید");
+            function (value) {
+                return validateEmail(value);
+            },
+            "لطفا آدرس ایمیل خود را به صورت صحیح وارد نمایید");
 
         $.validator.addMethod("mobile_email",
-                function (value) {
-                    return  validateMobile(value) || validateEmail(value);
-                },
-                "لطفا شماره تلفن همراه یا ایمیل خود را به صورت صحیح وارد نمایید.");
+            function (value) {
+                return validateMobile(value) || validateEmail(value);
+            },
+            "لطفا شماره تلفن همراه یا ایمیل خود را به صورت صحیح وارد نمایید.");
 
         $.validator.addMethod("mobile_email_melliCode",
-                function (value) {
-                    return validateMobile(value) || validateEmail(value) || validateMelliCode(value);
-                },
-                "لطفا شماره تلفن همراه، ایمیل یا کد ملی خود را به صورت صحیح وارد نمایید.");
+            function (value) {
+                return validateMobile(value) || validateEmail(value) || validateMelliCode(value);
+            },
+            "لطفا شماره تلفن همراه، ایمیل یا کد ملی خود را به صورت صحیح وارد نمایید.");
 
         $.validator.addMethod("mobile_melliCode",
-                function (value) {
-                    return validateMobile(value) || validateMelliCode(value);
-                },
-                "لطفا شماره تلفن همراه یا کد ملی خود را به صورت صحیح وارد نمایید.");
+            function (value) {
+                return validateMobile(value) || validateMelliCode(value);
+            },
+            "لطفا شماره تلفن همراه یا کد ملی خود را به صورت صحیح وارد نمایید.");
 
         $.validator.addMethod("email_melliCode",
-                function (value) {
-                    return validateEmail(value) || validateMelliCode(value);
-                },
-                "لطفا ایمیل یا کد ملی خود را به صورت صحیح وارد نمایید.");
+            function (value) {
+                return validateEmail(value) || validateMelliCode(value);
+            },
+            "لطفا ایمیل یا کد ملی خود را به صورت صحیح وارد نمایید.");
 
 
         $.validator.addMethod("postalcode",
-                function (value) {
-                    if (value.length == 0 || value.match("^[1-9][0-9]{9}$") || value.match("^[‍۱-۹][۰-۹]{9}$"))
-                        return true;
-                    else
-                        return false;
-                },
-                "کد پستی وارد شده صحیح نیست. لطفا کد پستی را به صورت ۱۰ رقمی وارد نمایید. مثال: ۸۳۴۱۱۱۱۱۱۱");
+            function (value) {
+                if (value.length == 0 || value.match("^[1-9][0-9]{9}$") || value.match("^[‍۱-۹][۰-۹]{9}$"))
+                    return true;
+                else
+                    return false;
+            },
+            "کد پستی وارد شده صحیح نیست. لطفا کد پستی را به صورت ۱۰ رقمی وارد نمایید. مثال: ۸۳۴۱۱۱۱۱۱۱");
 
         $.validator.addMethod("tagKeyFormat",
-                function (value) {
-                    if (value.length == 0 || value.match("^[a-zA-Z][a-zA-Z\-_]*$"))
-                        return true;
-                    else
-                        return false;
-                },
-                "لطفاکلید را در قالب تعریف شده وارد نمایید. کاراکترهای مجاز (حروف انگلیسی، _ -)");
+            function (value) {
+                if (value.length == 0 || value.match("^[a-zA-Z][a-zA-Z\-_]*$"))
+                    return true;
+                else
+                    return false;
+            },
+            "لطفاکلید را در قالب تعریف شده وارد نمایید. کاراکترهای مجاز (حروف انگلیسی، _ -)");
 
 
         $.validator.addMethod("englishFormat",
-                function (value) {
-                    if (value.length == 0 || value.match("^[a-zA-Z][a-zA-Z0-9\-_]*$"))
-                        return true;
-                    else
-                        return false;
-                },
-                "لطفا به صورت انگلیسی وارد نمایید. کاراکترهای مجاز (حروف انگلیسی،اعداد، _ -)");
+            function (value) {
+                if (value.length == 0 || value.match("^[a-zA-Z][a-zA-Z0-9\-_]*$"))
+                    return true;
+                else
+                    return false;
+            },
+            "لطفا به صورت انگلیسی وارد نمایید. کاراکترهای مجاز (حروف انگلیسی،اعداد، _ -)");
         $.validator.addMethod("latinFormat",
-                function (value) {
-                    if (value.length == 0 || value.match("^[a-zA-Z0-9]([a-zA-Z0-9\-_ ])*$"))
-                        return true;
-                    else
-                        return false;
-                },
-                "لطفا به صورت لاتین وارد نمایید. کاراکترهای مجاز (حروف انگلیسی،اعداد، _ -)");
+            function (value) {
+                if (value.length == 0 || value.match("^[a-zA-Z0-9]([a-zA-Z0-9\-_ ])*$"))
+                    return true;
+                else
+                    return false;
+            },
+            "لطفا به صورت لاتین وارد نمایید. کاراکترهای مجاز (حروف انگلیسی،اعداد، _ -)");
 
         $.validator.addMethod("numberFormat",
-                function (value) {
-                    if (value.length == 0 || value.match("[+-]?([0-9]*[.])?[0-9]+"))
-                        return true;
-                    else
-                        return false;
-                },
-                "لطفا عدد  را به صورت صحیح وارد نمایید.");
+            function (value) {
+                if (value.length == 0 || value.match("[+-]?([0-9]*[.])?[0-9]+"))
+                    return true;
+                else
+                    return false;
+            },
+            "لطفا عدد  را به صورت صحیح وارد نمایید.");
         $.validator.addMethod("englishCharacter",
-                function (value) {
-                    if (value.length == 0 || value.match("^[a-zA-Z\s]*$"))
-                        return true;
-                    else
-                        return false;
-                },
-                "لطفا به صورت انگلیسی وارد نمایید. کاراکترهای مجاز (حروف انگلیسی)");
+            function (value) {
+                if (value.length == 0 || value.match("^[a-zA-Z\s]*$"))
+                    return true;
+                else
+                    return false;
+            },
+            "لطفا به صورت انگلیسی وارد نمایید. کاراکترهای مجاز (حروف انگلیسی)");
         $.validator.addMethod("farsiFormat",
-                function (value) {
-                    if (value.length == 0 || value.match("^[آ-ی][ءآ-ی۰-۹\-_]*$"))
-                        return true;
-                    else
-                        return false;
-                },
-                "لطفا به صورت فارسی وارد نمایید. کاراکترهای مجاز (حروف فارسی،اعداد، _ -)");
+            function (value) {
+                if (value.length == 0 || value.match("^[آ-ی][ءآ-ی۰-۹\-_]*$"))
+                    return true;
+                else
+                    return false;
+            },
+            "لطفا به صورت فارسی وارد نمایید. کاراکترهای مجاز (حروف فارسی،اعداد، _ -)");
 
         $.validator.addMethod("persianDateFormat",
-                function (value) {
-                    if (value.length == 0 ||
-                            value.match(/^([1][2-4][0-9]{2})\/(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])$/g)
-                            || value.match(/^([۱][۲-۴][۰-۹]{2})\/(۰[۱-۹]|۱[۰-۲])\/(۰[۱-۹]|[۱۲][۰-۹]|۳[۰۱])$/g))
-                        return true;
-                    else
-                        return false;
-                },
-                "تاریخ را با ساختار صحیح وارد نمایید. ۱۳۹۵/۰۲/۲۱");
+            function (value) {
+                if (value.length == 0 ||
+                    value.match(/^([1][2-4][0-9]{2})\/(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])$/g)
+                    || value.match(/^([۱][۲-۴][۰-۹]{2})\/(۰[۱-۹]|۱[۰-۲])\/(۰[۱-۹]|[۱۲][۰-۹]|۳[۰۱])$/g))
+                    return true;
+                else
+                    return false;
+            },
+            "تاریخ را با ساختار صحیح وارد نمایید. ۱۳۹۵/۰۲/۲۱");
         $.validator.addMethod("persianYearFormat",
-                function (value) {
-                    if (value.length == 0 ||
-                            value.match(/^([1][2-4][0-9]{2})$/g)
-                            || value.match(/^([۱][۲-۴][۰-۹]{2})$/g))
-                        return true;
-                    else
-                        return false;
-                },
-                "سال را با ساختار صحیح وارد نمایید. ۱۳۹۶");
+            function (value) {
+                if (value.length == 0 ||
+                    value.match(/^([1][2-4][0-9]{2})$/g)
+                    || value.match(/^([۱][۲-۴][۰-۹]{2})$/g))
+                    return true;
+                else
+                    return false;
+            },
+            "سال را با ساختار صحیح وارد نمایید. ۱۳۹۶");
 
         $.validator.addMethod("persianDateTimeFormat",
-                function (value) {
-                    if (value.length == 0 ||
-                            value.match(/^([1][2-4][0-9]{2})\/(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\s(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])$/g)
-                            || value.match(/^([۱][۲-۴][۰-۹]{2})\/(۰[۱-۹]|۱[۰-۲])\/(۰[۱-۹]|[۱۲][۰-۹]|۳[۰۱])\s(۲[۰-۳]|[۰۱][۰-۹]):([۰-۵][۰-۹]):([۰-۵][۰-۹])$/g))
-                        return true;
-                    else
-                        return false;
-                },
-                "زمان وتاریخ را را با ساختار صحیح وارد نمایید. ۱۳۹۵/۰۲/۲۱ ۱۲:۰۰:۰۰");
+            function (value) {
+                if (value.length == 0 ||
+                    value.match(/^([1][2-4][0-9]{2})\/(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\s(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])$/g)
+                    || value.match(/^([۱][۲-۴][۰-۹]{2})\/(۰[۱-۹]|۱[۰-۲])\/(۰[۱-۹]|[۱۲][۰-۹]|۳[۰۱])\s(۲[۰-۳]|[۰۱][۰-۹]):([۰-۵][۰-۹]):([۰-۵][۰-۹])$/g))
+                    return true;
+                else
+                    return false;
+            },
+            "زمان وتاریخ را را با ساختار صحیح وارد نمایید. ۱۳۹۵/۰۲/۲۱ ۱۲:۰۰:۰۰");
 
         $.validator.addMethod("timeFormat",
-                function (value) {
-                    if (value.length == 0 ||
-                            value.match("^([0-1][0-9]|2[0-3]):[0-5][0-9]$")
-                            || value.match("^[۰-۱][۰-۹]|۲[۰-۳]:[۰-۵][۰-۹]$"))
-                        return true;
-                    else
-                        return false;
-                },
-                "زمان را با ساختار صحیح وارد نمایید. ۱۲:۰۰");
+            function (value) {
+                if (value.length == 0 ||
+                    value.match("^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$")
+                    || value.match("^[۰-۱][۰-۹]|۲[۰-۳]:[۰-۵][۰-۹]:[۰-۵][۰-۹]$"))
+                    return true;
+                else
+                    return false;
+            },
+            "زمان را با ساختار صحیح وارد نمایید. ۱۲:۰۰:۰۰");
 
         $.validator.addMethod("farsiCharacter",
-                function (value) {
-                    if (value.length == 0 || value.match("^[آ-ی][ءآ-ی\s ]*$"))
-                        return true;
-                    else
-                        return false;
-                },
-                "لطفا به صورت فارسی وارد نمایید. کاراکترهای مجاز (حروف فارسی)");
+            function (value) {
+                if (value.length == 0 || value.match("^[آ-ی][ءآ-ی\s ]*$"))
+                    return true;
+                else
+                    return false;
+            },
+            "لطفا به صورت فارسی وارد نمایید. کاراکترهای مجاز (حروف فارسی)");
         $.validator.addMethod("farsiCharacters",
-                function (value) {
-                    if (value.length == 0 || value.match("^[آ-ی][ءآ-ی\s -_ ،]*$"))
-                        return true;
-                    else
-                        return false;
-                },
-                "لطفا به صورت فارسی وارد نمایید. کاراکترهای مجاز (حروف فارسی ، _ -)");
+            function (value) {
+                if (value.length == 0 || value.match("^[آ-ی][ءآ-ی\s -_ ،]*$"))
+                    return true;
+                else
+                    return false;
+            },
+            "لطفا به صورت فارسی وارد نمایید. کاراکترهای مجاز (حروف فارسی ، _ -)");
 
         $.validator.addMethod("phone",
-                function (value) {
-                    if (value.length == 0 || value.match("^[0][0-8][0-9]{9}$") || value.match("^[۰][۰-۸][۰-۹]{9}$"))
-                        return true;
-                    else
-                        return false;
-                },
-                "لطفا شماره تلفن  را به صورت صحیح وارد نمایید - مثال ۰۳۱۳۶۶۶۶۶۶۶");
+            function (value) {
+                if (value.length == 0 || value.match("^[0][0-8][0-9]{9}$") || value.match("^[۰][۰-۸][۰-۹]{9}$"))
+                    return true;
+                else
+                    return false;
+            },
+            "لطفا شماره تلفن  را به صورت صحیح وارد نمایید - مثال ۰۳۱۳۶۶۶۶۶۶۶");
 
         $.validator.addMethod("passwordMin",
-                function (value) {
-                    if (value.length > 3)
-                        return true;
-                    else
-                        return false;
-                },
-                "لطفا رمز ورود را با حداقل طول ۴ کاراکتر وارد نمایید.");
+            function (value) {
+                if (value.length > 3)
+                    return true;
+                else
+                    return false;
+            },
+            "لطفا رمز ورود را با حداقل طول ۴ کاراکتر وارد نمایید.");
 
         $.validator.addMethod("passwordMax",
-                function (value) {
-                    if (value.length < 51)
-                        return true;
-                    else
-                        return false;
-                },
-                "لطفا رمز ورود را با حداکثر طول ۵۰ کاراکتر وارد نمایید.");
+            function (value) {
+                if (value.length < 51)
+                    return true;
+                else
+                    return false;
+            },
+            "لطفا رمز ورود را با حداکثر طول ۵۰ کاراکتر وارد نمایید.");
 
         $.validator.addMethod("passidMin",
-                function (value) {
-                    if (value.length > 3)
-                        return true;
-                    else
-                        return false;
-                },
-                "لطفا شناسه ورود را با حداقل طول ۴ کاراکتر وارد نمایید.");
+            function (value) {
+                if (value.length > 3)
+                    return true;
+                else
+                    return false;
+            },
+            "لطفا شناسه ورود را با حداقل طول ۴ کاراکتر وارد نمایید.");
 
         $.validator.addMethod("passidMax",
-                function (value) {
-                    if (value.length < 51)
-                        return true;
-                    else
-                        return false;
-                },
-                "لطفا شناسه ورود را با حداکثر طول ۵۰ کاراکتر وارد نمایید.");
+            function (value) {
+                if (value.length < 51)
+                    return true;
+                else
+                    return false;
+            },
+            "لطفا شناسه ورود را با حداکثر طول ۵۰ کاراکتر وارد نمایید.");
 
         /*        برای اعتبارسنجی dropdown ها*/
         $.validator.addMethod("itemList",
-                function (value) {
-                    if (value === "" || value === null)
-                        return false;
-                    else
-                        return true;
-                },
-                "لطفا یک مورد را انتخاب کنید!!");
+            function (value) {
+                if (value === "" || value === null)
+                    return false;
+                else
+                    return true;
+            },
+            "لطفا یک مورد را انتخاب کنید!!");
+
+        $.validator.addMethod("ipAddressFormat",
+            function (value) {
+                if (value.length == 0 ||
+                    value.match(/^(25[0-5]|2[0-4][0-9]|1?[0-9][0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/)
+                || value.match(/^((?=.*::)(?!.*::.+::)(::)?([\dA-F]{1,4}:(:|\b)|){5}|([\dA-F]{1,4}:){6})((([\dA-F]{1,4}((?!\3)::|:\b|$))|(?!\2\3)){2}|(((2[0-4]|1\d|[1-9])?\d|25[0-5])\.?\b){4})$/i)
+                )
+
+                    return true;
+                else
+                    return false;
+            },
+            "آدرس IP را به صورت صحیح وارد نمایید.");
+
 
         /*  Main Configuration*/
 
@@ -382,11 +395,11 @@ var FormValidator = function () {
                 if (element.attr("type") == "radio" || element.attr("type") == "checkbox") { /* for chosen elements, need to insert the error after the chosen container*/
                     error.insertAfter($(element).closest('.form-group').children('div').children().last());
                 } else if (element.hasClass("time-format")
-                        || element.hasClass("time-required")
-                        || element.hasClass("persian-datetime-format")
-                        || element.hasClass("persian-datetime-required")
-                        || element.hasClass("persian-date-format")
-                        || element.hasClass("persian-date-required")) {
+                    || element.hasClass("time-required")
+                    || element.hasClass("persian-datetime-format")
+                    || element.hasClass("persian-datetime-required")
+                    || element.hasClass("persian-date-format")
+                    || element.hasClass("persian-date-required")) {
                     ($(element).closest('.form-group').append(error));
                 } else if (element.hasClass("table-input")) {
                     if (!element.hasClass("error")) {
@@ -401,10 +414,8 @@ var FormValidator = function () {
                 }
             },
             ignore: "",
-            rules: {
-            },
-            messages: {
-            },
+            rules: {},
+            messages: {},
             groups: {
                 DateofBirth: "dd mm yyyy"
             },
@@ -1046,6 +1057,11 @@ var FormValidator = function () {
                 }
             });
         });
+        $('.ip-address-format').each(function () {
+            $(this).rules('add', {
+                ipAddressFormat: true
+            });
+        });
     };
     return {
         /*main function to initiate template pages*/
@@ -1055,9 +1071,9 @@ var FormValidator = function () {
             } else {
                 console.log($('#form').length);
             }
-/*            $(".form-validation").each(function (i) {
-                runValidator1($(this));
-            });*/
+            /*            $(".form-validation").each(function (i) {
+                            runValidator1($(this));
+                        });*/
         }
     };
 }();

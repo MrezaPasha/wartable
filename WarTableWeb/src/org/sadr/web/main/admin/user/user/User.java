@@ -3,6 +3,8 @@ package org.sadr.web.main.admin.user.user;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.jasypt.hibernate4.type.EncryptedStringType;
 import org.sadr._core._type.TtYesNo;
 import org.sadr._core.meta.annotation.PersianName;
@@ -20,6 +22,7 @@ import org.sadr.web.main.system.task.Task;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
@@ -39,28 +42,31 @@ import java.util.Set;
 @Table(name = "Web.Admin.User")
 public class User extends GenericDataModel<User> implements Serializable {
 //#########++++++#######// StaticFields: Start //
-public static final String USERNAME = "username";public static final String USER_CODE = "userCode";public static final String PASSWORD = "password";public static final String IS_NEED_TO_CHANGE_PASSWORD = "isNeedToChangePassword";public static final String PASSWORD_HISTORY = "passwordHistory";public static final String PASSWORD_DATE_TIME = "passwordDateTime";public static final String LAST_SIGNIN_DATE_TIME = "lastSigninDateTime";public static final String COMMENT = "comment";public static final String IP_RANGE_TYPE = "ipRangeType";public static final String IP_ADDRESS = "ipAddress";public static final String IP_ADDRESS_FIRST_SIGNIN = "ipAddressFirstSignin";public static final String IP_ADDRESS_START = "ipAddressStart";public static final String IP_ADDRESS_END = "ipAddressEnd";public static final String GENDER = "gender";public static final String FIRST_NAME = "firstName";public static final String LAST_NAME = "lastName";public static final String ACCESS_LIMIT_YEARLY_START = "accessLimitYearlyStart";public static final String ACCESS_LIMIT_YEARLY_END = "accessLimitYearlyEnd";public static final String ACCESS_LIMIT_MONTHLY_START = "accessLimitMonthlyStart";public static final String ACCESS_LIMIT_MONTHLY_END = "accessLimitMonthlyEnd";public static final String ACCESS_LIMIT_DAILY_START = "accessLimitDailyStart";public static final String ACCESS_LIMIT_DAILY_END = "accessLimitDailyEnd";public static final String ACCESS_LIMIT_TIMELY_START = "accessLimitTimelyStart";public static final String ACCESS_LIMIT_TIMELY_END = "accessLimitTimelyEnd";public static final String _LOGO = "logo";public static final String STATUS = "status";public static final String LEVEL = "level";public static final String IS_BLOCKED = "isBlocked";public static final String IS_SUPER_ADMIN = "isSuperAdmin";public static final String SUPER_ADMIN_CODE = "superAdminCode";public static final String SUPER_ADMIN_LOGING_IN = "superAdminLogingIn";public static final String SUPER_ADMIN_LOGING_ID = "superAdminLogingId";public static final String IS_LOG_MANAGER = "isLogManager";public static final String PORTER_UUID = "porterUuid";public static final String _USER_UUIDS = "userUuids";public static final String _USER_PORTERS = "userPorters";public static final String _TASKS = "tasks";public static final String _USER_GROUPS = "userGroups";public static final String $FULL_NAME = "fullName";public static final String $AUTHORIZED_MENU = "authorizedMenu";public static final String $ACT_COLUMNS = "actColumns";public static final String $IS_ACTIVE = "isActive";public static final String $SECRET_NOTE = "secretNote";public static final String $IS_MASTER = "isMaster";public static final String $REL_COLUMNS = "relColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $EXPORT_TITLE = "exportTitle";public static final String $IS_BLOCKED_Y = "isBlockedY";public static final String $FULL_NAME_ID = "fullNameId";public static final String $IS_CLIENT = "isClient";public static final String $IS_NOT_ADMIN = "isNotAdmin";public static final String $IS_ADMIN = "isAdmin";public static final String $IS_NOT_CLIENT = "isNotClient";public static final String $IS_NOT_MASTER = "isNotMaster";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
+public static final String USERNAME = "username";public static final String USER_CODE = "userCode";public static final String PASSWORD = "password";public static final String IS_NEED_TO_CHANGE_PASSWORD = "isNeedToChangePassword";public static final String PASSWORD_HISTORY = "passwordHistory";public static final String PASSWORD_DATE_TIME = "passwordDateTime";public static final String LAST_SIGNIN_DATE_TIME = "lastSigninDateTime";public static final String COMMENT = "comment";public static final String IP_RANGE_TYPE = "ipRangeType";public static final String IP_ADDRESS = "ipAddress";public static final String IP_ADDRESS_FIRST_SIGNIN = "ipAddressFirstSignin";public static final String IP_ADDRESS_START = "ipAddressStart";public static final String IP_ADDRESS_END = "ipAddressEnd";public static final String GENDER = "gender";public static final String FIRST_NAME = "firstName";public static final String LAST_NAME = "lastName";public static final String ACCESS_LIMIT_YEARLY_START = "accessLimitYearlyStart";public static final String ACCESS_LIMIT_YEARLY_END = "accessLimitYearlyEnd";public static final String ACCESS_LIMIT_MONTHLY_START = "accessLimitMonthlyStart";public static final String ACCESS_LIMIT_MONTHLY_END = "accessLimitMonthlyEnd";public static final String ACCESS_LIMIT_DAILY_START = "accessLimitDailyStart";public static final String ACCESS_LIMIT_DAILY_END = "accessLimitDailyEnd";public static final String ACCESS_LIMIT_TIMELY_START = "accessLimitTimelyStart";public static final String ACCESS_LIMIT_TIMELY_END = "accessLimitTimelyEnd";public static final String _LOGO = "logo";public static final String STATUS = "status";public static final String LEVEL = "level";public static final String IS_BLOCKED = "isBlocked";public static final String IS_SUPER_ADMIN = "isSuperAdmin";public static final String IS_LOG_MANAGER = "isLogManager";public static final String PORTER_UUID = "porterUuid";public static final String _USER_UUIDS = "userUuids";public static final String _USER_PORTERS = "userPorters";public static final String _TASKS = "tasks";public static final String _USER_GROUPS = "userGroups";public static final String $FULL_NAME = "fullName";public static final String $IS_BLOCKED_Y = "isBlockedY";public static final String $IS_NOT_MASTER = "isNotMaster";public static final String $IS_ADMIN = "isAdmin";public static final String $IS_NOT_ADMIN = "isNotAdmin";public static final String $IS_CLIENT = "isClient";public static final String $FULL_NAME_ID = "fullNameId";public static final String $IS_NOT_CLIENT = "isNotClient";public static final String $AUTHORIZED_MENU = "authorizedMenu";public static final String $EXPORT_TITLE = "exportTitle";public static final String $IS_MASTER = "isMaster";public static final String $ACT_COLUMNS = "actColumns";public static final String $IS_ACTIVE = "isActive";public static final String $SECRET_NOTE = "secretNote";public static final String $REL_COLUMNS = "relColumns";public static final String $VIR_COLUMNS = "virColumns";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
 //#########******#######// StaticFields: End //
 
     ///////////////////////
     public User() {
         this.isBlocked = false;
         this.isSuperAdmin = false;
-        this.isLogManager=false;
+        this.isLogManager = false;
         this.isNeedToChangePassword = true;
         this.level = TtUserLevel.Client;
         this.status = TtUserStatus.Active;
     }
 
     ///############################## PUBLIC
-    @Column(nullable = false)
+    @SafeHtml
+    @NotEmpty
     @PersianName("نام کاربری")
     private String username;
 
+    @SafeHtml
     @Type(type = "encryptedString")
     @PersianName("کد کاربری")
     private String userCode;
 
+    @SafeHtml
     @Column(nullable = false)
     @Size(max = 255)
     @PersianName("رمز")
@@ -73,52 +79,65 @@ public static final String USERNAME = "username";public static final String USER
     @PersianName("تاریخچه رمز")
     private String passwordHistory;
 
+    @SafeHtml
     @Size(max = 30)
     @PersianName("زمان تغییر رمز")
     private String passwordDateTime;
 
+    @SafeHtml
     @Size(max = 30)
     @PersianName("آخرین زمان ورود")
     private String lastSigninDateTime;
+    @SafeHtml
     @Size(max = 255)
     @PersianName("توضیحات")
     private String comment;
 
+    @NotNull
     @PersianName("سیاست آدرس IP مجاز")
     private TtUserIpRangeType ipRangeType;
 
+    @SafeHtml
     @Size(max = 50)
     @PersianName("آدرس Ip")
     private String ipAddress;
 
+    @SafeHtml
     @Size(max = 50)
     @PersianName("آدرس IP اولین ورود")
     private String ipAddressFirstSignin;
 
+    @SafeHtml
     @Size(max = 50)
     @PersianName("شروع بازه آدرس IP")
     private String ipAddressStart;
 
+    @SafeHtml
     @Size(max = 50)
     @PersianName("پایان بازه آدرس IP")
     private String ipAddressEnd;
 
 
     ///############################## HUMAN
+    @NotNull
     @PersianName("جنسیت")
     private TtGender gender;
 
-    @Size(max = 50)
+    @SafeHtml
+    @Size(min = 2, max = 50)
     @PersianName("نام")
     private String firstName;
-    @Size(max = 50)
+    @SafeHtml
+    @Size(min = 2, max = 50)
     @PersianName("نام خانوادگی")
     private String lastName;
     ///##############################  Access Limit in Time
+    @SafeHtml
     @Size(max = 30)
     @PersianName("محدودیت دسترسی سالیانه (شروع)")
     private String accessLimitYearlyStart;
 
+    @SafeHtml
     @Size(max = 30)
     @PersianName("محدودیت دسترسی سالیانه (پایان)")
     private String accessLimitYearlyEnd;
@@ -143,10 +162,12 @@ public static final String USERNAME = "username";public static final String USER
     @PersianName("محدودیت دسترسی روزانه (پایان)")
     private int accessLimitDailyEnd;
 
+    @SafeHtml
     @Size(max = 15)
     @PersianName("محدودیت دسترسی ساعتی (شروع)")
     private String accessLimitTimelyStart;
 
+    @SafeHtml
     @Size(max = 15)
     @PersianName("محدودیت دسترسی ساعتی (پایان)")
     private String accessLimitTimelyEnd;
@@ -156,10 +177,11 @@ public static final String USERNAME = "username";public static final String USER
     @PersianName("عکس")
     private File logo;//#
     ///##############################  STATUS
-    @Column(nullable = false)
+    @NotNull
     @PersianName("وضعیت")
     private TtUserStatus status;
 
+    @NotNull
     @PersianName("سطح دسترسی")
     private TtUserLevel level;
 
@@ -169,19 +191,11 @@ public static final String USERNAME = "username";public static final String USER
     @PersianName("مدیر ارشد")
     private Boolean isSuperAdmin;
 
-    @Size(max = 100)
-    @PersianName("کد اعتبار مدیر ارشد")
-    private String superAdminCode;
-    //////
-    @PersianName("ورود توسط مدیر ارشد")
-    private Boolean superAdminLogingIn;
-    @PersianName("مدیر ارشد وارد شده")
-    private int superAdminLogingId;
-
     @PersianName("مدیر رویدادنگار")
     private Boolean isLogManager;
 
     ///##############################  LOGGING
+    @SafeHtml
     @Size(max = 1000)
     @PersianName("UUIDهای حامل")
     private String porterUuid;
@@ -439,28 +453,8 @@ public static final String USERNAME = "username";public static final String USER
         this.isSuperAdmin = superAdmin;
     }
 
-    public String getSuperAdminCode() {
-        return superAdminCode;
-    }
-
-    public void setSuperAdminCode(String superAdminCode) {
-        this.superAdminCode = superAdminCode;
-    }
-
-    public Boolean getSuperAdminLogingIn() {
-        return superAdminLogingIn;
-    }
-
     public void setSuperAdminLogingIn(Boolean superAdminLogingIn) {
         superAdminLogingIn = superAdminLogingIn;
-    }
-
-    public int getSuperAdminLogingId() {
-        return superAdminLogingId;
-    }
-
-    public void setSuperAdminLogingId(int superAdminLogingId) {
-        this.superAdminLogingId = superAdminLogingId;
     }
 
     public String getPorterUuid() {

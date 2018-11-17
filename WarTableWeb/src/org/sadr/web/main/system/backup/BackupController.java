@@ -6,26 +6,21 @@ import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GB;
 import org.sadr._core.meta.generic.GenericControllerImpl;
 import org.sadr._core.meta.generic.JB;
-import org.sadr._core.utils.OutLog;
 import org.sadr._core.utils.ParsCalendar;
 import org.sadr._core.utils.Searchee;
 import org.sadr.web.main._core._type.TtTaskAccessLevel;
 import org.sadr.web.main._core._type.TtTile___;
-import org.sadr.web.main._core.propertor.PropertorInControl;
-import org.sadr.web.main._core.propertor._type.TtPropertorInControlList;
 import org.sadr.web.main._core.tools._type.TtUploadIfExist;
 import org.sadr.web.main._core.tools.uploader.Uploader;
+import org.sadr.web.main._core.utils.CacheStatic;
 import org.sadr.web.main._core.utils.Notice2;
 import org.sadr.web.main._core.utils.Referer;
 import org.sadr.web.main._core.utils._type.TtNotice;
 import org.sadr.web.main.archive._type.TtFileUploadStatus;
 import org.sadr.web.main.archive._type.TtRepoDirectory;
-import org.sadr.web.main.archive.directory.DirectoryService;
 import org.sadr.web.main.archive.file.file.File;
 import org.sadr.web.main.archive.file.file.FileService;
-import org.sadr.web.main.system._type.TtBackupType;
-import org.sadr.web.main.system._type.TtIrrorLevel;
-import org.sadr.web.main.system._type.TtIrrorPlace;
+import org.sadr.web.main.system._type.*;
 import org.sadr.web.main.system.irror.IrrorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -54,17 +49,11 @@ public class BackupController extends GenericControllerImpl<Backup, BackupServic
     }
 
     private IrrorService irrorService;
-    private DirectoryService directoryService;
     private FileService fileService;
 
     @Autowired
     public void setFileService(FileService fileService) {
         this.fileService = fileService;
-    }
-
-    @Autowired
-    public void setDirectoryService(DirectoryService directoryService) {
-        this.directoryService = directoryService;
     }
 
     @Autowired
@@ -78,23 +67,24 @@ public class BackupController extends GenericControllerImpl<Backup, BackupServic
     @PersianName("بارگذاری فایل")
     @RequestMapping(value = _PANEL_URL + "/upload")
     public ModelAndView pUpload() {
-
-        OutLog.pl();
-        return TtTile___.p_backup_upload.___getDisModel(_PANEL_URL + "/upload");
+        return TtTile___.p_backup_upload.___getDisModel(_PANEL_URL + "/upload", null, TtTaskActionStatus.Success);
     }
 
     @RequestMapping(value = _PANEL_URL + "/upload", method = RequestMethod.POST)
-    public ModelAndView pUpload(Model model,
-                                @RequestParam(value = "attachment") MultipartFile attachment,
+    public ModelAndView pUpload(@RequestParam(value = "attachment") MultipartFile attachment,
                                 final RedirectAttributes redirectAttributes) {
-        OutLog.pl("");
 
+        if (!attachment.getOriginalFilename().endsWith(".dbk")
+                || !attachment.getContentType().equals("application/octet-stream")) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.file.upload.format.invalid", TtNotice.Danger)));
+            return Referer.redirect(_PANEL_URL + "/upload", null, TtTaskActionStatus.Failure, notice2s);
+        }
 
         File file = Uploader.getInstance().upload(attachment, TtRepoDirectory.Db_Backup, TtUploadIfExist.RenameNewFile);
 
         if (file == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.file.upload.failed", TtNotice.Danger)));
-            return Referer.redirect(_PANEL_URL + "/upload");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.file.upload.failed", TtNotice.Danger)));
+            return Referer.redirect(_PANEL_URL + "/upload", null, TtTaskActionStatus.Failure, notice2s);
         }
         file.setIsTemporary(false);
         file.setIsContainOrginal(true);
@@ -110,8 +100,9 @@ public class BackupController extends GenericControllerImpl<Backup, BackupServic
         backup.setBackupType(TtBackupType.Uploaded);
         this.service.save(backup);
 
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.backup.upload.success", file.getSecretNote(), TtNotice.Success, file.getTitle())));
-        return Referer.redirect(_PANEL_URL + "/list");
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.backup.upload.success", file.getSecretNote(), TtNotice.Success, file.getTitle())));
+        return Referer.redirect(_PANEL_URL + "/list", null, TtTaskActionStatus.Success, notice2s);
+
     }
 
 
@@ -119,10 +110,7 @@ public class BackupController extends GenericControllerImpl<Backup, BackupServic
     @RequestMapping(value = _PANEL_URL + "/backup")
     public ModelAndView pBackup(RedirectAttributes redirectAttributes) throws InterruptedException {
 
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForClient);
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForGuests);
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForMasters);
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForAdmins);
+        CacheStatic.setDevelopingMode(true);
         Thread.sleep(3000);
         String name = "";
 
@@ -130,62 +118,46 @@ public class BackupController extends GenericControllerImpl<Backup, BackupServic
         if (backup != null) {
             name = backup.getTitle();
         }
-        if (backup == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.backup.create.failed", TtNotice.Danger)));
-        } else {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.backup.create.success", backup.getTitle(), TtNotice.Success, name)));
-        }
 
         Thread.sleep(5000);
+        CacheStatic.setDevelopingMode(false);
 
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForClient);
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForGuests);
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForMasters);
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForAdmins);
-        return Referer.redirect(_PANEL_URL + "/list");
+        if (backup == null) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.backup.create.failed", TtNotice.Danger)));
+            return Referer.redirect(_PANEL_URL + "/list", null, TtTaskActionStatus.Failure, notice2s);
+        }
+
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.backup.create.success", backup.getTitle(), TtNotice.Success, name)));
+        return Referer.redirect(_PANEL_URL + "/list", null, TtTaskActionStatus.Success, notice2s);
     }
 
 
     @PersianName("بازیابی")
     @RequestMapping(value = _PANEL_URL + "/restore/{uid}")
-    public ModelAndView pRestore(Model model, @PathVariable("uid") long uid,
-                                 HttpSession session,
-                                 HttpServletRequest request,
+    public ModelAndView pRestore(@PathVariable("uid") long uid,
                                  RedirectAttributes redirectAttributes) throws InterruptedException {
         Backup backup = this.service.findById(uid, Backup._FILE);
 
         if (backup == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.backup.restor.failed", TtNotice.Danger)));
-            return Referer.redirect(_PANEL_URL + "/list");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.backup.restore.failed", TtNotice.Danger)));
+            return Referer.redirect(_PANEL_URL + "/list", null, TtTaskActionStatus.Failure, notice2s);
         }
 
-
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForClient);
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForGuests);
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForMasters);
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForAdmins);
+        CacheStatic.setDevelopingMode(true);
         Thread.sleep(1000);
-
-
-        //========= auto backup
-        Backup backup1 = this.service.backup(TtBackupType.BeforeRestore, false);
-        //--------------
-
 
         String filePath = this.service.restore(backup);
-
-        if (filePath != null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.backup.restore.success", backup.getTitle(), TtNotice.Success, backup.getTitle())));
-        } else {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.backup.restore.failed", TtNotice.Danger)));
-        }
         Thread.sleep(1000);
 
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForClient);
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForGuests);
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForMasters);
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForAdmins);
-        return Referer.redirect(_PANEL_URL + "/list");
+        CacheStatic.setDevelopingMode(false);
+
+        if (filePath != null) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.backup.restore.success", backup.getTitle(), TtNotice.Success, backup.getTitle())));
+            return Referer.redirect(_PANEL_URL + "/list", null, TtTaskActionStatus.Success, notice2s);
+        }
+
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.backup.restore.failed", TtNotice.Danger)));
+        return Referer.redirect(_PANEL_URL + "/list", null, TtTaskActionStatus.Success, notice2s);
     }
 
     @PersianName("لیست")
@@ -209,7 +181,7 @@ public class BackupController extends GenericControllerImpl<Backup, BackupServic
                 GB.col(Backup.$TITLE),
                 GB.col(Backup.BACKUP_TYPE)
         );
-        return TtTile___.p_backup_list.___getDisModel();
+        return TtTile___.p_backup_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
     }
 
     @RequestMapping(value = _PANEL_URL + "/list", method = RequestMethod.POST)

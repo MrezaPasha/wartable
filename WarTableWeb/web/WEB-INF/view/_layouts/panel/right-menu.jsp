@@ -18,9 +18,7 @@
         </div>
         <ul class="main-navigation-menu <c:if test="${!sUser.isAdmin}">right-menu</c:if> ">
             <jsp:include page="right-menu/dashboard.jsp" />
-            <%--<jsp:include page="right-menu/users.jsp" />--%>
             <jsp:include page="right-menu/web.jsp" />
-            <%--<jsp:include page="right-menu/table.jsp" />--%>
             <jsp:include page="right-menu/service.jsp" />
             <c:if test="${sUser.isLogManager}">
                 <jsp:include page="right-menu/log-manager.jsp" />

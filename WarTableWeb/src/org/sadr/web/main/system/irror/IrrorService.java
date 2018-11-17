@@ -2,7 +2,6 @@ package org.sadr.web.main.system.irror;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.sadr._core.meta.generic.GenericService;
-import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.system._type.TtIrrorLevel;
 import org.sadr.web.main.system._type.TtIrrorPlace;
 

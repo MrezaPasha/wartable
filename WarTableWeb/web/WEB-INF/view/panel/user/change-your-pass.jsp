@@ -39,7 +39,9 @@
                                 <spring:message code="${varName}"/>
                                 <span class="symbol required"></span>
                             </label>
-                            <input id="newPassword" type="password" name="newPassword" data-repassword-target class="form-control disable-paste password-required password-required-minlen password-format"/>
+                            <input id="newPassword" type="password" name="newPassword" data-repassword-target
+                                   autocomplete="off"
+                                   class="form-control disable-paste password-required password-required-minlen password-format"/>
                         </div>
                         <div class="pwstrength_viewport_progress"></div>
                     </div>
@@ -50,7 +52,9 @@
                                 <spring:message code="${varName}"/>
                                 <span class="symbol required"></span>
                             </label>
-                            <input id="repassword" name="repassword" type="password" class="form-control disable-paste password-required password-required-minlen repassword-format"/>
+                            <input id="repassword" name="repassword" type="password"
+                                   autocomplete="off"
+                                   class="form-control disable-paste password-required password-required-minlen repassword-format"/>
                         </div>
                     </div>
                 </div>
@@ -58,12 +62,12 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources/js/form-validation.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/pw-strength/dist/pwstrength-bootstrap.min.js?r=${rl2}"></script>
+<script type="text/javascript" src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
+<script type="text/javascript" src="${cp}/resources/js/form-validation.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/pw-strength/dist/pwstrength-bootstrap.min.js"></script>
 <script>
     jQuery(document).ready(function () {
         CustomJs.initSelect2();

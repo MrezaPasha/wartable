@@ -2,7 +2,6 @@ package org.sadr.web.main.system.irror;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.sadr._core.meta.generic.GenericServiceImpl;
-import org.sadr._core.utils.OutLog;
 import org.sadr.web.main.system._type.TtHttpErrorCode___;
 import org.sadr.web.main.system._type.TtIrrorLevel;
 import org.sadr.web.main.system._type.TtIrrorPlace;

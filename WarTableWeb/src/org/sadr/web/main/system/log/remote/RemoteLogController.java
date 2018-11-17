@@ -21,9 +21,10 @@ import org.sadr.web.main._core.utils._type.TtIxportRowIndex;
 import org.sadr.web.main._core.utils._type.TtIxportSubStrategy;
 import org.sadr.web.main._core.utils._type.TtIxportTtStrategy;
 import org.sadr.web.main._core.utils._type.TtNotice;
-import org.sadr.web.main.system._type.TtHttpErrorCode___;
 import org.sadr.web.main.system._type.TtIrrorLevel;
 import org.sadr.web.main.system._type.TtIrrorPlace;
+import org.sadr.web.main.system._type.TtTaskActionStatus;
+import org.sadr.web.main.system._type.TtTaskActionSubType;
 import org.sadr.web.main.system.irror.IrrorService;
 import org.sadr.web.main.system.module.Module;
 import org.sadr.web.main.system.module.ModuleService;
@@ -141,57 +142,8 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
                 GB.col(RemoteLog.REQUEST_METHOD),
                 GB.col(RemoteLog.PORT_NUMBER)
         );
-        return TtTile___.p_sys_log_remote_list.___getDisModel();
+        return TtTile___.p_sys_log_remote_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
     }
-
-//    @LogManagerTask
-//    @RequestMapping(value = _PANEL_URL + "/list", method = RequestMethod.POST)
-//    public @ResponseBody
-//    ResponseEntity<String> list(
-//            @RequestParam(value = "ap", required = false) String ajaxParam,
-//            HttpServletRequest request,
-//            HttpSession session,
-//            HttpServletResponse response) {
-//        try {
-//            GB gb = GB.init(RemoteLog.class)
-//                    .set(
-//                            RemoteLog.CREATE_DATE_TIME,
-//                            RemoteLog.TASK_TITLE,
-//                            RemoteLog.SENSITIVITY,
-//                            RemoteLog.PORT_NUMBER,
-//                            RemoteLog.URL,
-//                            RemoteLog.PORT_NUMBER,
-//                            RemoteLog.IMPORTANCE_LEVEL,
-//                            RemoteLog.USER_ID,
-//                            RemoteLog.USER_GROUP_ID,
-//                            RemoteLog.USER_LEVEL
-//                    )
-//                    .setSearchParams(ajaxParam);
-//
-//            JB jb = JB.init()
-//                    .set(
-//                            RemoteLog.CREATE_DATE_TIME,
-//                            RemoteLog.TASK_TITLE,
-//                            RemoteLog.SENSITIVITY,
-//                            RemoteLog.PORT_NUMBER,
-//                            RemoteLog.URL,
-//                            RemoteLog.PORT_NUMBER,
-//                            RemoteLog.IMPORTANCE_LEVEL,
-//                            RemoteLog.USER_ID,
-//                            RemoteLog.USER_GROUP_ID,
-//                            RemoteLog.USER_LEVEL
-//                    );
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.add("Content-Type", "application/json; charset=utf-8");
-//            return new ResponseEntity<>(this.service.findAllJson(gb, jb), headers, HttpStatus.OK);
-//        } catch (Exception e) {
-//            irrorService.submit(e, request, TtIrrorPlace.Controller, TtIrrorLevel.Warn);
-//        }
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add("Content-Type", "application/json; charset=utf-8");
-//        return new ResponseEntity<>("", headers, HttpStatus.OK);
-//    }
 
     @LogManagerTask
     @RequestMapping(value = _PANEL_URL + "/list", method = RequestMethod.POST)
@@ -264,14 +216,16 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
     @PersianName("نمایش جزئیات رویدادنگاری")
     @RequestMapping(value = _PANEL_URL + "/details/{id}")
     public ModelAndView pShow(Model model,
-                              @PathVariable("id") long id
+                              @PathVariable("id") long id,
+                              RedirectAttributes redirectAttributes
     ) {
         RemoteLog i = this.service.findById(id);
         if (i == null) {
-            return TtHttpErrorCode___.NotFound_404.___getPanelDisModel();
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.log.not.found", TtNotice.Danger)));
+            return Referer.redirect(_PANEL_URL + "/upload", TtTaskActionSubType.Take_Report, TtTaskActionStatus.Failure, notice2s);
         }
         model.addAttribute("log", i);
-        return TtTile___.p_sys_log_remote_details.___getDisModel();
+        return TtTile___.p_sys_log_remote_details.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
     }
 
 
@@ -297,7 +251,7 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
             }
         }
         model.addAttribute("mlist", newList);
-        return TtTile___.p_sys_log_remote_moduleList.___getDisModel();
+        return TtTile___.p_sys_log_remote_moduleList.___getDisModel(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
     }
 
 
@@ -310,7 +264,7 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
         Module module = moduleService.findById(id);
         if (module == null) {
             Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.module.not.found", JsonBuilder.toJson("moduleId", id + ""), TtNotice.Warning)));
-            return Referer.redirect(_PANEL_URL + "/module/list");
+            return Referer.redirect(_PANEL_URL + "/module/list", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure);
         }
 
         List<Task> tasks = this.taskService.findAllBy(
@@ -322,7 +276,7 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
 
         model.addAttribute("module", module);
         model.addAttribute("tlist", tasks);
-        return TtTile___.p_sys_log_remote_taskList.___getDisModel();
+        return TtTile___.p_sys_log_remote_taskList.___getDisModel(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
     }
 
 
@@ -339,11 +293,11 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
                 ),
                 Task._MODULE);
         if (task == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.task.not.found", JsonBuilder.toJson("taskId", id + ""), TtNotice.Warning)));
-            return Referer.redirect(_PANEL_URL + "/module/list");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.task.not.found", JsonBuilder.toJson("taskId", id + ""), TtNotice.Warning)));
+            return Referer.redirect(_PANEL_URL + "/module/list", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s);
         }
         model.addAttribute("task", task);
-        return TtTile___.p_sys_log_remote_taskConfig.___getDisModel(_PANEL_URL + "/task/config");
+        return TtTile___.p_sys_log_remote_taskConfig.___getDisModel(_PANEL_URL + "/task/config", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
     }
 
     @LogManagerTask
@@ -358,8 +312,8 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
                         Restrictions.eq(Task.IS_SUPER_ADMIN, false)
                 ));
         if (dbObj == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.task.not.found", formObj.getSecretNote(), TtNotice.Warning)));
-            return new ModelAndView("redirect:/panel/log/remote/module/list");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.task.not.found", formObj.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirect(_PANEL_URL + "/module/list", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s);
         }
 
         dbObj.setSensitivity(formObj.getSensitivity());
@@ -370,8 +324,9 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
         dbObj.setOnlineLoggingDelay(formObj.getOnlineLoggingDelay());
         dbObj.setActionType(formObj.getActionType());
         this.taskService.update(dbObj);
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.log.task.config.success", formObj.getSecretNote(), TtNotice.Success)));
-        return new ModelAndView("redirect:/panel/log/remote/task/config/" + formObj.getId());
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.log.task.config.success", formObj.getSecretNote(), TtNotice.Success)));
+        return Referer.redirect(_PANEL_URL + "/task/config/" + formObj.getId(), TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success, notice2s);
+
     }
 
 
@@ -382,13 +337,12 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
     @RequestMapping(value = _PANEL_URL + "/task/online/logging/{mid}")
     public ModelAndView pActiveOnlineLogging(org.springframework.ui.Model model,
                                              @PathVariable("mid") long mid,
-                                             final RedirectAttributes redirectAttributes
-    ) {
+                                             final RedirectAttributes redirectAttributes) {
 
         Module mud = this.moduleService.findById(mid);
         if (mud == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.module.not.found", JsonBuilder.toJson("moduleId", ""), TtNotice.Warning)));
-            return new ModelAndView("redirect:/panel/module/list");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.module.not.found", JsonBuilder.toJson("moduleId", ""), TtNotice.Warning)));
+            return Referer.redirect(_PANEL_URL + "/module/list", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s);
         }
 
         List<Task> tasksNotActive = this.taskService.findAllBy(
@@ -413,7 +367,7 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
         model.addAttribute(taskViewModel);
         model.addAttribute("tlist", tasksNotActive);
 
-        return TtTile___.p_sys_log_remote_onlineLogging.___getDisModel(_PANEL_URL + "/task/online/logging");
+        return TtTile___.p_sys_log_remote_onlineLogging.___getDisModel(_PANEL_URL + "/task/online/logging", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
     }
 
     @LogManagerTask
@@ -427,8 +381,9 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
 
         Module module = this.moduleService.findById(taskViewModel.getModuleId());
         if (module == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.module.not.found", taskViewModel.getSecretNote(), TtNotice.Warning)));
-            return Referer.redirect("/panel/log/remote/module/list");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.module.not.found", taskViewModel.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirect(_PANEL_URL + "/module/list", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s);
+
         }
 
         if (taskViewModel.getTasks() != null && !taskViewModel.getTasks().isEmpty()) {
@@ -473,8 +428,8 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
             }
         }
 
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.log.task.online.logging.success", module.getSecretNote(), TtNotice.Success)));
-        return Referer.redirect(_PANEL_URL + "/task/online/logging/" + taskViewModel.getModuleId(), request);
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.log.task.online.logging.success", module.getSecretNote(), TtNotice.Success)));
+        return Referer.redirect(_PANEL_URL + "/task/online/logging/" + taskViewModel.getModuleId(), TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success, notice2s);
     }
 
 }

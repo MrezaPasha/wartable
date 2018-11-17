@@ -24,7 +24,6 @@ public interface UserAttemptService extends GenericService<UserAttempt> {
 
     public TtUserAttemptResult attemptStatus(HttpServletRequest request, HttpServletResponse response, Model model, User user, TtUserAttemptType attemptType, UserAttempt uatt, String uuid, boolean mergeNotice);
 
-    public void rebuildUerAttempt(HttpServletRequest request, HttpServletResponse response, UserAttempt uatt, TtUserAttemptType attemptType, String uuid, User user);
+    public void rebuildUerAttempt(HttpServletRequest request, HttpServletResponse response, TtUserAttemptType attemptType, String uuid, User user);
 
-    public TtUserAttemptResult rebuildUerAttempt(HttpServletRequest request, HttpServletResponse response, UserAttempt uatt, TtUserAttemptType attemptType, String uuid, User user, Model model);
 }

@@ -16,6 +16,7 @@ import org.sadr.web.main.admin._type.TtUserLevel;
 import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.note.note.Note;
 import org.sadr.web.main.note.note.NoteService;
+import org.sadr.web.main.system._type.TtHttpErrorCode___;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -55,10 +56,11 @@ public class CoreController {
     @PersianName("داشبورد")
     @RequestMapping(value = "/panel", method = RequestMethod.GET)
     public ModelAndView pPanelDashboard(Model model, HttpSession session) {
-        model.addAttribute("signinLog", CacheStatic.getSigninLog());
-        model.addAttribute("signinFailedCount", CacheStatic.getSigninLogFailedCount());
-        model.addAttribute("signinMainIp", CacheStatic.getSigninMainIp());
-        model.addAttribute("isSigninIpChanged", CacheStatic.isSigninIsIpChanged());
+        User suser = (User) session.getAttribute("sUser");
+        if (suser == null) {
+            return TtHttpErrorCode___.Unauthorized_401.___getFrontDisModel();
+        }
+        model.addAttribute("slList", CacheStatic.getSigninLog(suser.getId()));
 
         model.addAttribute("nlist", this.noteService.findAllBy(
                 Restrictions.and(

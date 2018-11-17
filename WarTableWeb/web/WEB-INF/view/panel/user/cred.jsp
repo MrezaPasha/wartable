@@ -8,7 +8,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ page session="false" %>
-<link rel="stylesheet" href="${cp}/resources/plugins/persian-datetimepicker/persian-datepicker-0.4.5.css?r=${rl2}">
+<link rel="stylesheet" href="${cp}/resources/plugins/persian-datetimepicker/persian-datepicker-0.4.5.css">
 
 <div class="container">
     <c:choose>
@@ -54,6 +54,7 @@
                             <c:choose>
                                 <c:when test="${user.isLogManager or user.isSuperAdmin}">
                                     <c:set var="dis" value="true"/>
+                                    <form:hidden path="${varName}"/>
                                 </c:when>
                                 <c:otherwise>
                                     <c:set var="dis" value="false"/>
@@ -172,7 +173,7 @@
                                 <span class="symbol required"></span>
                                 <form:errors cssClass="form-validation-error" path="${varName}"/>
                             </form:label>
-                            <form:input path="${varName}" cssClass="form-control string-required string-max-50"/>
+                            <form:input path="${varName}" cssClass="form-control string-required string-max-50 ip-address-format"/>
                         </div>
                         <div class="form-group" data-visible-dst="dv1" data-visible-align-1="false" data-visible-align-2="true" data-visible-align-3="false">
                             <c:set var="varName" value="user.ipAddressStart"/>
@@ -181,7 +182,7 @@
                                 <span class="symbol required"></span>
                                 <form:errors cssClass="form-validation-error" path="${varName}"/>
                             </form:label>
-                            <form:input path="${varName}" cssClass="form-control string-required string-max-50"/>
+                            <form:input path="${varName}" cssClass="form-control string-required string-max-50 ip-address-format"/>
                         </div>
                         <div class="form-group" data-visible-dst="dv1" data-visible-align-1="false" data-visible-align-2="true" data-visible-align-3="false">
                             <c:set var="varName" value="user.ipAddressEnd"/>
@@ -190,13 +191,12 @@
                                 <span class="symbol required"></span>
                                 <form:errors cssClass="form-validation-error" path="${varName}"/>
                             </form:label>
-                            <form:input path="${varName}" cssClass="form-control string-required string-max-50"/>
+                            <form:input path="${varName}" cssClass="form-control string-required string-max-50 ip-address-format"/>
                         </div>
                         <div class="form-group" data-visible-dst="dv1" data-visible-align-1="false" data-visible-align-2="false" data-visible-align-3="true">
                             <c:set var="varName" value="user.ipAddressFirstSignin"/>
                             <form:label path="${varName}" cssClass="control-label">
                                 <spring:message code="${varName}"/>
-                                <span class="symbol required"></span>
                                 <form:errors cssClass="form-validation-error" path="${varName}"/>
                             </form:label>
                             <span class="form-control">
@@ -277,7 +277,7 @@
                             <form:input path="${varName}"
                                         autocomplete="off"
                                         data-initial-value="false"
-                                        cssClass="form-control persian-time-format"/>
+                                        cssClass="form-control time-format"/>
                         </div>
                         <div class="form-group">
                             <c:set var="varName" value="user.accessLimitTimelyEnd"/>
@@ -288,7 +288,7 @@
                             <form:input path="${varName}"
                                         autocomplete="off"
                                         data-initial-value="false"
-                                        cssClass="form-control persian-time-format"/>
+                                        cssClass="form-control time-format"/>
                         </div>
                     </div>
                 </div>
@@ -296,13 +296,13 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources/js/form-validation.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources/plugins/persian-datetimepicker/persian-date-0.1.8.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources/plugins/persian-datetimepicker/persian-datepicker-0.4.5.js?r=${rl2}"></script>
+<script type="text/javascript" src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
+<script type="text/javascript" src="${cp}/resources/js/form-validation.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js"></script>
+<script type="text/javascript" src="${cp}/resources/plugins/persian-datetimepicker/persian-date-0.1.8.js"></script>
+<script type="text/javascript" src="${cp}/resources/plugins/persian-datetimepicker/persian-datepicker-0.4.5.js"></script>
 
 <script>
     jQuery(document).ready(function () {

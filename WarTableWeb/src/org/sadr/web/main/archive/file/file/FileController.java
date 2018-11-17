@@ -5,10 +5,6 @@ import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GenericControllerImpl;
 import org.sadr._core.utils.OutLog;
 import org.sadr.web.main._core.meta.annotation.TaskAccessLevel;
-import org.sadr.web.main.admin.user.user.User;
-import org.sadr.web.main.archive.file.download.FileDownload;
-import org.sadr.web.main.archive.file.download.FileDownloadService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,14 +29,6 @@ public class FileController extends GenericControllerImpl<File, FileService> {
     //===================================================
     private final String _FRONT_URL = "" + REQUEST_MAPPING_BASE;
     private final String _PANEL_URL = "/panel" + REQUEST_MAPPING_BASE;
-
-    private FileDownloadService fileDownloadService;
-
-    @Autowired
-    public void setFileDownloadService(FileDownloadService fileDownloadService) {
-        this.fileDownloadService = fileDownloadService;
-    }
-
 
     @TaskAccessLevel
     @PersianName("دانلود فایل با استفاده از شناسه")
@@ -74,18 +62,6 @@ public class FileController extends GenericControllerImpl<File, FileService> {
             try {
                 Files.copy(fpath, response.getOutputStream());
 
-                User u = (User) session.getAttribute("sUser");
-                if (u != null) {
-                    OutLog.pl("");
-                    f.addDownloadCount();
-                    FileDownload fd = new FileDownload();
-                    fd.setFile(f);
-                    fd.setUser(u);
-                    this.fileDownloadService.save(fd);
-                } else {
-                    OutLog.pl("");
-                    f.addDownloadCountGuest();
-                }
                 this.service.update(f);
                 response.getOutputStream().flush();
             } catch (IOException ex) {

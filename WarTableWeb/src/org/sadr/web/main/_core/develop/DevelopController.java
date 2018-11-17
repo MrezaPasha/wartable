@@ -125,33 +125,8 @@ public class DevelopController {
                         sb.append("public static final String ").append(st).append(" = \"").append(f.getName()).append("\";");
                     }
 
-                    // Methods
-                    mts = a.getDeclaredMethods();
-                    for (Method mt : mts) {
-                        OutLog.pl("# " + mt.getName() + "     " + mt.getGenericReturnType().getTypeName() + "  " + mt.getAnnotatedReturnType().toString());
-                        OutLog.p(mt.getModifiers() + "    " + mt.getClass().getName());
-                        if (mt.getParameterCount() == 0 && mt.getName().startsWith("get")) {
-                            nm = mt.getName().substring(3, 4).toLowerCase() + mt.getName().substring(4);
-                            OutLog.p("ok " + nm);
-                            if (fbb.indexOf("," + nm + ",") == -1) {
-                                st = "$";
-                                ss = nm.split("");
-                                for (String s : ss) {
-                                    if (s != null) {
-                                        st += (s.equals(s.toLowerCase())) ? s.toUpperCase() : "_" + s.toUpperCase();
-                                    }
-                                }
-                                OutLog.p(st);
-                                sb.append("public static final String ").append(st).append(" = \"").append(nm).append("\";");
 
-                            }
-
-                        }
-                    }
-                    sb.append("private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;")
-                            .append("public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(\",\");}if (virts != null) {virColumns = virts.split(\",\");}if (rels != null) {relColumns = rels.split(\",\");}}")
-                            .append("public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} ")
-                            .append("\n//#########******#######// StaticFields: End //");
+                    sb.append("\n//#########******#######// StaticFields: End //");
 
                     boolean isWrite = true, isInjected = false;
                     try {

@@ -67,7 +67,7 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
             u = new Note();
         }
         model.addAttribute("note", u);
-        return TtTile___.p_note_create.___getDisModel(_PANEL_URL + "/create");
+        return TtTile___.p_note_create.___getDisModel(_PANEL_URL + "/create",TtTaskActionSubType.New_Data, TtTaskActionStatus.Success);
     }
 
     @RequestMapping(value = _PANEL_URL + "/create", method = RequestMethod.POST)
@@ -80,6 +80,18 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
         if (noteBindingResult.hasErrors()) {
             return Referer.redirectBindingError(TtTaskActionSubType.New_Data, TtTaskActionStatus.Error, request, redirectAttributes, noteBindingResult, fnote);
         }
+
+        if (!Validator.persianDateTime(fnote.getDateTime())) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.note.dateTime.not.valid")));
+            return Referer.redirectObjects(
+                    TtTaskActionSubType.New_Data,
+                    TtTaskActionStatus.Error,
+                    notice2s,
+                    request,
+                    redirectAttributes,
+                    fnote);
+        }
+
         fnote.setUser((User) session.getAttribute("sUser"));
         fnote.setIsNotified(false);
         fnote.setIsVisited(false);
@@ -114,9 +126,7 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
         return TtTile___.p_note_details.___getDisModel(null, TtTaskActionStatus.Success);
     }
 
-
     //=========================== edit
-
     @PersianName("ویرایش")
     @RequestMapping(value = _PANEL_URL + "/edit/{uid}")
     public ModelAndView pEdit(Model model, @PathVariable("uid") long uid,
@@ -164,6 +174,17 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
                     fnote);
         }
 
+        if (!Validator.persianDateTime(fnote.getDateTime())) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.note.dateTime.not.valid")));
+            return Referer.redirectObjects(
+                    TtTaskActionSubType.New_Data,
+                    TtTaskActionStatus.Error,
+                    notice2s,
+                    request,
+                    redirectAttributes,
+                    fnote);
+        }
+
         User sUser = (User) session.getAttribute("sUser");
 
         Note dbnote = this.service.findBy(
@@ -185,7 +206,6 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
         }
 
         dbnote.setDateTime(fnote.getDateTime());
-//        dbnote.setDateTimeG(ParsCalendar.getInstance().gre);
         dbnote.setTitle(fnote.getTitle());
         dbnote.setMessage(fnote.getMessage());
         dbnote.setImportance(fnote.getImportance());

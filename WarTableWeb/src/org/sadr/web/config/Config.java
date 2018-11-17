@@ -10,10 +10,6 @@ import org.sadr._core.utils.Cryptor;
 import org.sadr._core.utils.OutLog;
 import org.sadr._core.utils.SpringMessager;
 import org.sadr.share.config.ShareConfigHandler;
-import org.sadr.web.main._core.propertor.PropertorInBoot;
-import org.sadr.web.main._core.propertor.PropertorInControl;
-import org.sadr.web.main._core.propertor._type.TtPropertorInBootList;
-import org.sadr.web.main._core.propertor._type.TtPropertorInControlList;
 import org.sadr.web.main._core.tools.authorizer.AuthorizerAspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -40,7 +36,10 @@ import org.springframework.web.servlet.view.tiles3.TilesView;
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+
 
 /**
  * @author masoud
@@ -192,7 +191,8 @@ public class Config extends WebMvcConfigurerAdapter {
         return new Properties() {
             {
                 setProperty("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
-                setProperty("hibernate.show_sql", PropertorInBoot.getInstance().isOnProperty(TtPropertorInBootList.HibernateSHowSQL) ? "true" : "false");
+                setProperty("hibernate.show_sql",
+                        "false");
                 setProperty("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
                 setProperty("hibernate.dialect", Cryptor.decrypt(env.getProperty("hibernate.dialect")));
                 setProperty("hibernate.globally_quoted_identifiers", env.getProperty("hibernate.globally_quoted_identifiers"));
@@ -211,7 +211,7 @@ public class Config extends WebMvcConfigurerAdapter {
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
         commonsMultipartResolver.setDefaultEncoding("utf-8");
         try {
-            commonsMultipartResolver.setMaxUploadSize(Long.parseLong(PropertorInControl.getInstance().getProperty(TtPropertorInControlList.FileMaxUploadSize)));
+            commonsMultipartResolver.setMaxUploadSize(50000000);
         } catch (Exception e) {
             commonsMultipartResolver.setMaxUploadSize(50000000);
         }

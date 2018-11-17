@@ -6,12 +6,11 @@ import org.sadr._core.utils.OutLog;
 import org.sadr._core.utils.ParsCalendar;
 import org.sadr._core.utils._type.TtCalendarItem;
 import org.sadr.web.main._core.propertor.PropertorInBackup;
-import org.sadr.web.main._core.propertor.PropertorInControl;
 import org.sadr.web.main._core.propertor.PropertorInWeb;
 import org.sadr.web.main._core.propertor._type.TtPropertorInBackupList;
-import org.sadr.web.main._core.propertor._type.TtPropertorInControlList;
 import org.sadr.web.main._core.propertor._type.TtPropertorInWebList;
 import org.sadr.web.main._core.tools.driver.remoteLogger.RemoteLogger;
+import org.sadr.web.main._core.utils.CacheStatic;
 import org.sadr.web.main.admin._type.TtUserStatus;
 import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.admin.user.user.UserService;
@@ -19,7 +18,6 @@ import org.sadr.web.main.system._type.TtBackupType;
 import org.sadr.web.main.system._type.TtLogOnlineSendStatus;
 import org.sadr.web.main.system.backup.Backup;
 import org.sadr.web.main.system.backup.BackupService;
-import org.sadr.web.main.system.log.daily.DailyLogService;
 import org.sadr.web.main.system.log.remote.RemoteLog;
 import org.sadr.web.main.system.log.remote.RemoteLogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +32,6 @@ import java.util.List;
 @PersianName("زمان شمار")
 public class Scheduler {
 
-    private DailyLogService visitLogService;
     private UserService userService;
     private RemoteLogService remoteLogService;
     private BackupService backupService;
@@ -52,11 +49,6 @@ public class Scheduler {
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
-    }
-
-    @Autowired
-    public void setVisitLogService(DailyLogService visitLogService) {
-        this.visitLogService = visitLogService;
     }
 
 
@@ -78,10 +70,8 @@ public class Scheduler {
 
     private void startBackup() {
         OutLog.pl("start backup...");
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForClient);
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForGuests);
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForMasters);
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForAdmins);
+        CacheStatic.setDevelopingMode(true);
+
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
@@ -96,10 +86,8 @@ public class Scheduler {
             e.printStackTrace();
         }
 
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForClient);
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForGuests);
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForMasters);
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForAdmins);
+        CacheStatic.setDevelopingMode(false);
+
 
     }
 
@@ -166,10 +154,8 @@ public class Scheduler {
         }
 
 
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForClient);
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForGuests);
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForMasters);
-        PropertorInControl.getInstance().setOn(TtPropertorInControlList.SiteInDevelopingForAdmins);
+        CacheStatic.setDevelopingMode(true);
+
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
@@ -199,10 +185,8 @@ public class Scheduler {
             e.printStackTrace();
         }
 
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForClient);
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForGuests);
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForMasters);
-        PropertorInControl.getInstance().setOff(TtPropertorInControlList.SiteInDevelopingForAdmins);
+        CacheStatic.setDevelopingMode(false);
+
     }
 
     private void restoreCheck() {

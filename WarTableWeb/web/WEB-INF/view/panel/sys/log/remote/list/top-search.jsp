@@ -9,6 +9,7 @@
                ir-search-field-tp="${f_userId[1]}"
                ir-search-field-opr="${f_userId[2]}"
                ir-search-field-noSp="${f_userId[3]}"
+               ir-search-submit-realTime
         >
     </div>
     <div class="col-xxs-12 col-xs-3 col-md-2">
@@ -17,6 +18,7 @@
                ir-search-field-tp="${f_fromDate[1]}"
                ir-search-field-opr="${f_fromDate[2]}"
                ir-search-field-noSp="${f_fromDate[3]}"
+               ir-search-submit-realTime
         >
     </div>
     <div class="col-xxs-12 col-xs-3 col-md-2">
@@ -25,6 +27,7 @@
                ir-search-field-tp="${f_toDate[1]}"
                ir-search-field-opr="${f_toDate[2]}"
                ir-search-field-noSp="${f_toDate[3]}"
+               ir-search-submit-realTime
         >
     </div>
 

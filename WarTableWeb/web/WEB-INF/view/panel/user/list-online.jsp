@@ -15,7 +15,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ page session="false" %>
 
-<link rel="stylesheet" href="${cp}/resources-p/plugins/dataTables/media/css/DT_bootstrap.css?r=${rl2}"/>
+<link rel="stylesheet" href="${cp}/resources-p/plugins/dataTables/media/css/DT_bootstrap.css"/>
 
 <div class="container" style="min-height: 300px;">
     <div class="page-header">
@@ -70,11 +70,11 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/dataTables/media/js/jquery.dataTables.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/dataTables/media/js/DT_bootstrap.js?r=${rl2}"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/dataTables/media/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/dataTables/media/js/DT_bootstrap.js"></script>
 
-<script type="text/javascript" src="${cp}/resources-p/plugins/bootbox/bootbox.js?r=${rl2}"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/bootbox/bootbox.js"></script>
 <script>
     jQuery(document).ready(function () {
         CustomJs.initTable();

@@ -8,6 +8,7 @@
                ir-search-field-tp="${f_searchInfo[1]}"
                ir-search-field-opr="${f_searchInfo[2]}"
                ir-search-field-noSp="true"
+               ir-search-submit-realTime
                >
     </div>
     <div class="col-xxs-12 col-xs-4 col-md-3">

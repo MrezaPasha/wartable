@@ -64,12 +64,12 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources/js/form-validation.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/pw-strength/dist/pwstrength-bootstrap.min.js?r=${rl2}"></script>
+<script type="text/javascript" src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
+<script type="text/javascript" src="${cp}/resources/js/form-validation.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/pw-strength/dist/pwstrength-bootstrap.min.js"></script>
 <script>
     jQuery(document).ready(function () {
         CustomJs.initSelect2();

@@ -45,10 +45,10 @@ public class BackupServiceImp extends GenericServiceImpl<Backup, BackupDao> impl
                 .replace(" ", "")
                 .replace("/", "")
                 .replace(":", "")
-                + (isLog ? "_" : "_" + dp[3]) + ".sql";
+                + (isLog ? "_" : "_" + dp[3]) + ".dbk";
         Directory dir = directoryService.getDirectory(TtRepoDirectory.Db_Backup);
 
-        String filePath = ShellCommander.postgres(dir.getAbsolutePath(), (isLog ? "" : dp[3]), dp[1], backupFileName, dp[2]);
+        String filePath = ShellCommander.postgres(dir.getAbsolutePath(), (isLog ? "" : dp[3]), dp[2], backupFileName, "backup");
         if (filePath != null) {
             java.io.File f = new java.io.File(filePath);
             File file = new File();
@@ -77,12 +77,13 @@ public class BackupServiceImp extends GenericServiceImpl<Backup, BackupDao> impl
     public String restore(Backup backup) {
 
         Directory dir = directoryService.getDirectory(TtRepoDirectory.Db_Backup);
+        String[] dp = WebConfigHandler.getDatabaseParamRest();
 
-        ShellCommander.postgres(null, "wtdb", "root", null, "drop");
+        ShellCommander.postgres(null, dp[3], dp[2], null, "drop");
 
-        ShellCommander.postgres(null, "wtdb", "root", null, "create");
+        ShellCommander.postgres(null, dp[3], dp[2], null, "create");
 
-        return ShellCommander.postgres(dir.getAbsolutePath(), "wtdb", "root", backup.getFile().getOrginalName(), "restore");
+        return ShellCommander.postgres(dir.getAbsolutePath(), dp[3], dp[2], backup.getFile().getOrginalName(), "restore");
 
     }
 }

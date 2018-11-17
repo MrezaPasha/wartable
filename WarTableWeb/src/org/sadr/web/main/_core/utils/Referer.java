@@ -1,7 +1,14 @@
 package org.sadr.web.main._core.utils;
 
+import org.hibernate.criterion.Restrictions;
+import org.sadr._core.meta.annotation.PersianName;
+import org.sadr._core.utils.OutLog;
+import org.sadr.web.config.WebConfigHandler;
+import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.system._type.TtTaskActionStatus;
 import org.sadr.web.main.system._type.TtTaskActionSubType;
+import org.sadr.web.main.system.log.validation.ValidationLog;
+import org.sadr.web.main.system.log.validation.ValidationLogService;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -12,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author dev1
  * @see Referer To createJsps Restrictions Paths
  */
+@PersianName
 public class Referer {
 
     public static ModelAndView ref(HttpServletRequest request, String modelString) {
@@ -63,6 +71,42 @@ public class Referer {
 
     ///////////////////
     public static ModelAndView redirectBindingError(HttpServletRequest request, RedirectAttributes redirectAttributes, BindingResult bindingResult, Object... attributes) {
+        try {
+            User sUser = (User) request.getSession().getAttribute("sUser");
+            if (sUser != null) {
+                ValidationLogService validationLogService = WebConfigHandler.getWebApplicationContext().getBean(ValidationLogService.class);
+
+                ValidationLog vl = validationLogService.findBy(
+                        Restrictions.and(
+                                Restrictions.eq(ValidationLog._USER, sUser),
+                                Restrictions.eq(ValidationLog.URL, request.getRequestURI())
+                        )
+                );
+                if (vl == null) {
+                    vl = new ValidationLog();
+                    vl.setUser(sUser);
+                    vl.setUrl(request.getRequestURI());
+                    vl.setTryCount(1);
+                    validationLogService.save(vl);
+                } else {
+                    if (vl.getTryCount() > 2) {
+                        vl.setTryCount(0);
+                        validationLogService.update(vl);
+                        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.all.validation.try.exceed")));
+                        return Referer.redirect("/panel", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s);
+                    } else {
+                        vl.addTryCount();
+                        validationLogService.update(vl);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        OutLog.pl(bindingResult.toString());
+        OutLog.pl(bindingResult.getTarget().toString());
+        OutLog.pl(request.getRequestURI());
         Notice2[] notice2s = Notice2.initPostError(redirectAttributes, bindingResult);
         if (attributes != null) {
             for (int i = 0; i < attributes.length; i++) {
@@ -84,6 +128,7 @@ public class Referer {
     }
 
     public static ModelAndView redirectBindingError(TtTaskActionSubType subType, TtTaskActionStatus actionStatus, HttpServletRequest request, RedirectAttributes redirectAttributes, BindingResult bindingResult, Object... attributes) {
+
         return redirectBindingError(request, redirectAttributes, bindingResult, attributes)
                 .addObject("actionSubType", subType)
                 .addObject("actionStatus", actionStatus);
@@ -128,13 +173,16 @@ public class Referer {
                 .addObject("noticeList", notice2);
     }
 
-    public static ModelAndView redirectObjects(String uri, RedirectAttributes redirectAttributes, Object... attributes) {
+    public static ModelAndView redirectObjects(TtTaskActionSubType subType, TtTaskActionStatus actionStatus, Notice2[] notice2s,String uri, RedirectAttributes redirectAttributes, Object... attributes) {
         if (attributes != null) {
             for (int i = 0; i < attributes.length; i++) {
                 redirectAttributes.addFlashAttribute(attributes[i]);
             }
         }
-        return new ModelAndView("redirect:" + uri);
+        return new ModelAndView("redirect:" + uri)
+                .addObject("actionSubType", subType)
+                .addObject("actionStatus", actionStatus)
+                .addObject("noticeList", notice2s);
 
     }
 

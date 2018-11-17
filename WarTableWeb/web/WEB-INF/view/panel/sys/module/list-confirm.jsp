@@ -13,7 +13,7 @@
 <div class="container module-list">
     <div class="page-header">
         <h3 class="cred-header">
-            <span class="cred-title"><spring:message code="module.list"/></span>
+            <span class="cred-title"><spring:message code="T.p.sys.module.listConfirm"/></span>
         </h3>
     </div>
     <div class="well well-act">
@@ -68,12 +68,12 @@
 
 </div>
 
-<script type="text/javascript" src="${cp}/resources-p/plugins/dataTables/media/js/jquery.dataTables.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/dataTables/media/js/DT_bootstrap.js?r=${rl2}"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/dataTables/media/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/dataTables/media/js/DT_bootstrap.js"></script>
 
-<script type="text/javascript" src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js?r=${rl2}"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js"></script>
 <script>
     jQuery(document).ready(function () {
         CustomJs.initTable();

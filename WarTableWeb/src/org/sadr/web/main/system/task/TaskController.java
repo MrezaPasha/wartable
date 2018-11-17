@@ -10,6 +10,8 @@ import org.sadr.web.main._core.meta.annotation.SuperAdminTask;
 import org.sadr.web.main._core.utils.Notice2;
 import org.sadr.web.main._core.utils.Referer;
 import org.sadr.web.main._core.utils._type.TtNotice;
+import org.sadr.web.main.system._type.TtTaskActionStatus;
+import org.sadr.web.main.system._type.TtTaskActionSubType;
 import org.sadr.web.main.system.module.Module;
 import org.sadr.web.main.system.module.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +68,9 @@ public class TaskController extends GenericControllerImpl<Task, TaskService> {
 
         Module mud = this.moduleService.findById(mid);
         if (mud == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.module.not.found", JsonBuilder.toJson("moduleId", ""), TtNotice.Warning)));
-            return new ModelAndView("redirect:/panel/module/list");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.module.not.found", JsonBuilder.toJson("moduleId", ""), TtNotice.Warning)));
+            return Referer.redirect("/panel/module/list", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s);
+
         }
 
         List<Task> tasksNotConfirmed = this.service.findAllBy(
@@ -77,7 +80,7 @@ public class TaskController extends GenericControllerImpl<Task, TaskService> {
                         Restrictions.eq(Task.IS_SUPER_ADMIN, false),
                         Restrictions.eq(Task.IS_AJAX, false)
 
-                        ));
+                ));
 
         TaskViewModel taskViewModel = new TaskViewModel();
 
@@ -96,7 +99,7 @@ public class TaskController extends GenericControllerImpl<Task, TaskService> {
         model.addAttribute(taskViewModel);
         model.addAttribute("tlist", tasksNotConfirmed);
 
-        return TtTile___.p_sys_task_confirm.___getDisModel(_PANEL_URL + "/confirm");
+        return TtTile___.p_sys_task_confirm.___getDisModel(_PANEL_URL + "/confirm", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
     }
 
     @RequestMapping(value = _PANEL_URL + "/confirm", method = RequestMethod.POST)
@@ -109,8 +112,8 @@ public class TaskController extends GenericControllerImpl<Task, TaskService> {
 
         Module module = this.moduleService.findById(taskViewModel.getModuleId());
         if (module == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.module.not.found", taskViewModel.getSecretNote(), TtNotice.Warning)));
-            return Referer.redirect("/panel/module/list");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.module.not.found", taskViewModel.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirect("/panel/module/list", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s);
         }
 
         if (taskViewModel.getTasks() != null && !taskViewModel.getTasks().isEmpty()) {
@@ -158,8 +161,8 @@ public class TaskController extends GenericControllerImpl<Task, TaskService> {
         }
 
 
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.task.confirm.success", module.getSecretNote(), TtNotice.Success)));
-        return Referer.redirect(_PANEL_URL + "/confirm/" + taskViewModel.getModuleId(), request);
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.task.confirm.success", module.getSecretNote(), TtNotice.Success)));
+        return Referer.redirect(_PANEL_URL + "/confirm/" + taskViewModel.getModuleId(), TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success, notice2s);
 
     }
 

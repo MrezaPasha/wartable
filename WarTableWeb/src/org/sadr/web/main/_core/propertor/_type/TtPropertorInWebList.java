@@ -26,6 +26,7 @@ public enum TtPropertorInWebList {
     UserAttemptSigninBlockTime("N.propertor.userAttempt.signin.blockTime", 180, TtPropertorType.Integer, TtPropertorInWebSection.UserAttempt, false), ///
     UserAttemptSigninAttemptMax("N.propertor.userAttempt.signin.attempt.max", 2, TtPropertorType.Integer, TtPropertorInWebSection.UserAttempt, false), ///
     UserAttemptSigninBlockMax("N.propertor.userAttempt.signin.block.max", 5, TtPropertorType.Integer, TtPropertorInWebSection.UserAttempt, false), ///
+    UserAttemptSigninBlockDuring("N.propertor.userAttempt.signin.block.during", 120, TtPropertorType.Integer, TtPropertorInWebSection.UserAttempt, false), ///
     ///==================== user password policy
     UserPasswordPeriodToChange("N.propertor.user.password.period.to.change", 90, TtPropertorType.Integer, TtPropertorInWebSection.UserPasswordPolicy, false), ///
     UserPasswordLastPassNotToBeSelected("N.propertor.user.password.last.pass.not.to.be.selected", 2, TtPropertorType.Integer, TtPropertorInWebSection.UserPasswordPolicy, false), ///

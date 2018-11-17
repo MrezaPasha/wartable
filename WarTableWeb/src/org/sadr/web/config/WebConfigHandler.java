@@ -5,8 +5,6 @@ import org.sadr._core.utils.OutLog;
 import org.sadr.web.main.CoreConfig;
 import org.sadr.web.main._core.develop.DevelopConfig;
 import org.sadr.web.main._core.propertor.*;
-import org.sadr.web.main._core.propertor._type.TtPropertorInBootList;
-import org.sadr.web.main._core.propertor._type.TtPropertorInBoot_DeployMode;
 import org.sadr.web.main._core.setting.SettingConfig;
 import org.sadr.web.main._core.setting.SettingController;
 import org.sadr.web.main._core.tools.authorizer.AuthorizerAspectConfig;
@@ -25,8 +23,6 @@ import org.sadr.web.main.admin.user.uuid.UserUuid;
 import org.sadr.web.main.admin.user.uuid.UserUuidConfig;
 import org.sadr.web.main.archive.directory.Directory;
 import org.sadr.web.main.archive.directory.DirectoryConfig;
-import org.sadr.web.main.archive.file.download.FileDownload;
-import org.sadr.web.main.archive.file.download.FileDownloadConfig;
 import org.sadr.web.main.archive.file.file.File;
 import org.sadr.web.main.archive.file.file.FileConfig;
 import org.sadr.web.main.note.note.Note;
@@ -39,14 +35,14 @@ import org.sadr.web.main.system.irror.Irror;
 import org.sadr.web.main.system.irror.IrrorConfig;
 import org.sadr.web.main.system.log.attempt.UserAttempt;
 import org.sadr.web.main.system.log.attempt.UserAttemptConfig;
-import org.sadr.web.main.system.log.daily.DailyLog;
-import org.sadr.web.main.system.log.daily.DailyLogConfig;
 import org.sadr.web.main.system.log.general.Log;
 import org.sadr.web.main.system.log.general.LogConfig;
 import org.sadr.web.main.system.log.remote.RemoteLog;
 import org.sadr.web.main.system.log.remote.RemoteLogConfig;
 import org.sadr.web.main.system.log.signin.SigninLog;
 import org.sadr.web.main.system.log.signin.SigninLogConfig;
+import org.sadr.web.main.system.log.validation.ValidationLog;
+import org.sadr.web.main.system.log.validation.ValidationLogConfig;
 import org.sadr.web.main.system.model.Model;
 import org.sadr.web.main.system.model.ModelConfig;
 import org.sadr.web.main.system.module.Module;
@@ -62,6 +58,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 /**
  * @author MSD
@@ -96,22 +93,11 @@ public class WebConfigHandler {
     private static String[] databaseParamLog;
 
     public static void setDatabaseParamsRest(Environment env) {
-        String dm = PropertorInBoot.getInstance().getProperty(TtPropertorInBootList.DeployMode);
-        if (TtPropertorInBoot_DeployMode.ServerReal.getTitle().equals(dm)) {
-            databaseParamRest = new String[]{
-                    Cryptor.decrypt(env.getProperty("db.rest.server.url")) + Cryptor.decrypt(env.getProperty("db.rest.server.name")),
-                    Cryptor.decrypt(env.getProperty("db.rest.server.username")),
-                    Cryptor.decrypt(env.getProperty("db.rest.server.password")),
-                    Cryptor.decrypt(env.getProperty("db.rest.server.name"))};
-        } else {
-            OutLog.pl(env.getProperty("db.rest.local.name"));
             databaseParamRest = new String[]{
                     Cryptor.decrypt(env.getProperty("db.rest.local.url")) + env.getProperty("db.rest.local.name"),
                     Cryptor.decrypt(env.getProperty("db.rest.local.username")),
                     Cryptor.decrypt(env.getProperty("db.rest.local.password")),
                     env.getProperty("db.rest.local.name")};
-            OutLog.pl(Arrays.toString(databaseParamRest));
-        }
     }
 
     public static String[] getDatabaseParamRest() {
@@ -119,21 +105,11 @@ public class WebConfigHandler {
     }
 
     public static void setDatabaseParamsLog(Environment env) {
-        String dm = PropertorInBoot.getInstance().getProperty(TtPropertorInBootList.DeployMode);
-        if (TtPropertorInBoot_DeployMode.ServerReal.getTitle().equals(dm)) {
-            databaseParamLog = new String[]{
-                    Cryptor.decrypt(env.getProperty("db.log.server.url")) + Cryptor.decrypt(env.getProperty("db.log.server.name")),
-                    Cryptor.decrypt(env.getProperty("db.log.server.username")),
-                    Cryptor.decrypt(env.getProperty("db.log.server.password")),
-                    Cryptor.decrypt(env.getProperty("db.log.server.name"))};
-        } else {
-            OutLog.pl(env.getProperty("db.log.local.name"));
             databaseParamLog = new String[]{
                     Cryptor.decrypt(env.getProperty("db.log.local.url")) + env.getProperty("db.log.local.name"),
                     Cryptor.decrypt(env.getProperty("db.log.local.username")),
                     Cryptor.decrypt(env.getProperty("db.log.local.password")),
                     env.getProperty("db.log.local.name")};
-        }
     }
 
     public static String[] getDatabaseParamLog() {
@@ -190,12 +166,11 @@ public class WebConfigHandler {
         addModelClassRest(UserConfirm.class);
         //
         addModelClassRest(Log.class);
-        addModelClassRest(DailyLog.class);
         addModelClassRest(SigninLog.class);
+        addModelClassRest(ValidationLog.class);
 
         //============================  archive
         addModelClassRest(File.class);
-        addModelClassRest(FileDownload.class);
         addModelClassRest(Directory.class);
 
         //============================  note
@@ -282,9 +257,9 @@ public class WebConfigHandler {
         addConfigClass(UserPorterConfig.class);
         addConfigClass(UserConfirmConfig.class);
         addConfigClass(LogConfig.class);
-        addConfigClass(DailyLogConfig.class);
         addConfigClass(SigninLogConfig.class);
         addConfigClass(RemoteLogConfig.class);
+        addConfigClass(ValidationLogConfig.class);
         //
         addConfigClass(AuthorizerAspectConfig.class);
         addConfigClass(SchedulerConfig.class);
@@ -295,7 +270,6 @@ public class WebConfigHandler {
 
         //============================  archive
         addConfigClass(FileConfig.class);
-        addConfigClass(FileDownloadConfig.class);
         addConfigClass(DirectoryConfig.class);
 
         //============================  note
@@ -309,7 +283,6 @@ public class WebConfigHandler {
 
     //=========================################===========================// Load Propertor
     public static void loadPropertors() {
-        PropertorInControl.getInstance().load();
         PropertorInWeb.getInstance().load();
         PropertorInBackup.getInstance().load();
         PropertorInLog.getInstance().load();
@@ -320,11 +293,7 @@ public class WebConfigHandler {
         SettingController ic;
         ic = webApplicationContext.getBean(SettingController.class);
         boolean isInitEmergency;
-        try {
-            isInitEmergency = PropertorInBoot.getInstance().isOnProperty(TtPropertorInBootList.InitEmergency);
-        } catch (Exception e) {
             isInitEmergency = false;
-        }
         if (ic != null) {
             ic.initCorePrime(isInitEmergency);
         }

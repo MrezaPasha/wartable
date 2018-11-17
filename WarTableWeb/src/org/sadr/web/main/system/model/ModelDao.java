@@ -7,7 +7,4 @@ import org.sadr._core.meta.generic.GenericDao;
  */
 public interface ModelDao extends GenericDao<Model> {
 
-    public Model findByClassName(String className);
-
-    public Model findByPackageName(String packageName);
 }

@@ -62,6 +62,26 @@
 
 }
 
+.panel-dashboard .unsuccessful-login .signin-log {
+    background-color: rgba(255, 155, 100, 0.69);
+    padding: 10px;
+}
+
+.panel-dashboard .successful-login .signin-log {
+    background-color: rgba(255, 255, 255, 0.69);
+    padding: 10px;
+}
+
+.panel-dashboard .unsuccessful-login .signin-count {
+    background-color: rgba(235, 7, 7, 0.69);
+    padding: 7px;
+    margin-top: 10px;
+    margin-bottom: 2px;
+    text-align: center;
+    font-weight: bold;
+    color: #fff900;
+}
+
 .panel-dashboard .signin-log {
     background-color: rgba(255, 255, 255, 0.69);
     padding: 10px;
@@ -73,7 +93,18 @@
     margin: 0px;
 }
 
-.panel-dashboard .signin-log ul > li {
+.panel-dashboard .unsuccessful-login .signin-log ul > li {
+    padding: 1px 5px;
+    border-bottom: #666060 solid 1px;
+    font-size: 11px;
+}
+
+.panel-dashboard .unsuccessful-login .signin-box {
+    height: 400px;
+    overflow-y: auto;
+}
+
+.panel-dashboard .successful-login .signin-log ul > li {
     padding: 5px;
     border-bottom: white solid 1px;
 }

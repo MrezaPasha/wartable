@@ -4,24 +4,24 @@ import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GB;
 import org.sadr._core.meta.generic.GenericControllerImpl;
 import org.sadr._core.meta.generic.JB;
-import org.sadr.web.main._core._type.TtTaskAccessLevel;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.meta.annotation.OverChangePassword;
 import org.sadr.web.main._core.meta.annotation.TaskAccessLevel;
+import org.sadr.web.main._core.utils.Notice2;
+import org.sadr.web.main._core.utils.Referer;
+import org.sadr.web.main._core.utils._type.TtNotice;
 import org.sadr.web.main.admin._type.TtUserLevel;
 import org.sadr.web.main.admin.user.user.User;
-import org.sadr.web.main.system._type.TtHttpErrorCode___;
-import org.sadr.web.main.system._type.TtIrrorLevel;
-import org.sadr.web.main.system._type.TtIrrorPlace;
+import org.sadr.web.main.system._type.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -82,17 +82,6 @@ public class IrrorController extends GenericControllerImpl<Irror, IrrorService> 
     }
 
     /////////////////////////////////////////////////// PANEL
-    @TaskAccessLevel(TtTaskAccessLevel.Free4Users)
-    @PersianName("آزمایش صفحه خطا")
-    @RequestMapping(value = _PANEL_URL + "/{code}")
-    public ModelAndView pServletErrorHandler(@PathVariable("code") String code
-    ) {
-        TtHttpErrorCode___ eCode = TtHttpErrorCode___.getByKey(code);
-        if (eCode == null) {
-            return TtHttpErrorCode___.NotFound_404.___getPanelDisModel();
-        }
-        return eCode.___getPanelDisModel();
-    }
 
     @PersianName("لیست خطاها")
     @RequestMapping(value = _PANEL_URL + "/list")
@@ -108,16 +97,14 @@ public class IrrorController extends GenericControllerImpl<Irror, IrrorService> 
                 GB.col(Irror.LEVEL),
                 GB.col(Irror.PLACE)
         );
-        return TtTile___.p_e_list.___getDisModel();
+        return TtTile___.p_e_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
     }
 
     @RequestMapping(value = _PANEL_URL + "/list", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<String> pErrorList(
             @RequestParam(value = "ap", required = false) String ajaxParam,
-            HttpServletRequest request,
-            HttpSession session,
-            HttpServletResponse response) {
+            HttpServletRequest request) {
         try {
             GB gb = GB.init(Irror.class)
                     .set(
@@ -165,31 +152,18 @@ public class IrrorController extends GenericControllerImpl<Irror, IrrorService> 
     @PersianName("نمایش جزئیات خطا")
     @RequestMapping(value = _PANEL_URL + "/show/{id}")
     public ModelAndView pErrorShow(Model model,
-                                   @PathVariable("id") long id
-    ) {
+                                   @PathVariable("id") long id,
+                                   RedirectAttributes redirectAttributes) {
         Irror i = this.service.findById(id, Irror._USER);
         if (i == null) {
-            return TtHttpErrorCode___.NotFound_404.___getPanelDisModel();
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.irror.not.found", TtNotice.Danger)));
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Take_Report, TtTaskActionStatus.Failure, notice2s);
         }
         i.addVisitCount();
         i.setIsVisited(true);
         this.service.update(i);
         model.addAttribute("irror", i);
-        return TtTile___.p_e_show.___getDisModel().addObject("pageTitle", "irror.c.pErrorShow");
+        return TtTile___.p_e_show.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success).addObject("pageTitle", "irror.c.pErrorShow");
     }
-
     //////////////////////////////////
-    @TaskAccessLevel(TtTaskAccessLevel.Free4Gusts)
-    @PersianName("آزمایش صفحه خطا")
-    @RequestMapping(value = _FRONT_URL + "/{code}")
-    public ModelAndView fServletErrorHandler(@PathVariable("code") String code
-    ) {
-        TtHttpErrorCode___ eCode = TtHttpErrorCode___.getByKey(code);
-        if (eCode == null) {
-            return TtHttpErrorCode___.NotFound_404.___getFrontDisModel()
-                    .addObject("pageTitle", "irror.c.fServletErrorHandler");
-        }
-        return eCode.___getFrontDisModel().addObject("pageTitle", "irror.c.fServletErrorHandler");
-    }
-
 }

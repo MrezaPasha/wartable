@@ -4,7 +4,7 @@
 <li data-menu-id="|p_dashboard|p_user_changeYourPass|p_user_yourEdit|" class="right-menu-visible">
     <a href="${cp}/panel">
         <i class="clip-home-3"></i>
-        <span class="title"><spring:message code="rightmenu.mainpage"/></span>
+        <span class="title"><spring:message code="rightmenu.dashboard"/></span>
         <span class="selected"></span>
     </a>
 </li>

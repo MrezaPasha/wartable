@@ -1,6 +1,7 @@
 package org.sadr.web.main.system.log.signin;
 
 import org.sadr.web.config.Config;
+import org.sadr.web.main.system.irror.IrrorConfig;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -26,6 +27,7 @@ public class SigninLogConfig extends Config {
     public SigninLogController signinLogController() {
         SigninLogController uc = new SigninLogController();
         uc.setService(signinLogServiceImp());
+        uc.setIrrorService(new IrrorConfig().irrorServiceImp());
         return uc;
     }
 }

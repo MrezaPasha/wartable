@@ -1,5 +1,6 @@
 package org.sadr._core.meta.generic;
 
+import org.hibernate.validator.constraints.SafeHtml;
 import org.sadr._core._type.*;
 import org.sadr._core.meta.annotation.ExporterMode;
 import org.sadr._core.meta.annotation.PersianName;
@@ -35,10 +36,12 @@ public class GenericDataModel<T extends Serializable> implements Serializable {
     @PersianName("شناسه")
     private long id;
 
+    @SafeHtml
     @Size(max = 30)
     @PersianName("زمان ثبت")
     private String createDateTime;
 
+    @SafeHtml
     @Size(max = 30)
     @PersianName("زمان آخرین ویرایش")
     private String modifyDateTime;

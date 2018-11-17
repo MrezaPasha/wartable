@@ -85,12 +85,12 @@
         </c:otherwise>
     </c:choose>
 </div>
-<script src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js?r=${rl2}"></script>
-<script src="${cp}/resources/js/form-validation.js?r=${rl2}"></script>
+<script src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="${cp}/resources/js/form-validation.js"></script>
 
-<script src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js?r=${rl2}"></script>
-<script src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js?r=${rl2}"></script>
-<script src="${cp}/resources-p/plugins/select2/select2.min.js?r=${rl2}"></script>
+<script src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js"></script>
+<script src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js"></script>
+<script src="${cp}/resources-p/plugins/select2/select2.min.js"></script>
 <script>
     jQuery(document).ready(function () {
         CustomJs.initSelect2();;

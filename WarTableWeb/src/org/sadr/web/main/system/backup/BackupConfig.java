@@ -31,7 +31,6 @@ public class BackupConfig extends Config {
         BackupController uc = new BackupController();
         uc.setService(backupServiceImp());
         uc.setIrrorService(new IrrorConfig().irrorServiceImp());
-        uc.setDirectoryService(new DirectoryConfig().directoryServiceImp());
         uc.setFileService(new FileConfig().fileServiceImp());
         return uc;
     }

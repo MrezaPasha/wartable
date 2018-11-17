@@ -4,6 +4,8 @@ import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GenericControllerImpl;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.meta.annotation.SuperAdminTask;
+import org.sadr.web.main.system._type.TtTaskActionStatus;
+import org.sadr.web.main.system._type.TtTaskActionSubType;
 import org.sadr.web.main.system.task.Task;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,7 +53,7 @@ public class ModuleController extends GenericControllerImpl<Module, ModuleServic
             }
         }
         model.addAttribute("mlist", newList);
-        return TtTile___.p_sys_module_listConfirm.___getDisModel();
+        return TtTile___.p_sys_module_listConfirm.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
     }
 
 

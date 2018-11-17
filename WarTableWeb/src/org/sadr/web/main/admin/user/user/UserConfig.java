@@ -2,7 +2,6 @@ package org.sadr.web.main.admin.user.user;
 
 import org.sadr.web.main.admin.user.confirm.UserConfirmConfig;
 import org.sadr.web.main.admin.user.group.UserGroupConfig;
-import org.sadr.web.main.admin.user.porter.UserPorterConfig;
 import org.sadr.web.main.admin.user.uuid.UserUuidConfig;
 import org.sadr.web.main.system.irror.IrrorConfig;
 import org.sadr.web.main.system.log.attempt.UserAttemptConfig;

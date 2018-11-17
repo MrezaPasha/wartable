@@ -24,13 +24,15 @@
         <div class="tab-content">
             <form id="form" accept-charset="UTF-8" action="${action}" method="POST">
                 <form:hidden id="user_id" path="user.id"/>
-                <c:if test="${user.isLogManager}">
-                    <c:set var="dis" value="true"/>
-                </c:if>
+
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="form-group">
                             <c:set var="varName" value="user.username"/>
+                            <c:if test="${user.isLogManager}">
+                                <c:set var="dis" value="true"/>
+                                <form:hidden path="${varName}"/>
+                            </c:if>
                             <form:label path="${varName}" cssClass="control-label">
                                 <spring:message code="${varName}"/>
                                 <span class="symbol required"></span>
@@ -82,11 +84,11 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources/js/form-validation.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js?r=${rl2}"></script>
+<script type="text/javascript" src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
+<script type="text/javascript" src="${cp}/resources/js/form-validation.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js"></script>
 <script>
     jQuery(document).ready(function () {
         CustomJs.initSelect2();

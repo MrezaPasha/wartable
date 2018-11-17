@@ -22,7 +22,9 @@
                         </label>
                         <div class="col-sm-8">
                             <%--<input value="${username}" class="form-control" name="username" id="username" autofocus="autofocus" autocomplete="off" placeholder="<spring:message code='user.signin.enter.username'/>"/>--%>
-                            <input value="admin" class="form-control" name="username" id="username" autofocus="autofocus" autocomplete="off" placeholder="<spring:message code='user.signin.enter.username'/>"/>
+                            <input value="admin" class="form-control" name="username" id="username" autofocus="autofocus"
+                                   placeholder="<spring:message code='user.signin.enter.username'/>"
+                                   autocomplete="off" readonly onfocus="this.removeAttribute('readonly');"/>
                             <i class="fa fa-user form-control-feedback"></i>
                             <span class="symbol required"></span>
                         </div>
@@ -37,7 +39,9 @@
                         </label>
                         <div class="col-sm-8">
                             <%--<input value="${password}" class="form-control password-format" type="password" name="password" autocomplete="off" placeholder="<spring:message code='user.signin.enter.password'/>"/>--%>
-                            <input value="admin" class="form-control password-format" type="password" name="password" autocomplete="off" placeholder="<spring:message code='user.signin.enter.password'/>"/>
+                            <input value="admin" class="form-control password-format" type="password" name="password"
+                                   placeholder="<spring:message code='user.signin.enter.password'/>"
+                                   autocomplete="off" readonly onfocus="this.removeAttribute('readonly');"/>
                             <i class="fa fa-lock form-control-feedback"></i>
                             <span class="symbol required"></span>
                         </div>
@@ -87,8 +91,8 @@
     </div>
 </div>
 
-<script src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js?r=${rl2}"></script>
-<script src="${cp}/resources/js/form-validation.js?r=${rl2}"></script>
+<script src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="${cp}/resources/js/form-validation.js"></script>
 <script>
     jQuery(document).ready(function () {
         FormValidator.init();

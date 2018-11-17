@@ -3,6 +3,7 @@ package org.sadr.web.main.admin.user.user;
 import com.captcha.botdetect.web.servlet.SimpleCaptcha;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.sadr._core._type.TtCompareResult;
 import org.sadr._core._type.TtDataType;
 import org.sadr._core._type.TtEntityState;
 import org.sadr._core._type.TtRestrictionOperator;
@@ -180,6 +181,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Error, notice2s, request, redirectAttributes, fuser);
         }
 
+
         User dbu;
         // =========== username
         dbu = service.findBy(Restrictions.eq(User.USERNAME, fuser.getUsername()));
@@ -195,6 +197,49 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                 Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.code.registered", fuser.getSecretNote(), TtNotice.Warning, dbu.getFullName())));
                 return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
             }
+        }
+
+        /////////////////
+        if (fuser.getAccessLimitYearlyStart() != null && !fuser.getAccessLimitYearlyStart().isEmpty() && !Validator.persianDateTime(fuser.getAccessLimitYearlyStart())) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitYearlyStart.not.valid", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
+        if (fuser.getAccessLimitYearlyEnd() != null && !fuser.getAccessLimitYearlyEnd().isEmpty() && !Validator.persianDateTime(fuser.getAccessLimitYearlyEnd())) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitYearlyEnd.not.valid", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
+        if (fuser.getAccessLimitYearlyStart() != null && !fuser.getAccessLimitYearlyStart().isEmpty() &&
+                fuser.getAccessLimitYearlyEnd() != null && !fuser.getAccessLimitYearlyEnd().isEmpty() &&
+                ParsCalendar.getInstance().compareDateTime(fuser.getAccessLimitYearlyStart(), fuser.getAccessLimitYearlyEnd()) == TtCompareResult.FirstIsBigger) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitYearly.first.is.bigger", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
+
+        /////////////////////
+        if (fuser.getAccessLimitMonthlyStart() > fuser.getAccessLimitMonthlyEnd()) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitMonthly.first.is.bigger", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
+        /////////////////////
+        if (fuser.getAccessLimitDailyStart() > fuser.getAccessLimitDailyEnd()) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitDaily.first.is.bigger", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
+
+        //////////////////////
+        if (fuser.getAccessLimitTimelyStart() != null && !fuser.getAccessLimitTimelyStart().isEmpty() && !Validator.persianTime(fuser.getAccessLimitTimelyStart())) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitTimelyStart.not.valid", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
+        if (fuser.getAccessLimitTimelyEnd() != null && !fuser.getAccessLimitTimelyEnd().isEmpty() && !Validator.persianTime(fuser.getAccessLimitTimelyEnd())) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitTimelyEnd.not.valid", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
+        if (fuser.getAccessLimitTimelyStart() != null && !fuser.getAccessLimitTimelyStart().isEmpty() &&
+                fuser.getAccessLimitTimelyEnd() != null && !fuser.getAccessLimitTimelyEnd().isEmpty() &&
+                ParsCalendar.getInstance().compareTime(fuser.getAccessLimitTimelyStart(), fuser.getAccessLimitTimelyEnd()) == TtCompareResult.FirstIsBigger) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitTimely.first.is.bigger", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
         }
 
         fuser.setPassword(CodeGenerator.password(TtPasswordType.Mix, 20));
@@ -278,6 +323,49 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                 Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.code.registered", fuser.getSecretNote(), TtNotice.Warning, dbuser.getFullName())));
                 return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
             }
+        }
+
+        /////////////////
+        if (fuser.getAccessLimitYearlyStart() != null && !fuser.getAccessLimitYearlyStart().isEmpty() && !Validator.persianDateTime(fuser.getAccessLimitYearlyStart())) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitYearlyStart.not.valid", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
+        if (fuser.getAccessLimitYearlyEnd() != null && !fuser.getAccessLimitYearlyEnd().isEmpty() && !Validator.persianDateTime(fuser.getAccessLimitYearlyEnd())) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitYearlyEnd.not.valid", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
+        if (fuser.getAccessLimitYearlyStart() != null && !fuser.getAccessLimitYearlyStart().isEmpty() &&
+                fuser.getAccessLimitYearlyEnd() != null && !fuser.getAccessLimitYearlyEnd().isEmpty() &&
+                ParsCalendar.getInstance().compareDateTime(fuser.getAccessLimitYearlyStart(), fuser.getAccessLimitYearlyEnd()) == TtCompareResult.FirstIsBigger) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitYearly.first.is.bigger", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
+
+        /////////////////////
+        if (fuser.getAccessLimitMonthlyStart() > fuser.getAccessLimitMonthlyEnd()) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitMonthly.first.is.bigger", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
+        /////////////////////
+        if (fuser.getAccessLimitDailyStart() > fuser.getAccessLimitDailyEnd()) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitDaily.first.is.bigger", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
+
+        //////////////////////
+        if (fuser.getAccessLimitTimelyStart() != null && !fuser.getAccessLimitTimelyStart().isEmpty() && !Validator.persianTime(fuser.getAccessLimitTimelyStart())) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitTimelyStart.not.valid", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
+        if (fuser.getAccessLimitTimelyEnd() != null && !fuser.getAccessLimitTimelyEnd().isEmpty() && !Validator.persianTime(fuser.getAccessLimitTimelyEnd())) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitTimelyEnd.not.valid", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
+        if (fuser.getAccessLimitTimelyStart() != null && !fuser.getAccessLimitTimelyStart().isEmpty() &&
+                fuser.getAccessLimitTimelyEnd() != null && !fuser.getAccessLimitTimelyEnd().isEmpty() &&
+                ParsCalendar.getInstance().compareTime(fuser.getAccessLimitTimelyStart(), fuser.getAccessLimitTimelyEnd()) == TtCompareResult.FirstIsBigger) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitTimely.first.is.bigger", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
         }
 
 
@@ -366,7 +454,8 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             HttpSession session,
             RedirectAttributes redirectAttributes) {
 
-        if (userBindingResult.hasErrors()) {
+        if (userBindingResult.hasErrors()
+                && !userBindingResult.getFieldError().getField().equals("ipRangeType")) {
             return Referer.redirectBindingError(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Error, request, redirectAttributes, userBindingResult, fuser);
         }
 
@@ -395,44 +484,44 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     }
 
     //=========================== password
-    private ModelAndView changePassRedirect(User fuser, RedirectAttributes redirectAttributes, boolean isYour) {
-        return Referer.redirectObjects(
-                isYour ? (_PANEL_URL + "/your-pass") : (_PANEL_URL + "/user-pass/" + fuser.getIdi())
-                , redirectAttributes,
+    private ModelAndView changePassRedirect(User fuser, Notice2[] notice2s, RedirectAttributes redirectAttributes, boolean isYour) {
+        return Referer.redirectObjects(TtTaskActionSubType.Change_Password, TtTaskActionStatus.Failure, notice2s,
+                isYour ? (_PANEL_URL + "/your-pass") : (_PANEL_URL + "/user-pass/" + fuser.getIdi()), redirectAttributes,
                 fuser);
 
     }
 
     private ModelAndView changePass(User fuser, String newPass, String rePass, HttpServletRequest request, RedirectAttributes redirectAttributes, boolean isYour) {
         if (fuser == null || fuser.getIdi() == 0) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.password.change.error")));
-            return changePassRedirect(fuser, redirectAttributes, isYour);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.password.change.error")));
+            return changePassRedirect(fuser, notice2s, redirectAttributes, isYour);
         }
 
         if (!newPass.equals(rePass)) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.repassword.not.equal", TtNotice.Warning)));
-            return changePassRedirect(fuser, redirectAttributes, isYour);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.repassword.not.equal", TtNotice.Warning)));
+            return changePassRedirect(fuser, notice2s, redirectAttributes, isYour);
         }
 
 
         User dbu = service.findById(fuser.getId());
         if (dbu == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found", fuser.getSecretNote(), TtNotice.Danger)));
-            return Referer.redirectObjects("/panel/user/your-pass", redirectAttributes, fuser);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found", fuser.getSecretNote(), TtNotice.Danger)));
+            return changePassRedirect(fuser, notice2s, redirectAttributes, isYour);
         }
         int prop;
         boolean boProp, checked;
         checked = false;
+        Notice2[] notice2s = null;
         //-------- min length
         prop = PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.UserPasswordMinLength);
         if (newPass.length() < prop) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.password.min.length.violation", fuser.getSecretNote(), TtNotice.Warning, prop + "")));
+            notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.password.min.length.violation", fuser.getSecretNote(), TtNotice.Warning, prop + "")));
             checked = true;
         }
         //-------- max length
         prop = PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.UserPasswordMaxLength);
         if (newPass.length() > prop) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.password.max.length.violation", fuser.getSecretNote(), TtNotice.Warning, prop + "")));
+            notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.password.max.length.violation", fuser.getSecretNote(), TtNotice.Warning, prop + "")));
             checked = true;
         }
         //-------- Big char
@@ -440,7 +529,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         if (boProp) {
             prop = PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.UserPasswordCountBigCharacter);
             if (!newPass.matches("^(.*?[A-Z]){" + prop + ",}.*$")) {
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.password.at.least.big.char", fuser.getSecretNote(), TtNotice.Warning, prop + "")));
+                notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.password.at.least.big.char", fuser.getSecretNote(), TtNotice.Warning, prop + "")));
                 checked = true;
             }
         }
@@ -449,7 +538,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         if (boProp) {
             prop = PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.UserPasswordCountSmallCharacter);
             if (!newPass.matches("^(.*?[a-z]){" + prop + ",}.*$")) {
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.password.at.least.small.char", fuser.getSecretNote(), TtNotice.Warning, prop + "")));
+                notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.password.at.least.small.char", fuser.getSecretNote(), TtNotice.Warning, prop + "")));
                 checked = true;
             }
         }
@@ -458,7 +547,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         if (boProp) {
             prop = PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.UserPasswordCountNumber);
             if (!newPass.matches("^(.*?[0-9]){" + prop + ",}.*$")) {
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.password.at.least.number.char", fuser.getSecretNote(), TtNotice.Warning, prop + "")));
+                notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.password.at.least.number.char", fuser.getSecretNote(), TtNotice.Warning, prop + "")));
                 checked = true;
             }
         }
@@ -467,20 +556,20 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         if (boProp) {
             prop = PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.UserPasswordCountSpecific);
             if (!newPass.matches("^(.*?[!@#$%^&*-+_]){" + prop + ",}.*$")) {
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.password.at.least.specific.char", fuser.getSecretNote(), TtNotice.Warning, prop + "")));
+                notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.password.at.least.specific.char", fuser.getSecretNote(), TtNotice.Warning, prop + "")));
                 checked = true;
             }
         }
 
         if (checked) {
-            return changePassRedirect(fuser, redirectAttributes, isYour);
+            return changePassRedirect(fuser, notice2s, redirectAttributes, isYour);
         }
 
         //-------- duplicate password
         prop = PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.UserPasswordLastPassNotToBeSelected);
         if (dbu.isPasswordInHistory(Digester.digestSHA1(newPass), prop)) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.password.not.be.equal.to.last", fuser.getSecretNote(), TtNotice.Warning, prop + "")));
-            return changePassRedirect(fuser, redirectAttributes, isYour);
+            notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.password.not.be.equal.to.last", fuser.getSecretNote(), TtNotice.Warning, prop + "")));
+            return changePassRedirect(fuser, notice2s, redirectAttributes, isYour);
         }
 
         dbu.setPassword(Digester.digestSHA1(newPass));
@@ -492,15 +581,15 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             dbu.setIsNeedToChangePassword(false);
             this.service.update(dbu);
             SessionListener.invalidate(dbu.getId());
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.password.your.change.success", fuser.getSecretNote(), TtNotice.Success)));
-            return Referer.redirect("/signin");
+            notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.password.your.change.success", fuser.getSecretNote(), TtNotice.Success)));
+            return Referer.redirect("/signin", TtTaskActionSubType.Change_Password, TtTaskActionStatus.Success, notice2s);
         } else {
             dbu.setPasswordDateTime(null);
             dbu.setIsNeedToChangePassword(true);
             this.service.update(dbu);
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.password.change.success", fuser.getSecretNote(), TtNotice.Success)));
+            notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.password.change.success", fuser.getSecretNote(), TtNotice.Success)));
             SessionListener.invalidate(dbu.getId());
-            return Referer.redirect(_PANEL_URL + "/edit/" + fuser.getIdi());
+            return Referer.redirect(_PANEL_URL + "/edit/" + fuser.getIdi(), TtTaskActionSubType.Change_Password, TtTaskActionStatus.Success, notice2s);
         }
     }
 
@@ -509,11 +598,11 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     public ModelAndView pChangeUserPassword(Model model, @PathVariable("uid") int uid, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         User dbuser = this.service.findById(uid);
         if (dbuser == null) {
-            Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + uid), TtNotice.Warning));
-            return Referer.redirect(_PANEL_URL + "/list", request);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + uid), TtNotice.Warning));
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Change_Password, TtTaskActionStatus.Failure, notice2s);
         }
         model.addAttribute("user", dbuser);
-        return TtTile___.p_user_changeUserPass.___getDisModel(_PANEL_URL + "/user-pass");
+        return TtTile___.p_user_changeUserPass.___getDisModel(_PANEL_URL + "/user-pass", TtTaskActionSubType.Change_Password, TtTaskActionStatus.Success);
     }
 
     @RequestMapping(value = _PANEL_URL + "/user-pass", method = RequestMethod.POST)
@@ -536,13 +625,12 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             @RequestParam(value = "signinNotice", required = false) String signinNotice,
             Model model,
             HttpSession session,
-            HttpServletRequest request,
             RedirectAttributes redirectAttributes) {
         User dbuser = (User) session.getAttribute("sUser");
         dbuser = this.service.findById(dbuser.getIdi());
         if (dbuser == null) {
-            Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.user.not.found", TtNotice.Warning));
-            return Referer.redirect(_PANEL_URL + "/list", request);
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.user.not.found", TtNotice.Warning));
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Change_Password, TtTaskActionStatus.Failure, notice2s);
         }
         model.addAttribute("user", dbuser);
         if (x != null) {
@@ -551,14 +639,13 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         if (signinNotice != null) {
             model.addAttribute("signinNotice", PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.SigninNotice).replaceAll("\r\n", "<br/>"));
         }
-        return TtTile___.p_user_changeYourPass.___getDisModel(_PANEL_URL + "/your-pass");
+        return TtTile___.p_user_changeYourPass.___getDisModel(_PANEL_URL + "/your-pass", TtTaskActionSubType.Change_Password, TtTaskActionStatus.Success);
     }
 
     @TaskAccessLevel(TtTaskAccessLevel.Free4Users)
     @OverChangePassword
     @RequestMapping(value = _PANEL_URL + "/your-pass", method = RequestMethod.POST)
-    public ModelAndView pChangeYourPassword(Model model,
-                                            @ModelAttribute("newPassword") String newPass,
+    public ModelAndView pChangeYourPassword(@ModelAttribute("newPassword") String newPass,
                                             @ModelAttribute("repassword") String rePass,
                                             @ModelAttribute("user") User fuser,
                                             BindingResult userBindingResult,
@@ -622,7 +709,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                 GB.col(User.PASSWORD_DATE_TIME),
                 GB.col(User.CREATE_DATE_TIME)
         );
-        return TtTile___.p_user_listInactive.___getDisModel();
+        return TtTile___.p_user_listInactive.___getDisModel(null, TtTaskActionStatus.Success);
     }
 
     @RequestMapping(value = _PANEL_URL + "/list/inactive", method = RequestMethod.POST)
@@ -718,7 +805,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
 //            ,
 //            GB.col(User.$BLOCKED_Y, GB.path(User.BLOCKED))
         );
-        return TtTile___.p_user_list.___getDisModel();
+        return TtTile___.p_user_list.___getDisModel(null, TtTaskActionStatus.Success);
     }
 
 
@@ -824,7 +911,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
 
         model.addAttribute("ulist", allBy);
 
-        return TtTile___.p_user_listOnline.___getDisModel();
+        return TtTile___.p_user_listOnline.___getDisModel(null, TtTaskActionStatus.Success);
     }
     //=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* DEACTIVATE & EXPIRE
 
@@ -844,7 +931,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
 
         Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.deactivate.success", TtNotice.Success)));
 
-        return Referer.redirect(_PANEL_URL + "/list/inactive");
+        return Referer.redirect(_PANEL_URL + "/list/inactive", null, TtTaskActionStatus.Success);
     }
 
     @PersianName("منقضی کردن نشست کاربر")
@@ -857,18 +944,21 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                         .set(
                                 User.GENDER, User.FIRST_NAME, User.LAST_NAME)
         );
+        Notice2[] notice2s;
         if (dbus == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + id))));
-            return Referer.redirect(_PANEL_URL + "/list/online");
+            notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + id))));
+            return Referer.redirect(_PANEL_URL + "/list/online", null, TtTaskActionStatus.Failure, notice2s);
         }
 
         if (SessionListener.invalidate(id)) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.expire.success", dbus.getSecretNote(), TtNotice.Success, dbus.getFullName())));
+            notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.expire.success", dbus.getSecretNote(), TtNotice.Success, dbus.getFullName())));
+            return Referer.redirect(_PANEL_URL + "/list/online", null, TtTaskActionStatus.Success, notice2s);
         } else {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.expire.failed", dbus.getSecretNote(), TtNotice.Danger, dbus.getFullName())));
+            notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.expire.failed", dbus.getSecretNote(), TtNotice.Danger, dbus.getFullName())));
+            return Referer.redirect(_PANEL_URL + "/list/online", null, TtTaskActionStatus.Failure, notice2s);
         }
 
-        return Referer.redirect(_PANEL_URL + "/list/online");
+
     }
 
     //=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* ACCESS
@@ -1001,7 +1091,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         model.addAttribute("user", us);
         model.addAttribute("moduleId", mid);
 
-        return TtTile___.p_user_access_assign.___getDisModel();
+        return TtTile___.p_user_access_assign.___getDisModel(TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Success);
     }
 
     @RequestMapping(value = _PANEL_URL + "/access", method = RequestMethod.POST)
@@ -1012,22 +1102,22 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                                 BindingResult userBindingResult,
                                 HttpSession session,
                                 final RedirectAttributes redirectAttributes) {
-        int mid = 0;
+        int mid;
         try {
             mid = Integer.valueOf(sid.trim());
         } catch (Exception e) {
             irrorService.submit(e, request, TtIrrorPlace.Controller, TtIrrorLevel.Warn);
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.not.found", JsonBuilder.toJson("moduleId", "" + sid), TtNotice.Warning)));
-            return new ModelAndView("redirect:/panel/user/list");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.not.found", JsonBuilder.toJson("moduleId", "" + sid), TtNotice.Warning)));
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Failure, notice2s);
         }
         if (u.getIdi() == 0) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.not.found", JsonBuilder.toJson("moduleId", "" + sid), TtNotice.Warning)));
-            return new ModelAndView("redirect:/panel/user/list");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.not.found", JsonBuilder.toJson("moduleId", "" + sid), TtNotice.Warning)));
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Failure, notice2s);
         } else {
             User dbU = service.findById(u.getId(), User._TASKS, User._TASKS + "." + Task._MODULE);
             if (dbU == null) {
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.not.found", JsonBuilder.toJson("moduleId", "" + sid), TtNotice.Warning)));
-                return new ModelAndView("redirect:/panel/user/list");
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.not.found", JsonBuilder.toJson("moduleId", "" + sid), TtNotice.Warning)));
+                return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Failure, notice2s);
             } else if (dbU.getIsLogManager()) {
                 Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.log.manager.not.allowed", TtNotice.Warning)));
                 return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Error, notice2s);
@@ -1047,9 +1137,8 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             this.service.update(dbU);
             SessionListener.invalidate(dbU.getId());
         }
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.success", u.getSecretNote(), TtNotice.Success)));
-        return new ModelAndView("redirect:/panel/user/access/" + u.getId() + "/" + mid);
-
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.access.success", u.getSecretNote(), TtNotice.Success)));
+        return Referer.redirect(_PANEL_URL + "/access/" + u.getId() + "/" + mid, TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Failure, notice2s);
     }
 
     //=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* User Re-Signin For Two Level Confirm
@@ -1094,17 +1183,17 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         }
         //-----------------------------------------------------------------------------
         if (userPass == null || userPass.isEmpty() || taskSignature == null || taskSignature.isEmpty()) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.reSignin.failed", TtNotice.Warning)));
-            return Referer.redirect(_PANEL_URL + "/");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.reSignin.failed", TtNotice.Warning)));
+            return Referer.redirect(_PANEL_URL + "/", TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure, notice2s);
         }
         User aUser = service.authenticateE(user.getUsername(), Digester.digestSHA1(userPass));
         if (aUser == null) {
             //=================================================== Rebuild User Attempt
-            this.userAttemptService.rebuildUerAttempt(request, response, uatt, TtUserAttemptType.ReSignin, uuid, user);
+            this.userAttemptService.rebuildUerAttempt(request, response, TtUserAttemptType.ReSignin, uuid, user);
             //------------------------------------------------------------------------
 
             Notice2.initModelAttr(model, Notice2.addNotices(new Notice2("N.user.reSignin.pass.wrong", user.getSecretNote(), TtNotice.Warning)));
-            return TtTile___.p_user_reSignin.___getDisModel("/panel/user/reSignin")
+            return TtTile___.p_user_reSignin.___getDisModel("/panel/user/reSignin", TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure)
                     .addObject("taskSignature", taskSignature)
                     .addObject("reSignUrl", reSignUrl);
         }
@@ -1136,7 +1225,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         }
         //------------------------------------------------------------------------
 
-        return Referer.redirect(reSignUrl);
+        return Referer.redirect(reSignUrl, TtTaskActionSubType.Success_Login, TtTaskActionStatus.Success);
     }
 
     //=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* OTHERS
@@ -1153,19 +1242,21 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         //----------- verify super admin
         User suser = (User) session.getAttribute("sUser");
         if (suser == null) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.all.validation.try.exceed")));
+
             return TtHttpErrorCode___.Unauthorized_401.___getFrontDisModel();
         }
         if (!suser.getIsSuperAdmin() && (dbus.getIsSuperAdmin() || dbus.getIsLogManager())) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.trash.impossible", dbus.getSecretNote(), TtNotice.Danger, dbus.getFullName())));
-            return new ModelAndView("redirect:/panel/user/list");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.trash.impossible", dbus.getSecretNote(), TtNotice.Danger, dbus.getFullName())));
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.delete_User, TtTaskActionStatus.Failure, notice2s);
         }
 
         dbus.setTasks(null);
         dbus.setEntityState(TtEntityState.Trash);
         this.service.update(dbus);
         SessionListener.invalidate(id);
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.trash.success", dbus.getSecretNote(), TtNotice.Success, dbus.getFullName())));
-        return new ModelAndView("redirect:/panel/user/list");
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.trash.success", dbus.getSecretNote(), TtNotice.Success, dbus.getFullName())));
+        return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.delete_User, TtTaskActionStatus.Success, notice2s);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -1185,9 +1276,10 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             HttpServletRequest request) {
         this.service.logout(request, response, session);
         SessionListener.invalidate(session.getId());
-        return Referer.redirect("/");
+        return Referer.redirect("/", TtTaskActionSubType.User_LoginLogout, TtTaskActionStatus.Success);
     }
 
+    @OverActiveTask
     @Front
     @TaskAccessLevel
     @OverDevelopingMode
@@ -1197,6 +1289,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                                 @RequestParam(value = "limit", required = false) String limit,
                                 @RequestParam(value = "inactive", required = false) String inactive,
                                 HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+
         if ((User) session.getAttribute("sUser") != null) {
             return new ModelAndView("redirect:/");
         }
@@ -1210,7 +1303,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         //====================================================== Attempt Status
         this.userAttemptService.attemptStatus(request, response, model, null, TtUserAttemptType.Signin);
         //---------------------------------------------------------------------
-        return TtTile___.f_user_signin.___getDisModel();
+        return TtTile___.f_user_signin.___getDisModel(TtTaskActionSubType.Success_Login, TtTaskActionStatus.Success);
     }
 
     @Front
@@ -1222,7 +1315,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                                 @RequestParam(value = "password", required = false) String password,
                                 @RequestParam(value = "force", required = false) String isFoceToSignin,
                                 @RequestParam(value = "rememberMe", required = false, defaultValue = "false") boolean rememberMe,
-                                @RequestParam(value = "captchaCode", required = false, defaultValue = "false") String captchaCode,
+                                @RequestParam(value = "captchaCode", required = false) String captchaCode,
                                 final RedirectAttributes redirectAttributes) {
 
         //================================================== Verification && Recaptcha
@@ -1231,16 +1324,16 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         UserAttempt uatt;
 
         User user = this.service.findByUsername(username);
-        if (user != null) {
+
+        uatt = this.userAttemptService.findBy(Restrictions.and(
+                Restrictions.eq(UserAttempt.COMPUTER_SIGNATURE, request.getRemoteAddr()),
+                Restrictions.isNull(UserAttempt._USER),
+                Restrictions.eq(UserAttempt.ATTEMPT_TYPE, TtUserAttemptType.Signin)));
+
+        if (uatt == null && user != null) {
             uatt = this.userAttemptService.findBy(Restrictions.and(
                     Restrictions.eq(UserAttempt._USER, user),
                     Restrictions.eq(UserAttempt.ATTEMPT_TYPE, TtUserAttemptType.Signin)));
-
-        } else {
-            uatt = this.userAttemptService.findBy(Restrictions.and(
-                    Restrictions.eq(UserAttempt.UUID, uuid),
-                    Restrictions.eq(UserAttempt.ATTEMPT_TYPE, TtUserAttemptType.Signin)));
-
         }
 
         switch (this.userAttemptService.attemptStatus(request, response, model, user, TtUserAttemptType.Signin, uatt, uuid)) {
@@ -1248,27 +1341,35 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                 return TtTile___.f_user_signin.___getDisModel();
             case UuidNotValid:
             case NeedRecaptcha:
+                if (captchaCode == null || captchaCode.isEmpty()) {
+                    //----------------------------
+                    Notice2.initModelAttr(model, Notice2.addNotices(new Notice2("N.user.are.you.robot", TtNotice.Warning)));
+                    return TtTile___.f_user_signin.___getDisModel(TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure);
+                }
                 SimpleCaptcha captcha = SimpleCaptcha.load(request, "exampleCaptcha");
-                boolean isHuman = captcha
+                boolean isHuman;
+
+                isHuman = captcha
                         .validate
                                 (captchaCode);
+
                 if (!isHuman) {
                     //----------------------------
                     Notice2.initModelAttr(model, Notice2.addNotices(new Notice2("N.user.are.you.robot", TtNotice.Warning)));
-                    return TtTile___.f_user_signin.___getDisModel();
+                    return TtTile___.f_user_signin.___getDisModel(TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure);
                 }
                 break;
         }
         //-----------------------------------------------------------------------------
         if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.failed", TtNotice.Warning)));
-            return Referer.redirect("/signin");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.failed", TtNotice.Warning)));
+            return Referer.redirect("/signin", TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure, notice2s);
         }
         user = service.authenticateE(username, Digester.digestSHA1(password));
         if (user == null) {
             user = service.findByUsername(username);
             //=================================================== Rebuild User Attempt
-            this.userAttemptService.rebuildUerAttempt(request, response, uatt, TtUserAttemptType.Signin, uuid, user);
+            this.userAttemptService.rebuildUerAttempt(request, response, TtUserAttemptType.Signin, uuid, user);
             //------------------------------------------------------------------------
 
             //=================================================== Signin Log
@@ -1277,8 +1378,8 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             }
             //------------------------------------------------------------------------
 
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.pass.wrong", JsonBuilder.toJson("pswd", password, "username", username), TtNotice.Warning)));
-            return Referer.redirect("/signin");
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.pass.wrong", JsonBuilder.toJson("pswd", password, "username", username), TtNotice.Warning)));
+            return Referer.redirect("/signin", TtTaskActionSubType.Success_Login, TtTaskActionStatus.Success, notice2s);
         }
 
         if (SessionListener.isUserInSession(user.getId())) {
@@ -1304,82 +1405,77 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             uatt.setCount(0);
             this.userAttemptService.update(uatt);
         }
+        if (uatt != null && uatt.getUser() == null) {
+            uatt = this.userAttemptService.findBy(Restrictions.and(
+                    Restrictions.eq(UserAttempt._USER, user),
+                    Restrictions.eq(UserAttempt.ATTEMPT_TYPE, TtUserAttemptType.Signin)));
+            if (uatt != null) {
+                uatt.refreshDateTime();
+                uatt.setCount(0);
+                this.userAttemptService.update(uatt);
+            }
+        }
+
+        if (user.getIpRangeType() != null) {
+            switch (user.getIpRangeType()) {
+                case FirstSignin:
+                    OutLog.pl("|" + user.getIpAddressFirstSignin() + "|");
+                    OutLog.pl("|" + request.getRemoteAddr() + "|");
+                    if (user.getIpAddressFirstSignin() != null
+                            && !user.getIpAddressFirstSignin().equals(request.getRemoteAddr())) {
+                        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.ip.is.not.allowed", user.getSecretNote(), TtNotice.Danger)));
+                        SessionListener.invalidate(user.getId());
+                        return Referer.redirect("/signin", TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure, notice2s);
+                    }
+                    break;
+                case One:
+                    if (user.getIpAddress() != request.getRemoteAddr()) {
+                        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.ip.is.not.allowed", user.getSecretNote(), TtNotice.Danger)));
+                        SessionListener.invalidate(user.getId());
+                        return Referer.redirect("/signin", TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure, notice2s);
+                    }
+                    break;
+                case All:
+                    break;
+                case Range:
+                    String ipp = request.getRemoteAddr();
+                    if (ipp != null
+                            && user.getIpAddressEnd() != null
+                            && user.getIpAddressStart() != null) {
+                        OutLog.pl(ipp.compareTo(user.getIpAddressStart()));
+                        OutLog.pl(ipp.compareTo(user.getIpAddressEnd()));
+                        if (ipp.compareTo(user.getIpAddressStart()) == -1
+                                || ipp.compareTo(user.getIpAddressEnd()) == 1) {
+                            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.ip.is.not.allowed", user.getSecretNote(), TtNotice.Danger)));
+                            SessionListener.invalidate(user.getId());
+                            return Referer.redirect("/signin", TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure, notice2s);
+                        }
+                    }
+                    break;
+            }
+        }
 
         //=================================================== Show Signin Log
+        List<SigninLog> signinLogList = new ArrayList<>();
         List<SigninLog> signinLogs = this.signinLogService.findAllBy(Restrictions.and(
-                Restrictions.eq(SigninLog._USER, user)), 5, Order.desc(SigninLog.LAST_DATE_TIME_G));
-        if (signinLogs != null && signinLogs.size() > 0) {
-            int cnt = 0;
-            if (signinLogs.get(0).getStatus() == TtSigninLogStatus.Failed) {
-                for (SigninLog s : signinLogs) {
-                    if (s.getStatus() == TtSigninLogStatus.Success) {
-                        break;
-                    }
-                    cnt++;
-                }
-            }
-            CacheStatic.setSigninLog(signinLogs.get(0));
-            CacheStatic.setSigninLogFailedCount(cnt);
+                Restrictions.eq(SigninLog._USER, user)), 20, Order.desc(SigninLog.LAST_DATE_TIME_G));
 
-            if (user.getIpRangeType() != null) {
-                switch (user.getIpRangeType()) {
-                    case FirstSignin:
-                        OutLog.pl("|" + user.getIpAddressFirstSignin() + "|");
-                        OutLog.pl("|" + signinLogs.get(0).getIpAddress() + "|");
-                        if (user.getIpAddressFirstSignin() != null
-                                && !user.getIpAddressFirstSignin().equals(signinLogs.get(0).getIpAddress())) {
-                            CacheStatic.setSigninMainIp(user.getIpAddressFirstSignin());
-                            CacheStatic.setSigninIsIpChanged(true);
-                        } else {
-                            CacheStatic.setSigninIsIpChanged(false);
-                        }
-                        break;
-                    case One:
-                        if (user.getIpAddress() != signinLogs.get(0).getIpAddress()) {
-                            CacheStatic.setSigninMainIp(user.getIpAddress());
-                            CacheStatic.setSigninIsIpChanged(true);
-                        } else {
-                            CacheStatic.setSigninIsIpChanged(false);
-                        }
-                        break;
-                    case All:
-                        CacheStatic.setSigninIsIpChanged(false);
-                        break;
-                    case Range:
-//                        long ipSt, ipEd, ip;
-//                        if (user.getIpAddressStart() != null) {
-//                            ipSt = Long.parseLong(user.getIpAddressStart().trim().replace(".", "").replace(":", ""));
-//                        } else {
-//                            ipSt = 0;
-//                        }
-//                        if (user.getIpAddressEnd() != null) {
-//                            ipEd = Long.parseLong(user.getIpAddressEnd().trim().replace(".", "").replace(":", ""));
-//                        } else {
-//                            ipEd = 0;
-//                        }
-//                        if (signinLogs.get(0).getIpAddress() != null) {
-//                            ip = Long.parseLong(signinLogs.get(0).getIpAddress().trim().replace(".", "").replace(":", ""));
-//                        } else {
-//                            ip = 0;
-//                        }
-//                        if (ip < ipSt || ip > ipEd) {
-                        String ipp = signinLogs.get(0).getIpAddress();
-                        if (ipp != null
-                                && user.getIpAddressEnd() != null
-                                && user.getIpAddressStart() != null) {
-                            OutLog.pl(ipp.compareTo(user.getIpAddressStart()));
-                            OutLog.pl(ipp.compareTo(user.getIpAddressEnd()));
-                            if (ipp.compareTo(user.getIpAddressStart()) == -1
-                                    || ipp.compareTo(user.getIpAddressEnd()) == 1) {
-                                CacheStatic.setSigninMainIp(user.getIpAddressStart() + " - " + user.getIpAddressEnd());
-                                CacheStatic.setSigninIsIpChanged(true);
-                            } else {
-                                CacheStatic.setSigninIsIpChanged(false);
-                            }
-                        }
-                        break;
+        if (signinLogs != null && signinLogs.size() > 0) {
+            for (SigninLog s : signinLogs) {
+                if (s.getStatus() == TtSigninLogStatus.Success) {
+                    signinLogList.add(s);
+                    break;
                 }
             }
+            for (SigninLog s : signinLogs) {
+                if (s.getStatus() == TtSigninLogStatus.Success) {
+                    break;
+                }
+                signinLogList.add(s);
+            }
+
+            CacheStatic.setSigninLog(user.getId(), signinLogList);
+
         }
         //=================================================== Signin Log
         this.signinLogService.persistSigninLog(request, uuid, user, TtSigninLogStatus.Success);
@@ -1407,33 +1503,9 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         this.service.update(user);
 
         //------------------------------------------------------------------------
-//        if (rememberMe) {
-//            UserUuid uu = new UserUuid();
-//            uu.setUser(user);
-//            uu.setAgentSignature(request.getHeader("User-Agent"));
-//            uu.setComputerSignature(request.getRemoteAddr());
-//            uu.generateSecureUUID();
-//            this.uuidService.save(uu);
-//            Cookier.setCookie(response, TtCookierVariable.UserAutoLoginUUID, uu.getUuid());
-//        } else {
-//            String value = Cookier.getValue(request, TtCookierVariable.UserAutoLoginUUID.getKey());
-//            if (value != null && !value.isEmpty()) {
-//                UserUuid uui = uuidService.findBy(Restrictions.and(
-//                        Restrictions.eq(UserUuid._USER, user),
-//                        Restrictions.eq(UserUuid.UUID, value)
-//                ));
-//                if (uui != null) {
-//                    this.uuidService.deleteUUID(uui.getUuid());
-//                }
-//            }
-//            Cookier.deleteCookie(response, TtCookierVariable.UserAutoLoginUUID.getKey());
-//        }
-
-//        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.signin.success", user.getSecretNote(), TtNotice.Info, user.getFullName())));
-
 
         try {
-            redirectAttributes.addFlashAttribute("signinNotice", PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.SigninNotice).replaceAll("\r\n", "<br/>"));
+            redirectAttributes.addFlashAttribute("signinNotice", PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.SigninNotice).replaceAll("\r\n|\n", "<br/>"));
         } catch (Exception e) {
             irrorService.submit(e, request, TtIrrorPlace.Controller, TtIrrorLevel.Warn);
         }
@@ -1443,7 +1515,6 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             Cookier.deleteCookie(response, TtCookierVariable.ReturnUrlAfterSignin);
             return Referer.redirect(retUrl);
         }
-        return Referer.redirect("/panel");
+        return Referer.redirect("/panel", TtTaskActionSubType.Success_Login, TtTaskActionStatus.Success);
     }
-
 }

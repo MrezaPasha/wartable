@@ -10,9 +10,6 @@
     <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
     <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
     <c:set var="cp" value="${pageContext.request.servletContext.contextPath}" scope="request" />
-    <c:set var="rl1" value="${rl1}" scope="request"/>
-    <c:set var="rl2" value="${rl2}" scope="request"/>
-    <c:set var="rl3" value="${rl3}" scope="request"/>
     <tiles:importAttribute name="title"/>
     <spring:message  code="${title}" var="title"/>
     <head>
@@ -31,15 +28,15 @@
         <c:if test="${fontVar==null}">
             <c:set var="fontVar" value='iransans'/>
         </c:if>
-        <link rel="stylesheet" href="${cp}/resources/css/font-${fontVar}.css?r=${rl1}">
-        <link rel="stylesheet" href="${cp}/resources/css/custom.css?r=${rl1}">
-        <link rel="stylesheet" href="${cp}/resources-f/css/custom-f.css?r=${rl1}">
+        <link rel="stylesheet" href="${cp}/resources/css/font-${fontVar}.css">
+        <link rel="stylesheet" href="${cp}/resources/css/custom.css">
+        <link rel="stylesheet" href="${cp}/resources-f/css/custom-f.css">
 
         <script type="text/javascript" src="${cp}/resources/plugins/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="${cp}/resources-f/bootstrap/js/bootstrap-rtl.min.js"></script>
-        <script type="text/javascript" src="${cp}/resources/js/custom.js?r=${rl1}"></script>
-        <script type="text/javascript" src="${cp}/resources/js/utils.js?r=${rl2}"></script>
-        <script type="text/javascript" src="${cp}/resources-f/js/custom-f.js?r=${rl1}"></script>
+        <script type="text/javascript" src="${cp}/resources/js/custom.js"></script>
+        <script type="text/javascript" src="${cp}/resources/js/utils.js"></script>
+        <script type="text/javascript" src="${cp}/resources-f/js/custom-f.js"></script>
 
     </head>
     <body class="no-trans">

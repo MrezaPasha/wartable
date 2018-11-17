@@ -4,6 +4,7 @@ import org.hibernate.criterion.Restrictions;
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GenericControllerImpl;
 import org.sadr._core.utils.JsonBuilder;
+import org.sadr._core.utils.OutLog;
 import org.sadr.web.main._core._type.TtTaskAccessLevel;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.tools.listener.SessionListener;
@@ -115,7 +116,7 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
     public ModelAndView pDesk(Model model,
                               @PathParam("ix") String ix) {
 
-        UserGroup obj = (UserGroup) model.asMap().get("raObj_1");
+        UserGroup obj = (UserGroup) model.asMap().get("userGroup");
         if (obj == null) {
             Integer id;
             try {
@@ -143,15 +144,15 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
             Model model,
             @ModelAttribute("userGroup") @Valid UserGroup formObj,
             BindingResult bindingResultformObj,
+            HttpServletRequest request,
             final RedirectAttributes redirectAttributes) {
-        formObj.setTitle(formObj.getTitle().trim());
         if (bindingResultformObj.hasErrors()) {
+            OutLog.pl(bindingResultformObj.toString());
             if (bindingResultformObj.getErrorCount() > 1 || !bindingResultformObj.getFieldError().getField().equals(UserGroup._PARENT + ".id")) {
-                redirectAttributes.addFlashAttribute("raObj_1", formObj);
-                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.all.validation.error")));
-                return Referer.redirect(_PANEL_URL + "/desk?ix=" + formObj.getId(), TtTaskActionSubType.Edit_Group, TtTaskActionStatus.Error, notice2s);
+                return Referer.redirectBindingError(TtTaskActionSubType.Edit_Group, TtTaskActionStatus.Error, request, redirectAttributes, bindingResultformObj, formObj);
             }
         }
+        formObj.setTitle(formObj.getTitle().trim());
 
         if (formObj.getParent() != null && formObj.getParent().getIdi() == 0) {
             formObj.setParent(null);
@@ -484,97 +485,8 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
             Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.group.not.found", JsonBuilder.toJson("userGrId", "" + id), TtNotice.Warning)));
             return new ModelAndView("redirect:/panel/user/group/desk");
         }
-        if (ug.getParent() != null) {
-            UserGroup sug = this.service.findById(ug.getParent().getId());
-            if (sug != null) {
-                sug.minusSubCount();
-                this.service.update(sug);
-            }
-        }
         this.service.trash(id);
         Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.trash.success", ug.getSecretNote(), TtNotice.Success, ug.getTitle())));
-        return new ModelAndView("redirect:/panel/user/group/desk");
-    }
-
-    @PersianName("تازه سازی آمار")
-    @RequestMapping(value = _PANEL_URL + "/refresh/{id}")
-    public ModelAndView pRefreshStatistics(@PathVariable("id") int id,
-                                           final RedirectAttributes redirectAttributes
-    ) {
-        if (id == 0) {
-            List<UserGroup> groups = this.service.findAll(UserGroup._CHILDS, UserGroup._USERS);
-            if (groups != null) {
-                for (UserGroup ug : groups) {
-                    ug.setSubCount(ug.getChilds() == null ? 0 : ug.getChilds().size());
-                    ug.setMemberCount(ug.getUsers() == null ? 0 : ug.getUsers().size());
-                    this.service.update(ug);
-                }
-            }
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.all.refresh.success", JsonBuilder.toJson("userGrId", "" + id), TtNotice.Success)));
-        } else {
-            UserGroup ug = this.service.findById(id, UserGroup._CHILDS, UserGroup._USERS);
-            if (ug == null) {
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.group.not.found", JsonBuilder.toJson("userGrId", "" + id))));
-                return new ModelAndView("redirect:/panel/user/group/desk");
-            }
-
-            ug.setSubCount(ug.getChilds() == null ? 0 : ug.getChilds().size());
-            ug.setMemberCount(ug.getUsers() == null ? 0 : ug.getUsers().size());
-
-            this.service.update(ug);
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.refresh.success", ug.getSecretNote(), TtNotice.Success, ug.getTitle())));
-        }
-        return new ModelAndView("redirect:/panel/user/group/desk");
-    }
-
-    @PersianName("آزادسازی اعضای گروه")
-    @RequestMapping(value = _PANEL_URL + "/freeMember/{id}")
-    public ModelAndView pFreeMemberList(@PathVariable("id") int id,
-                                        final RedirectAttributes redirectAttributes
-    ) {
-        if (id == 0) {
-            List<UserGroup> groups = this.service.findAll(UserGroup._USERS);
-            for (UserGroup ug : groups) {
-                ug.setUsers(null);
-                this.service.update(ug);
-            }
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.all.free.success", JsonBuilder.toJson("userGrId", "" + id), TtNotice.Success)));
-        } else {
-            UserGroup ug = this.service.findById(id, UserGroup._USERS);
-            if (ug == null) {
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.group.not.found", JsonBuilder.toJson("userGrId", "" + id))));
-                return new ModelAndView("redirect:/panel/user/group/desk");
-            }
-            ug.setUsers(null);
-            this.service.update(ug);
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.list.free.success", ug.getSecretNote(), TtNotice.Success, ug.getTitle())));
-        }
-        return new ModelAndView("redirect:/panel/user/group/desk");
-    }
-
-    @PersianName("آزادسازی زیرگروه ها")
-    @RequestMapping(value = _PANEL_URL + "/freeSub/{id}")
-    public ModelAndView pFreeSubList(@PathVariable("id") int id,
-                                     final RedirectAttributes redirectAttributes
-    ) {
-        if (id == 0) {
-            List<UserGroup> groups = this.service.findAll(UserGroup._CHILDS);
-            for (UserGroup ug : groups) {
-                ug.setParent(null);
-                this.service.update(ug);
-            }
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.all.free.success", JsonBuilder.toJson("userGrId", "" + id), TtNotice.Success
-            )));
-        } else {
-            UserGroup ug = this.service.findById(id, UserGroup._CHILDS);
-            if (ug == null) {
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.group.not.found", JsonBuilder.toJson("userGrId", "" + id))));
-                return new ModelAndView("redirect:/panel/user/group/desk");
-            }
-            ug.setChilds(null);
-            this.service.update(ug);
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.list.free.success", ug.getSecretNote(), TtNotice.Success, ug.getTitle())));
-        }
         return new ModelAndView("redirect:/panel/user/group/desk");
     }
 

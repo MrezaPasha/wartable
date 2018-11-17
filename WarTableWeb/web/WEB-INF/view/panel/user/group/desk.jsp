@@ -10,7 +10,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ page session="false" %>
 
-<link rel="stylesheet" href="${cp}/resources-p/plugins/dataTables/media/css/DT_bootstrap.css?r=${rl2}"/>
+<link rel="stylesheet" href="${cp}/resources-p/plugins/dataTables/media/css/DT_bootstrap.css"/>
 
 <div class="container print">
     <div class="page-header">
@@ -89,8 +89,6 @@
                         <tr>
                             <th><spring:message code="model.id"/></th>
                             <th><spring:message code="userGroup.title"/></th>
-                            <th><spring:message code="userGroup.memberCount"/></th>
-                            <th><spring:message code="userGroup.subCount"/></th>
                             <th><spring:message code="userGroup.parent"/></th>
                             <th class="th-hidden"></th> 
                         </tr>
@@ -101,8 +99,6 @@
                                 <tr>
                                     <td>${myvar.id}</td>
                                     <td>${myvar.title}</td>
-                                    <td>${myvar.memberCount}</td>
-                                    <td>${myvar.subCount}</td>
                                     <td>${myvar.parent.title}</td>
                                     <td class="right btn-tools" style="width: 168px;">
                                         <div class="visible-md visible-lg hidden-sm hidden-xs operation-icon">
@@ -165,16 +161,16 @@
         </div>
     </div>                     
 </div>
-<script type="text/javascript" src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js?r=${rl2}"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js"></script>
 
-<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/dataTables/media/js/jquery.dataTables.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/dataTables/media/js/DT_bootstrap.js?r=${rl2}"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/dataTables/media/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/dataTables/media/js/DT_bootstrap.js"></script>
 
-<script type="text/javascript" src="${cp}/resources/js/form-validation.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js?r=${rl2}"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/bootbox/bootbox.js?r=${rl2}"></script>
+<script type="text/javascript" src="${cp}/resources/js/form-validation.js"></script>
+<script type="text/javascript" src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/bootbox/bootbox.js"></script>
 <script>
     jQuery(document).ready(function () {
         CustomJs.initTable();

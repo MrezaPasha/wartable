@@ -1,6 +1,5 @@
 package org.sadr.web.main._core.tools.authorizer;
 
-import org.sadr.web.config.Config;
 import org.sadr.web.main.admin.user.confirm.UserConfirmConfig;
 import org.sadr.web.main.admin.user.group.UserGroupConfig;
 import org.sadr.web.main.admin.user.user.UserConfig;

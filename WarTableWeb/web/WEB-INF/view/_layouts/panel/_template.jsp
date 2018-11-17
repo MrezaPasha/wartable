@@ -8,9 +8,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <c:set var="cp" value="${pageContext.request.servletContext.contextPath}" scope="request"/>
-<c:set var="rl1" value="${rl1}" scope="request"/>
-<c:set var="rl2" value="${rl2}" scope="request"/>
-<c:set var="rl3" value="${rl3}" scope="request"/>
+
 
 <tiles:importAttribute name="rightMenuId"/>
 <tiles:importAttribute name="title"/>
@@ -22,47 +20,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="description" content="مرکز تحقیقات صدر"/>
-    <meta name="keywords" content="پنل مدیریت  میزجنگ"/>
+    <meta name="description" content="مرکز صدر"/>
+    <meta name="keywords" content="پنل مدیریت  میز"/>
     <meta name="author" content="<spring:message  code="sadr.title"/>">
     <title>
-        ایراس-${title}
+        میز جنگ-${title}
     </title>
 
     <c:set var="fontVar" value='${sessionScope.font}'/>
     <c:if test="${fontVar==null}">
         <c:set var="fontVar" value='iransans'/>
     </c:if>
-    <link rel="stylesheet" href="${cp}/resources/css/font-${fontVar}.css?r=${rl1}">
+    <link rel="stylesheet" href="${cp}/resources/css/font-${fontVar}.css">
     <c:set var="styleVar" value='${sessionScope.style}'/>
     <c:if test="${styleVar==null}">
         <c:set var="styleVar" value='light'/>
     </c:if>
-    <link rel="stylesheet" href="${cp}/resources-p/css/theme_${styleVar}.css?r=${rl2}" type="text/css" id="skin_color"/>
-    <link rel="stylesheet" href="${cp}/resources/plugins/datetime-picker/content/css-date/date.css?r=${rl3}"/>
-    <link rel="stylesheet" href="${cp}/resources-p/plugins/bootstrap/css/bootstrap-rtl.css?r=${rl3}"/>
-    <link rel="stylesheet" href="${cp}/resources-p/css/print.css?r=${rl2}" type="text/css" media="print"/>
-    <link rel="stylesheet" href="${cp}/resources-p/css/style-p.css?r=${rl2}"/>
-    <link rel="stylesheet" href="${cp}/resources-p/plugins/select2/select2.css?r=${rl3}">
-    <link rel="stylesheet" href="${cp}/resources-p/plugins/font-awesome/css/font-awesome.min.css?r=${rl3}"/>
-    <link rel="stylesheet" href="${cp}/resources-p/fonts/style.css?r=${rl2}"/>
-    <link rel="stylesheet" href="${cp}/resources-p/css/rtl-version.css?r=${rl2}"/>
-    <link rel="stylesheet" href="${cp}/resources/css/custom.css?r=${rl1}"/>
-    <link rel="stylesheet" href="${cp}/resources-p/css/custom-p.css?r=${rl1}"/>
+    <link rel="stylesheet" href="${cp}/resources-p/css/theme_${styleVar}.css" type="text/css" id="skin_color"/>
+    <link rel="stylesheet" href="${cp}/resources/plugins/datetime-picker/content/css-date/date.css"/>
+    <link rel="stylesheet" href="${cp}/resources-p/plugins/bootstrap/css/bootstrap-rtl.css"/>
+    <link rel="stylesheet" href="${cp}/resources-p/css/print.css" type="text/css" media="print"/>
+    <link rel="stylesheet" href="${cp}/resources-p/css/style-p.css"/>
+    <link rel="stylesheet" href="${cp}/resources-p/plugins/select2/select2.css">
+    <link rel="stylesheet" href="${cp}/resources-p/plugins/font-awesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="${cp}/resources-p/fonts/style.css"/>
+    <link rel="stylesheet" href="${cp}/resources-p/css/rtl-version.css"/>
+    <link rel="stylesheet" href="${cp}/resources/css/custom.css"/>
+    <link rel="stylesheet" href="${cp}/resources-p/css/custom-p.css"/>
 
-    <script type="text/javascript" src="${cp}/resources-p/plugins/jQuery-lib/2.0.3/jquery.min.js?r=${rl3}"></script>
-    <script type="text/javascript" src="${cp}/resources-p/plugins/jquery-ui/jquery-ui-1.10.2.custom.min.js?r=${rl3}"></script>
-    <script type="text/javascript" src="${cp}/resources-p/plugins/bootstrap/js/bootstrap.min-rtl.js?r=${rl3}"></script>
+    <script type="text/javascript" src="${cp}/resources-p/plugins/jQuery-lib/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="${cp}/resources-p/plugins/jquery-ui/jquery-ui-1.10.2.custom.min.js"></script>
+    <script type="text/javascript" src="${cp}/resources-p/plugins/bootstrap/js/bootstrap.min-rtl.js"></script>
     <script type="text/javascript" src="${cp}/resources-p/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js?r=${3}"></script>
-    <script type="text/javascript" src="${cp}/resources-p/plugins/iCheck/jquery.icheck.min.js?r=${rl3}"></script>
-    <script type="text/javascript" src="${cp}/resources-p/plugins/perfect-scrollbar/src/jquery.mousewheel.js?r=${rl3}"></script>
-    <script type="text/javascript" src="${cp}/resources-p/plugins/perfect-scrollbar/src/perfect-scrollbar-rtl.js?r=${rl3}"></script>
-    <script type="text/javascript" src="${cp}/resources-p/plugins/less/less-1.5.0.min.js?r=${rl3}"></script>
-    <script type="text/javascript" src="${cp}/resources-p/plugins/jquery-cookie/jquery.cookie.js?r=${rl3}"></script>
-    <script type="text/javascript" src="${cp}/resources-p/js/main.js?r=${rl2}"></script>
-    <script type="text/javascript" src="${cp}/resources/js/custom.js?r=${rl1}"></script>
-    <script type="text/javascript" src="${cp}/resources/js/utils.js?r=${rl2}"></script>
-    <script type="text/javascript" src="${cp}/resources-p/js/custom-p.js?r=${rl1}"></script>
+    <script type="text/javascript" src="${cp}/resources-p/plugins/iCheck/jquery.icheck.min.js"></script>
+    <script type="text/javascript" src="${cp}/resources-p/plugins/perfect-scrollbar/src/jquery.mousewheel.js"></script>
+    <script type="text/javascript" src="${cp}/resources-p/plugins/perfect-scrollbar/src/perfect-scrollbar-rtl.js"></script>
+    <script type="text/javascript" src="${cp}/resources-p/plugins/less/less-1.5.0.min.js"></script>
+    <script type="text/javascript" src="${cp}/resources-p/plugins/jquery-cookie/jquery.cookie.js"></script>
+    <script type="text/javascript" src="${cp}/resources-p/js/main.js"></script>
+    <script type="text/javascript" src="${cp}/resources/js/custom.js"></script>
+    <script type="text/javascript" src="${cp}/resources/js/utils.js"></script>
+    <script type="text/javascript" src="${cp}/resources-p/js/custom-p.js"></script>
     <script>
         jQuery(document).ready(function () {
             // CustomJs.initCloseBrowser();

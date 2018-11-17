@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<div class="modal-dialog select">
+<div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
             خوش آمدید
@@ -14,6 +14,9 @@
         <div class="modal-body">
             ${signinNotice}
         </div>
+        <div class="modal-footer">
+            <button data-dismiss="modal" class="btn btn-success"> موافق هستم</button>
+            <a href="${cp}/signout" class="btn btn-warning"> مخالف هستم</a>
+        </div>
     </div>
 </div>
-

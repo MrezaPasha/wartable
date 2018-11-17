@@ -16,7 +16,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -51,8 +50,9 @@ public class FilterHandler implements Filter {
 
             chain.doFilter(request, response); // Just continue chain.
         } else {
-            response.setHeader("Expires", "Tue, 03 Jul 2001 06:00:00 GMT");
-            response.setDateHeader("Last-Modified", new Date().getTime());
+            response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+            response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+            response.setDateHeader("Expires", 0); // Proxies.
             String uuid = Cookier.getValue(request, TtCookierVariable.UserPorterUUID.getKey());
             if (uuid == null || uuid.isEmpty()) {
                 String agentSignature = request.getHeader("User-Agent");
@@ -60,19 +60,12 @@ public class FilterHandler implements Filter {
                         + (agentSignature == null ? "" : agentSignature.trim().replace(" ", "").toUpperCase().codePoints().sum());
                 Cookier.setCookie(response, TtCookierVariable.UserPorterUUID, uuid);
             }
-            if ((req.getAttribute("returnToUrl") != null && !req.getAttribute("returnToUrl").toString().isEmpty()) && !req.getAttribute("returnToUrl").toString().contains(".ico")) {
-                Cookier.setCookie(response, TtCookierVariable.ReturnUrlAfterSignin, req.getAttribute("returnToUrl").toString());
-                req.removeAttribute("returnToUrl");
-            } else if (req.getParameter("returnToUrl") != null && !req.getParameter("returnToUrl").isEmpty() && !req.getParameter("returnToUrl").contains(".ico")) {
-                Cookier.setCookie(response, TtCookierVariable.ReturnUrlAfterSignin, req.getParameter("returnToUrl"));
-                req.removeAttribute("returnToUrl");
-            }
             chain.doFilter(request, response);
         }
     }
 
     @Override
     public void destroy() {
-        OutLog.pl("FILTER HANDLER DESTROIED. ");
+        OutLog.pl("FILTER HANDLER DESTROYED. ");
     }
 }

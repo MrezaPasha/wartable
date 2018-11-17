@@ -15,6 +15,7 @@
                ir-search-field-tp="${f_username[1]}"
                ir-search-field-opr="${f_username[2]}"
                ir-search-field-noSp="${f_username[3]}"
+               ir-search-submit-realTime
         >
     </div>
     <div class="col-xxs-12 col-xs-3 col-md-2">
@@ -23,6 +24,7 @@
                ir-search-field-tp="${f_firstName[1]}"
                ir-search-field-opr="${f_firstName[2]}"
                ir-search-field-noSp="${f_firstName[3]}"
+               ir-search-submit-realTime
         >
     </div>
     <div class="col-xxs-12 col-xs-3 col-md-2">
@@ -31,6 +33,7 @@
                ir-search-field-tp="${f_lastName[1]}"
                ir-search-field-opr="${f_lastName[2]}"
                ir-search-field-noSp="${f_lastName[3]}"
+               ir-search-submit-realTime
         >
     </div>
     <div class="col-xxs-12 col-xs-12 col-md-6">

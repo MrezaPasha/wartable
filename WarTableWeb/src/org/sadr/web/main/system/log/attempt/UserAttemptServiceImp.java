@@ -81,14 +81,18 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
 
                 } else {
                     uatt = this.findBy(Restrictions.and(
-                            Restrictions.eq(UserAttempt.UUID, uuid),
+                            Restrictions.eq(UserAttempt.COMPUTER_SIGNATURE, request.getRemoteAddr()),
                             Restrictions.eq(UserAttempt.ATTEMPT_TYPE, attemptType)));
 
                 }
             }
             if (uatt != null) {
                 if (uatt.isBlocked()) {
-                    Notice2.initModelAttr(mergeNotice, model, Notice2.addNotices(new Notice2("N1.user.attempt.blocked", JsonBuilder.toJson("sttType", attemptType.toString()), TtNotice.Danger, ParsCalendar.getInstance().toRemindingTimeString(uatt.getDateTimeG(), uatt.getAttemptType().getBlockSec()))));
+                    if (uatt.getUser() != null) {
+                        Notice2.initModelAttr(mergeNotice, model, Notice2.addNotices(new Notice2("N1.user.attempt.blocked", JsonBuilder.toJson("sttType", attemptType.toString()), TtNotice.Danger, ParsCalendar.getInstance().toRemindingTimeString(uatt.getDateTimeG(), uatt.getAttemptType().getBlockDuringSec()))));
+                    } else {
+                        Notice2.initModelAttr(mergeNotice, model, Notice2.addNotices(new Notice2("N1.user.attempt.ip.blocked", JsonBuilder.toJson("sttType", attemptType.toString()), TtNotice.Danger, ParsCalendar.getInstance().toRemindingTimeString(uatt.getDateTimeG(), uatt.getAttemptType().getBlockDuringSec()))));
+                    }
                     model.addAttribute("noRecaptcha", false);
                     model.addAttribute("blocked", true);
                     return TtUserAttemptResult.IsBlock;
@@ -124,85 +128,79 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
     /**
      * بروزرسانی تعداد تلاش ها
      */
-    public void rebuildUerAttempt(HttpServletRequest request, HttpServletResponse response, UserAttempt uatt, TtUserAttemptType attemptType, String uuid, User user) {
+    public void rebuildUerAttempt(HttpServletRequest request, HttpServletResponse response, TtUserAttemptType attemptType, String uuid, User user) {
+        UserAttempt uatt;
         if (!PropertorInWeb.getInstance().isOnProperty(TtPropertorInWebList.UserAttemptOn)) {
-        } else if (uatt != null) {
-            if (uatt.isInAttemptRange()) {
-                uatt.addCount();
-            } else {
-                uatt.setCount(1);
-            }
-            uatt.setIsSuccess(false);
-            uatt.refreshDateTime();
-            if (user != null) {
-                uatt.setUser(user);
-            }
-            this.update(uatt);
         } else {
-            uatt = new UserAttempt();
-            uatt.setUser(user);
-            uatt.setAgentSignature(request.getHeader("User-Agent"));
-            uatt.setComputerSignature(request.getRemoteAddr());
-            uatt.refreshDateTime();
-            uatt.setAttemptType(attemptType);
-            uatt.setIsSuccess(false);
-            if (uuid == null || uuid.isEmpty()) {
-                uuid = uatt.generateSecureUUID();
-                Cookier.setCookie(response, TtCookierVariable.UserPorterUUID, uuid);
+            uatt = this.findBy(Restrictions.and(
+                    Restrictions.eq(UserAttempt.COMPUTER_SIGNATURE, request.getRemoteAddr()),
+                    Restrictions.isNull(UserAttempt._USER),
+                    Restrictions.eq(UserAttempt.ATTEMPT_TYPE, attemptType)));
+            if (uatt != null) {
+                if (uatt.isInAttemptRange()) {
+                    uatt.addCount();
+                } else {
+                    uatt.setCount(1);
+                }
+                uatt.setIsSuccess(false);
+                uatt.refreshDateTime();
+//                if (user != null) {
+//                    uatt.setUser(user);
+//                }
+                this.update(uatt);
             } else {
-                uatt.setUuid(uuid);
+                uatt = new UserAttempt();
+//                uatt.setUser(user);
+                uatt.setAgentSignature(request.getHeader("User-Agent"));
+                uatt.setComputerSignature(request.getRemoteAddr());
+                uatt.refreshDateTime();
+                uatt.setAttemptType(attemptType);
+                uatt.setIsSuccess(false);
+                if (uuid == null || uuid.isEmpty()) {
+                    uuid = uatt.generateSecureUUID();
+                    Cookier.setCookie(response, TtCookierVariable.UserPorterUUID, uuid);
+                } else {
+                    uatt.setUuid(uuid);
+                }
+                this.save(uatt);
             }
-            this.save(uatt);
+
+
+            if (user != null) {
+                uatt = this.findBy(Restrictions.and(
+                        Restrictions.eq(UserAttempt._USER, user),
+                        Restrictions.eq(UserAttempt.ATTEMPT_TYPE, attemptType)));
+                if (uatt != null) {
+                    if (uatt.isInAttemptRange()) {
+                        uatt.addCount();
+                    } else {
+                        uatt.setCount(1);
+                    }
+                    uatt.setIsSuccess(false);
+                    uatt.refreshDateTime();
+                    if (user != null) {
+                        uatt.setUser(user);
+                    }
+                    this.update(uatt);
+                } else {
+                    uatt = new UserAttempt();
+                    uatt.setUser(user);
+                    uatt.setAgentSignature(request.getHeader("User-Agent"));
+                    uatt.setComputerSignature(request.getRemoteAddr());
+                    uatt.refreshDateTime();
+                    uatt.setAttemptType(attemptType);
+                    uatt.setIsSuccess(false);
+                    if (uuid == null || uuid.isEmpty()) {
+                        uuid = uatt.generateSecureUUID();
+                        Cookier.setCookie(response, TtCookierVariable.UserPorterUUID, uuid);
+                    } else {
+                        uatt.setUuid(uuid);
+                    }
+                    this.save(uatt);
+                }
+            }
+
+
         }
     }
-
-    /**
-     * برای مواردی که هم نیاز به بروزرسانی تعداد تلاشها است هم نیاز به تعیین
-     * وضعیت
-     *
-     * @param request
-     * @param response
-     * @param uatt
-     * @param attemptType
-     * @param uuid
-     * @param user
-     * @param model
-     * @return
-     */
-    @Override
-    public TtUserAttemptResult rebuildUerAttempt(HttpServletRequest request, HttpServletResponse response, UserAttempt uatt, TtUserAttemptType attemptType, String uuid, User user, Model model) {
-        if (!PropertorInWeb.getInstance().isOnProperty(TtPropertorInWebList.UserAttemptOn)) {
-            model.addAttribute("noRecaptcha", true);
-            return TtUserAttemptResult.Ok;
-        } else if (uatt != null) {
-            if (uatt.isInAttemptRange()) {
-                uatt.addCount();
-            } else {
-                uatt.setCount(1);
-            }
-            uatt.setIsSuccess(false);
-            uatt.refreshDateTime();
-            if (user != null) {
-                uatt.setUser(user);
-            }
-            this.update(uatt);
-        } else {
-            uatt = new UserAttempt();
-            uatt.setUser(user);
-            uatt.setAgentSignature(request.getHeader("User-Agent"));
-            uatt.setComputerSignature(request.getRemoteAddr());
-            uatt.refreshDateTime();
-            uatt.setAttemptType(attemptType);
-            uatt.setIsSuccess(false);
-            if (uuid == null || uuid.isEmpty()) {
-                uuid = uatt.generateSecureUUID();
-                Cookier.setCookie(response, TtCookierVariable.UserPorterUUID, uuid);
-            } else {
-                uatt.setUuid(uuid);
-            }
-            this.save(uatt);
-        }
-        return attemptStatus(request, response, model, user, attemptType, uatt, uuid);
-    }
-
 }
