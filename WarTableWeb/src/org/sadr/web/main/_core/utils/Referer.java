@@ -5,8 +5,11 @@ import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.utils.OutLog;
 import org.sadr.web.config.WebConfigHandler;
 import org.sadr.web.main.admin.user.user.User;
+import org.sadr.web.main.system._type.TtLogHandler;
 import org.sadr.web.main.system._type.TtTaskActionStatus;
 import org.sadr.web.main.system._type.TtTaskActionSubType;
+import org.sadr.web.main.system.log.general.Log;
+import org.sadr.web.main.system.log.general.LogService;
 import org.sadr.web.main.system.log.validation.ValidationLog;
 import org.sadr.web.main.system.log.validation.ValidationLogService;
 import org.springframework.validation.BindingResult;
@@ -75,6 +78,7 @@ public class Referer {
             User sUser = (User) request.getSession().getAttribute("sUser");
             if (sUser != null) {
                 ValidationLogService validationLogService = WebConfigHandler.getWebApplicationContext().getBean(ValidationLogService.class);
+                LogService logService = WebConfigHandler.getWebApplicationContext().getBean(LogService.class);
 
                 ValidationLog vl = validationLogService.findBy(
                         Restrictions.and(
@@ -93,6 +97,12 @@ public class Referer {
                         vl.setTryCount(0);
                         validationLogService.update(vl);
                         Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.all.validation.try.exceed")));
+                        logService.log(
+                                new Log(
+                                        null, request,
+                                        " Dispatched to < panel > [Attempt Exceed] ",
+                                        TtLogHandler.AuthorizerAspect, null, sUser)
+                        );
                         return Referer.redirect("/panel", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s);
                     } else {
                         vl.addTryCount();

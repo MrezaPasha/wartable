@@ -85,7 +85,7 @@ public enum TtTile___ {
     p_sys_registery_list(TtSystemTileLayout.Panel, null),
     p_sys_task_active(TtSystemTileLayout.Panel, null),
     p_sys_task_confirm(TtSystemTileLayout.Panel, null),
-    p_ui_set(TtSystemTileLayout.Panel, null),
+    p_uiBag_set(TtSystemTileLayout.Panel, null),
 
     p_user_porter_details(TtSystemTileLayout.Panel, null),
     p_user_porter_list(TtSystemTileLayout.Panel, null),

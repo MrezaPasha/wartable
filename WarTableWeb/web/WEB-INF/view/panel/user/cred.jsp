@@ -238,7 +238,7 @@
                                 <spring:message code="${varName}"/>
                                 <form:errors cssClass="form-validation-error" path="${varName}"/>
                             </form:label>
-                            <form:input type="number" path="${varName}" min="0" max="12" cssClass="form-control number-format"/>
+                            <form:input type="number" path="${varName}" cssClass="form-control number-format"/>
                         </div>
                         <div class="form-group">
                             <c:set var="varName" value="user.accessLimitMonthlyEnd"/>
@@ -246,7 +246,7 @@
                                 <spring:message code="${varName}"/>
                                 <form:errors cssClass="form-validation-error" path="${varName}"/>
                             </form:label>
-                            <form:input type="number" path="${varName}" min="0" max="12" cssClass="form-control number-format"/>
+                            <form:input type="number" path="${varName}"  cssClass="form-control number-format"/>
                         </div>
                     </div>
                     <div class="col-sm-3">
@@ -256,7 +256,7 @@
                                 <spring:message code="${varName}"/>
                                 <form:errors cssClass="form-validation-error" path="${varName}"/>
                             </form:label>
-                            <form:input type="number" path="${varName}" min="0" max="31" cssClass="form-control number-format"/>
+                            <form:input type="number" path="${varName}" cssClass="form-control number-format"/>
                         </div>
                         <div class="form-group">
                             <c:set var="varName" value="user.accessLimitDailyEnd"/>
@@ -264,7 +264,7 @@
                                 <spring:message code="${varName}"/>
                                 <form:errors cssClass="form-validation-error" path="${varName}"/>
                             </form:label>
-                            <form:input type="number" path="${varName}" min="0" max="31" cssClass="form-control number-format"/>
+                            <form:input type="number" path="${varName}" cssClass="form-control number-format"/>
                         </div>
                     </div>
                     <div class="col-sm-3">

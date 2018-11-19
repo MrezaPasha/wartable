@@ -40,7 +40,7 @@ import java.util.List;
  * @author masoud
  */
 @RestController
-@PersianName("مدیریت یادداشت")
+@PersianName("مدیریت یادآور")
 public class NoteController extends GenericControllerImpl<Note, NoteService> {
 
     ////////////////////
@@ -71,8 +71,7 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
     }
 
     @RequestMapping(value = _PANEL_URL + "/create", method = RequestMethod.POST)
-    public ModelAndView pCreate(Model model,
-                                @ModelAttribute("note") @Valid Note fnote,
+    public ModelAndView pCreate(@ModelAttribute("note") @Valid Note fnote,
                                 BindingResult noteBindingResult,
                                 HttpServletRequest request,
                                 HttpSession session,
@@ -104,7 +103,6 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
     @RequestMapping(value = _PANEL_URL + "/details/{uid}")
     public ModelAndView pDetails(Model model, @PathVariable("uid") long uid,
                                  HttpSession session,
-                                 HttpServletRequest request,
                                  RedirectAttributes redirectAttributes) {
         User sUser = (User) session.getAttribute("sUser");
         Note dbnote;
@@ -131,7 +129,6 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
     @RequestMapping(value = _PANEL_URL + "/edit/{uid}")
     public ModelAndView pEdit(Model model, @PathVariable("uid") long uid,
                               HttpSession session,
-                              HttpServletRequest request,
                               RedirectAttributes redirectAttributes) {
         User sUser = (User) session.getAttribute("sUser");
         Note dbnote = (Note) model.asMap().get("note");

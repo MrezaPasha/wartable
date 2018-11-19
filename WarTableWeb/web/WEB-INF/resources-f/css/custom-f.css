@@ -44,6 +44,13 @@ body {
 /* Signin
  ***************/
 
+input[name=password] {
+    -webkit-text-security: disc;
+    text-security: disk;
+    -mox-text-security: disk;
+
+}
+
 .background-image-signin {
     background-image: url(../images/bg-signin3.jpg);
     position: fixed;
@@ -82,7 +89,8 @@ body {
     border: 1px solid #ff3d2b;
     float: left;
 }
-.signin-box .btn-signin-cancel{
+
+.signin-box .btn-signin-cancel {
     color: #AB1400;
     background-color: rgba(200, 200, 200, 0.83);
     border: 1px solid #FFF;

@@ -21,8 +21,8 @@
                 <i class="clip-deviantart light"></i>
                 <span class="title"><spring:message code="user.list.inactive" /></span>
             </a>
-            <a href="${cp}/panel/user/list/online" class="btn btn-p-createandNew btn-animated btn-animated-right">
-                <i class="clip-data light"></i>
+            <a href="${cp}/panel/user/list/online" class="btn btn-p-amar btn-animated btn-animated-right">
+                <i class="clip-star light"></i>
                 <span class="title"><spring:message code="user.list.online" /></span>
             </a>
         </div>

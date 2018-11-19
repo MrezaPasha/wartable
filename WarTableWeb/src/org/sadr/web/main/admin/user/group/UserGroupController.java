@@ -33,7 +33,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.ws.rs.PathParam;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ import java.util.Set;
 /**
  * @author masoud
  */
-@PersianName("مدیریت گروه کاربری")
+@PersianName("مدیریت گروه کاربران")
 @RestController
 public class UserGroupController extends GenericControllerImpl<UserGroup, UserGroupService> {
 
@@ -111,10 +110,10 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
         });
     }
 
-    @PersianName("میز کار")
+    @PersianName("میز کار (لیست-ثبت-ویرایش)")
     @RequestMapping(value = _PANEL_URL + "/desk")
     public ModelAndView pDesk(Model model,
-                              @PathParam("ix") String ix) {
+                              @RequestParam(value = "ix",required = false) String ix) {
 
         UserGroup obj = (UserGroup) model.asMap().get("userGroup");
         if (obj == null) {
@@ -141,7 +140,6 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
 
     @RequestMapping(value = _PANEL_URL + "/desk", method = RequestMethod.POST)
     public ModelAndView pDesk(
-            Model model,
             @ModelAttribute("userGroup") @Valid UserGroup formObj,
             BindingResult bindingResultformObj,
             HttpServletRequest request,
@@ -249,11 +247,10 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
     }
 
     @RequestMapping(value = _PANEL_URL + "/assign", method = RequestMethod.POST)
-    public ModelAndView pAssign(Model model,
-                                @ModelAttribute("userGroup") UserGroup formug,
-                                BindingResult bindingResult,
-                                HttpServletRequest request,
-                                final RedirectAttributes redirectAttributes
+    public ModelAndView pAssign(
+            @ModelAttribute("userGroup") UserGroup formug,
+            BindingResult bindingResult,
+            final RedirectAttributes redirectAttributes
     ) {
         UserGroup dbug = this.service.findById(formug.getId(), UserGroup._USERS);
 
@@ -299,8 +296,7 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
     @PersianName("لیست سطح دسترسی ها")
     @RequestMapping(value = _PANEL_URL + "/access/list/{id}")
     public ModelAndView pAccessList(Model model,
-                                    @PathVariable("id") int id,
-                                    final RedirectAttributes redirectAttributes
+                                    @PathVariable("id") int id
     ) {
         if (id == 0) {
             model.addAttribute("uglist", this.service.findAll());
@@ -347,7 +343,7 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
         return TtTile___.p_user_group_access_list.___getDisModel();
     }
 
-    @PersianName("تنظیم سطح دسترسی")
+    @PersianName("اعمال سطح دسترسی")
     @RequestMapping(value = _PANEL_URL + "/access/{uid}/{mid}")
     public ModelAndView pAccess(Model model,
                                 @PathVariable("uid") int uid,
@@ -425,12 +421,10 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
     }
 
     @RequestMapping(value = _PANEL_URL + "/access", method = RequestMethod.POST)
-    public ModelAndView pAccess(Model model,
-                                HttpServletRequest request,
+    public ModelAndView pAccess(HttpServletRequest request,
                                 @ModelAttribute("moduleId") String sid,
                                 @ModelAttribute("userGroup") UserGroup ug,
                                 BindingResult userBindingResult,
-                                HttpSession session,
                                 final RedirectAttributes redirectAttributes
     ) {
         int mid = 0;

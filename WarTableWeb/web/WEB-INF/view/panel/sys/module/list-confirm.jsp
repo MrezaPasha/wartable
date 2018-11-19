@@ -54,7 +54,7 @@
                                 </c:forEach>
                             </td>
                             <td>
-                                <a href="${cp}/panel/task/confirm/${myvar.id}" class="btn btn-sm btn-l-assign tooltips " data-placement="top" data-original-title="اعمال تایید دو سطحی">
+                                <a href="${cp}/panel/module/confirm/${myvar.id}" class="btn btn-sm btn-l-assign tooltips " data-placement="top" data-original-title="اعمال تایید دو سطحی">
                                     <i class="fa fa-bullseye"></i>
                                 </a>
                             </td>

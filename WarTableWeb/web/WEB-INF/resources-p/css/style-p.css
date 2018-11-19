@@ -11,21 +11,6 @@ body {
     margin: 0px !important;
     background: #ffffff;
 }
-body.bg_style_1 {
-    background: url("../images/bg.png") rgba(0, 0, 0, 0) !important;
-}
-body.bg_style_2 {
-    background: url("../images/bg_2.png") rgba(0, 0, 0, 0) !important;
-}
-body.bg_style_3 {
-    background: url("../images/bg_3.png") rgba(0, 0, 0, 0) !important;
-}
-body.bg_style_4 {
-    background: url("../images/bg_4.png") rgba(0, 0, 0, 0) !important;
-}
-body.bg_style_5 {
-    background: url("../images/bg_5.png") rgba(0, 0, 0, 0) !important;
-}
 a, a:focus, a:hover, a:active {
     outline: 0 !important;
 }
@@ -1322,10 +1307,6 @@ ul.main-navigation-menu {
     height: 300px;
 }
 
-ul.main-navigation-menu > li a > .light {
-    color: #57517B;
-    font-weight: normal;
-}
 
 ul.main-navigation-menu > li {
     border: 0 none;

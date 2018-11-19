@@ -101,77 +101,7 @@ public class DirectoryServiceImp extends GenericServiceImpl<Directory, Directory
         return d;
     }
 
-    @Override
-    public Directory getDirectoryAndSubs(String path) {
-        Directory d = dao.getDirectory(path);
-        if (d == null) {
-            String[] pt = path.split(Environment.FILE_SEPARATOR);
-            OutLog.po("-->> direc is null");
-            d = new Directory();
-            d.setLevel(1);
-            d.setIsPermanent(true);
-            d.setComment("پیش ساز ۲");
-            d.setName(pt[pt.length - 1]);
-            d.setPath(path);
-            if (pt.length > 1) {
-                OutLog.pl("ll " + path.substring(0, path.lastIndexOf(Environment.FILE_SEPARATOR)));
-                d.setParent(getDirectory(path.substring(0, path.lastIndexOf(Environment.FILE_SEPARATOR))));
-            }
-            this.save(d);
-        } else {
-            Hibernate.initialize(d.getDirectorys());
-        }
-        java.io.File dir = new java.io.File(d.getAbsolutePath());
-        if (!dir.exists()) {
-            OutLog.p("dir create on server file directory");
-            dir.mkdirs();
-        }
 
-        return d;
-    }
-
-    @Override
-    public Directory getAutoSubDirectory(TtRepoDirectory repoDirectory) {
-        OutLog.pl("");
-        Directory d = getDirectoryAndSubs(repoDirectory);
-        if (d == null) {
-            OutLog.pl("");
-            return null;
-        }
-
-        int max = 1;
-        String s;
-        for (Directory di : d.getDirectorys()) {
-            s = di.getPath();
-            if (s.startsWith(subPath)) {
-                max++;
-            }
-        }
-        while (isExist(
-            Restrictions.and(
-                Restrictions.eq(Directory.PATH, subPath + max),
-                Restrictions.eq(Directory._PARENT, d)
-            ))) {
-            max++;
-        }
-        OutLog.po("-->> direc is null");
-        Directory dd = new Directory();
-        dd.setLevel(2);
-        dd.setIsPermanent(true);
-        dd.setComment("زیرپوشه اتوماتیک");
-        dd.setName(subPath.substring(1) + max);
-        dd.setParent(d);
-        dd.setPath(subPath + max);
-        this.save(dd);
-
-        OutLog.p(dd.getName() + " " + dd.getPath());
-        java.io.File dir = new java.io.File(dd.getAbsolutePath());
-        if (!dir.exists()) {
-            OutLog.p("dir create on server file directory");
-            dir.mkdirs();
-        }
-        return dd;
-    }
 
     @Override
     public Directory getAutoSubDirectory(Directory d) {
@@ -191,10 +121,10 @@ public class DirectoryServiceImp extends GenericServiceImpl<Directory, Directory
             }
         }
         while (isExist(
-            Restrictions.and(
-                Restrictions.eq(Directory.PATH, subPath + max),
-                Restrictions.eq(Directory._PARENT, d)
-            ))) {
+                Restrictions.and(
+                        Restrictions.eq(Directory.PATH, subPath + max),
+                        Restrictions.eq(Directory._PARENT, d)
+                ))) {
             max++;
             OutLog.p("");
         }
@@ -217,6 +147,7 @@ public class DirectoryServiceImp extends GenericServiceImpl<Directory, Directory
         }
         return dd;
     }
+
 
     @Override
     public TtInitResult init() {

@@ -8,14 +8,14 @@ import org.sadr.web.main._core.propertor._type.TtPropertorInWebList;
  */
 public enum TtUserAttemptType {
 
-    Signin("تلاش برای ورود",
+    Signin("ورودهای ناموفق",
             TtPropertorInWebList.UserAttemptSigninRageTime,
             TtPropertorInWebList.UserAttemptSigninBlockTime,
             TtPropertorInWebList.UserAttemptSigninAttemptMax,
             TtPropertorInWebList.UserAttemptSigninBlockMax,
             TtPropertorInWebList.UserAttemptSigninBlockDuring
     ),
-    ReSignin("تلاش برای ورود به عملیات های سطح دو",
+    ReSignin("ورودهای ناموفق به عملیات های سطح دو",
             TtPropertorInWebList.UserAttemptSigninRageTime,
             TtPropertorInWebList.UserAttemptSigninBlockTime,
             TtPropertorInWebList.UserAttemptSigninAttemptMax,

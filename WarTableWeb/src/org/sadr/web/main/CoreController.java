@@ -89,40 +89,4 @@ public class CoreController {
     }
 
 
-    @TaskAccessLevel
-    @PersianName("تاریخ")
-    @RequestMapping(value = "/date-x", method = RequestMethod.GET, headers = "Accept=application/json", produces = "application/json")
-    public @ResponseBody
-    ResponseEntity<String> getDateX() {
-        return Ison.init()
-                .setStatus(TtIsonStatus.Ok)
-                .setProperty("date", ParsCalendar.getInstance().getShortDate())
-                .setProperty("time", ParsCalendar.getInstance().getShortTime())
-                .toResponse();
-    }
-
-    @TaskAccessLevel
-    @PersianName("زمان")
-    @RequestMapping(value = "/datetime-x", method = RequestMethod.GET, headers = "Accept=application/json", produces = "application/json")
-    public @ResponseBody
-    ResponseEntity<String> getDateTimeX() {
-        return Ison.init()
-                .setStatus(TtIsonStatus.Ok)
-                .setProperty("date", ParsCalendar.getInstance().getShortDate())
-                .setProperty("time", ParsCalendar.getInstance().getShortTime())
-                .toResponse();
-    }
-
-    /////////////////////////////////////////////////////// ROBOTS
-    @Front
-    @TaskAccessLevel
-    @PersianName("روبات جستجوگر")
-    @RequestMapping(value = "/robots.txt", produces = {"text/plain"}, method = RequestMethod.GET)
-    @ResponseBody
-    public String fRobotsTxt() {
-        return "User-agent: *"
-                + "\nDisallow: /";
-    }
-
 }
-

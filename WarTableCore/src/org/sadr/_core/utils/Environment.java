@@ -74,26 +74,6 @@ public class Environment {
         _SRC_MAIN_ADDRESS = "/src/org/sadr";
     }
 
-    public void printInfo() {
-        OutLog.sl("================== Environment info:\n"
-            + "\n> OS_ENVIRONMENT: " + osEnvironment
-            + "\n> IDE_ENVIRONMENT: " + ideEnvironment
-            + "\n> CORE_NAME: " + _CORE_NAME
-            + "\n> CORE_ABSOLUTE_PATH: " + coreAbsolutePath
-            + "\n> PROJECT_NAME: " + _PROJECT_NAME
-            + "\n> PROJECT_ABSOLUTE_PATH: " + projectAbsolutePath
-            + "\n> REPOSITORY_ROOT_ADDRESS: " + _REPOSITORY_ROOT_ADDRESS
-            + "\n> REPOSITORY_ADDRESS: " + _REPOSITORY_ADDRESS
-            + "\n> REGISTERY_ROOT_ADDRESS: " + _REGISTERY_ROOT_ADDRESS
-            + "\n> WEBINF_ADDRESS: " + _WEBINF_ADDRESS
-            + "\n> CORE_BUILD: " + coreBuild
-            + "\n> PROJECT_BUILD: " + projectBuild
-            + "\n> getContextPath: " + getContextPath()
-            + "\n> getWebDomain: " + getWebDomain()
-            + "\n\n");
-    }
-
-    /////====//////////////////////////////    PROJECT
     public String getContextPath() {
         return contextPath;
     }

@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * @author masoud
@@ -38,13 +40,13 @@ import java.io.Serializable;
 @Table(name = "Web.System.Irror")
 public class Irror extends GenericDataModel<Irror> implements Serializable {
 //#########++++++#######// StaticFields: Start //
-public static final String MESSAGE = "message";public static final String CAUSE = "cause";public static final String SESSION_ID = "sessionId";public static final String COMPUTER_SIGNATURE = "computerSignature";public static final String AGENT_SIGNATURE = "agentSignature";public static final String PORTER_UUID = "porterUuid";public static final String TASK_NAME = "taskName";public static final String HTTP_ERROR_CODE = "httpErrorCode";public static final String IS_VISITED = "isVisited";public static final String VISIT_COUNT = "visitCount";public static final String STATUS = "status";public static final String LEVEL = "level";public static final String PLACE = "place";public static final String _USER = "user";public static final String $USER_FULL_NAME = "userFullName";public static final String $ACT_COLUMNS = "actColumns";public static final String $REL_COLUMNS = "relColumns";public static final String $VIR_COLUMNS = "virColumns";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
+public static final String MESSAGE = "message";public static final String CAUSE = "cause";public static final String SESSION_ID = "sessionId";public static final String COMPUTER_SIGNATURE = "computerSignature";public static final String AGENT_SIGNATURE = "agentSignature";public static final String PORTER_UUID = "porterUuid";public static final String TASK_NAME = "taskName";public static final String HTTP_ERROR_CODE = "httpErrorCode";public static final String IS_VISITED = "isVisited";public static final String VISIT_COUNT = "visitCount";public static final String STATUS = "status";public static final String LEVEL = "level";public static final String PLACE = "place";public static final String _USER = "user";public static final String $USER_FULL_NAME = "userFullName";public static final String $ACT_COLUMNS = "actColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $REL_COLUMNS = "relColumns";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
 //#########******#######// StaticFields: End //
 
     public Irror() {
     }
 
-    public Irror(String message, String cause, String taskName, TtHttpErrorCode___ httpErrorCode, TtIrrorLevel level,TtIrrorPlace place, HttpServletRequest request) {
+    public Irror(String message, String cause, String taskName, TtHttpErrorCode___ httpErrorCode, TtIrrorLevel level,TtIrrorPlace place, HttpServletRequest request) throws UnknownHostException {
         this.message = message;
         this.cause = cause;
         this.taskName = taskName;
@@ -52,7 +54,7 @@ public static final String MESSAGE = "message";public static final String CAUSE 
 
         if (request != null) {
             this.sessionId = request.getSession().getId();
-            this.computerSignature = request.getRemoteAddr();
+            this.computerSignature = InetAddress.getLocalHost().getHostAddress();
             this.agentSignature = request.getHeader("User-Agent");
             this.porterUuid = Cookier.getValue(request, TtCookierVariable.UserPorterUUID);
             this.user = (User) request.getSession().getAttribute("sUser");

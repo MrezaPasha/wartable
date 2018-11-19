@@ -26,6 +26,8 @@ import org.sadr.web.main._core.meta.annotation.TaskAccessLevel;
 import org.sadr.web.main._core.propertor.PropertorInWeb;
 import org.sadr.web.main._core.propertor._type.TtPropertorInWebList;
 import org.sadr.web.main._core.tools.listener.SessionListener;
+import org.sadr.web.main._core.uiBag.UiBag;
+import org.sadr.web.main._core.uiBag.UiBagService;
 import org.sadr.web.main._core.utils.*;
 import org.sadr.web.main._core.utils._type.*;
 import org.sadr.web.main.admin._type.TtUserAttemptType;
@@ -62,6 +64,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 
 /**
@@ -69,7 +73,7 @@ import java.util.*;
  * @version 1.95.10.19
  */
 @RestController
-@PersianName("مدیریت کاربری")
+@PersianName("مدیریت کاربران")
 public class UserController extends GenericControllerImpl<User, UserService> {
 
     ////////////////////
@@ -87,6 +91,12 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     private SigninLogService signinLogService;
     private UserConfirmService userConfirmService;
     private IrrorService irrorService;
+    private UiBagService uiBagService;
+
+    @Autowired
+    public void setUiBagService(UiBagService uiBagService) {
+        this.uiBagService = uiBagService;
+    }
 
     @Autowired
     public void setIrrorService(IrrorService irrorService) {
@@ -165,8 +175,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     }
 
     @RequestMapping(value = _PANEL_URL + "/create", method = RequestMethod.POST)
-    public ModelAndView pCreateUser(Model model,
-                                    @ModelAttribute("user") @Valid User fuser,
+    public ModelAndView pCreateUser(@ModelAttribute("user") @Valid User fuser,
                                     BindingResult userBindingResult,
                                     HttpServletRequest request,
                                     final RedirectAttributes redirectAttributes) {
@@ -254,7 +263,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
 
     @PersianName("ویرایش کاربر")
     @RequestMapping(value = _PANEL_URL + "/edit/{uid}")
-    public ModelAndView pEditUser(Model model, @PathVariable("uid") int uid, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    public ModelAndView pEditUser(Model model, @PathVariable("uid") int uid, RedirectAttributes redirectAttributes) {
         User dbuser = (User) model.asMap().get("user");
         if (dbuser == null) {
             dbuser = this.service.findById(uid, User._USER_GROUPS);
@@ -426,8 +435,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     @TaskAccessLevel(TtTaskAccessLevel.Free4Users)
     @PersianName("ویرایش اطلاعات کاربری")
     @RequestMapping(value = _PANEL_URL + "/your-edit")
-    public ModelAndView pEditYourUser(Model model, HttpSession session,
-                                      HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    public ModelAndView pEditYourUser(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         User sUser = (User) session.getAttribute("sUser");
 
         User dbuser = (User) model.asMap().get("user");
@@ -491,7 +499,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
 
     }
 
-    private ModelAndView changePass(User fuser, String newPass, String rePass, HttpServletRequest request, RedirectAttributes redirectAttributes, boolean isYour) {
+    private ModelAndView changePass(User fuser, String newPass, String rePass, RedirectAttributes redirectAttributes, boolean isYour) {
         if (fuser == null || fuser.getIdi() == 0) {
             Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.password.change.error")));
             return changePassRedirect(fuser, notice2s, redirectAttributes, isYour);
@@ -595,7 +603,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
 
     @PersianName("تغییر رمز برای کاربر")
     @RequestMapping(value = _PANEL_URL + "/user-pass/{uid}")
-    public ModelAndView pChangeUserPassword(Model model, @PathVariable("uid") int uid, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    public ModelAndView pChangeUserPassword(Model model, @PathVariable("uid") int uid, RedirectAttributes redirectAttributes) {
         User dbuser = this.service.findById(uid);
         if (dbuser == null) {
             Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + uid), TtNotice.Warning));
@@ -606,14 +614,12 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     }
 
     @RequestMapping(value = _PANEL_URL + "/user-pass", method = RequestMethod.POST)
-    public ModelAndView pChangeUserPassword(Model model,
-                                            @ModelAttribute("newPassword") String newPass,
+    public ModelAndView pChangeUserPassword(@ModelAttribute("newPassword") String newPass,
                                             @ModelAttribute("repassword") String rePass,
                                             @ModelAttribute("user") User fuser,
                                             BindingResult userBindingResult,
-                                            HttpServletRequest request,
                                             final RedirectAttributes redirectAttributes) {
-        return changePass(fuser, newPass, rePass, request, redirectAttributes, false);
+        return changePass(fuser, newPass, rePass, redirectAttributes, false);
     }
 
     @TaskAccessLevel(TtTaskAccessLevel.Free4Users)
@@ -649,10 +655,9 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                                             @ModelAttribute("repassword") String rePass,
                                             @ModelAttribute("user") User fuser,
                                             BindingResult userBindingResult,
-                                            HttpServletRequest request,
                                             final RedirectAttributes redirectAttributes) {
 
-        return changePass(fuser, newPass, rePass, request, redirectAttributes, true);
+        return changePass(fuser, newPass, rePass, redirectAttributes, true);
     }
 
     @PersianName("تولید نام کاربری تصادفی")
@@ -1013,7 +1018,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         return TtTile___.p_user_access_list.___getDisModel(TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Success);
     }
 
-    @PersianName("سطح دسترسی")
+    @PersianName("اعمال سطح دسترسی")
     @RequestMapping(value = _PANEL_URL + "/access/{uid}/{mid}")
     public ModelAndView pAccess(Model model,
                                 @PathVariable("uid") int uid,
@@ -1100,7 +1105,6 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                                 @ModelAttribute("moduleId") String sid,
                                 @ModelAttribute("user") User u,
                                 BindingResult userBindingResult,
-                                HttpSession session,
                                 final RedirectAttributes redirectAttributes) {
         int mid;
         try {
@@ -1150,7 +1154,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                                   @RequestParam(value = "reSignUrl") String reSignUrl,
                                   @RequestParam(value = "userPass") String userPass,
                                   @RequestParam(value = "captchaCode", required = false, defaultValue = "false") String captchaCode,
-                                  final RedirectAttributes redirectAttributes) {
+                                  final RedirectAttributes redirectAttributes) throws UnknownHostException {
 
         //================================================== Verification && Recaptcha
 
@@ -1288,7 +1292,8 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     public ModelAndView fSignin(Model model,
                                 @RequestParam(value = "limit", required = false) String limit,
                                 @RequestParam(value = "inactive", required = false) String inactive,
-                                HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+                                HttpServletRequest request, HttpServletResponse response, HttpSession session) throws UnknownHostException {
+
 
         if ((User) session.getAttribute("sUser") != null) {
             return new ModelAndView("redirect:/");
@@ -1314,9 +1319,8 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                                 @RequestParam(value = "username") String username,
                                 @RequestParam(value = "password", required = false) String password,
                                 @RequestParam(value = "force", required = false) String isFoceToSignin,
-                                @RequestParam(value = "rememberMe", required = false, defaultValue = "false") boolean rememberMe,
                                 @RequestParam(value = "captchaCode", required = false) String captchaCode,
-                                final RedirectAttributes redirectAttributes) {
+                                final RedirectAttributes redirectAttributes) throws UnknownHostException {
 
         //================================================== Verification && Recaptcha
 
@@ -1325,8 +1329,9 @@ public class UserController extends GenericControllerImpl<User, UserService> {
 
         User user = this.service.findByUsername(username);
 
+
         uatt = this.userAttemptService.findBy(Restrictions.and(
-                Restrictions.eq(UserAttempt.COMPUTER_SIGNATURE, request.getRemoteAddr()),
+                Restrictions.eq(UserAttempt.COMPUTER_SIGNATURE, InetAddress.getLocalHost().getHostAddress()),
                 Restrictions.isNull(UserAttempt._USER),
                 Restrictions.eq(UserAttempt.ATTEMPT_TYPE, TtUserAttemptType.Signin)));
 
@@ -1382,7 +1387,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             return Referer.redirect("/signin", TtTaskActionSubType.Success_Login, TtTaskActionStatus.Success, notice2s);
         }
 
-        if (SessionListener.isUserInSession(user.getId())) {
+        if (SessionListener.isUserInSession(user.getIdi())) {
             if (isFoceToSignin != null) {
                 SessionListener.invalidate(user.getId());
                 Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.previous.signed.out.try.again", user.getSecretNote(), TtNotice.Info)));
@@ -1419,17 +1424,15 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         if (user.getIpRangeType() != null) {
             switch (user.getIpRangeType()) {
                 case FirstSignin:
-                    OutLog.pl("|" + user.getIpAddressFirstSignin() + "|");
-                    OutLog.pl("|" + request.getRemoteAddr() + "|");
                     if (user.getIpAddressFirstSignin() != null
-                            && !user.getIpAddressFirstSignin().equals(request.getRemoteAddr())) {
+                            && !user.getIpAddressFirstSignin().equals(InetAddress.getLocalHost().getHostAddress())) {
                         Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.ip.is.not.allowed", user.getSecretNote(), TtNotice.Danger)));
                         SessionListener.invalidate(user.getId());
                         return Referer.redirect("/signin", TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure, notice2s);
                     }
                     break;
                 case One:
-                    if (user.getIpAddress() != request.getRemoteAddr()) {
+                    if (user.getIpAddress() != InetAddress.getLocalHost().getHostAddress()) {
                         Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.ip.is.not.allowed", user.getSecretNote(), TtNotice.Danger)));
                         SessionListener.invalidate(user.getId());
                         return Referer.redirect("/signin", TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure, notice2s);
@@ -1438,7 +1441,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                 case All:
                     break;
                 case Range:
-                    String ipp = request.getRemoteAddr();
+                    String ipp = InetAddress.getLocalHost().getHostAddress();
                     if (ipp != null
                             && user.getIpAddressEnd() != null
                             && user.getIpAddressStart() != null) {
@@ -1495,7 +1498,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         //=================================================== set first ip address
 
         if (user.getIpRangeType() == TtUserIpRangeType.FirstSignin && user.getIpAddressFirstSignin() == null) {
-            user.setIpAddressFirstSignin(request.getRemoteAddr());
+            user.setIpAddressFirstSignin(InetAddress.getLocalHost().getHostAddress());
         }
         //------------------------------------------------------------------------
 
@@ -1510,11 +1513,16 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             irrorService.submit(e, request, TtIrrorPlace.Controller, TtIrrorLevel.Warn);
         }
 
-        String retUrl = Cookier.getValue(request, TtCookierVariable.ReturnUrlAfterSignin);
-        if (retUrl != null && !retUrl.isEmpty()) {
-            Cookier.deleteCookie(response, TtCookierVariable.ReturnUrlAfterSignin);
-            return Referer.redirect(retUrl);
+        //------------------------------
+
+
+        UiBag bag = uiBagService.findBy(
+                Restrictions.eq(UiBag._USER, user)
+        );
+        if (bag != null) {
+            SessionListener.refreshUiSetting(bag.getFont().getKey(), bag.getStyle().getKey(), user.getId());
         }
+
         return Referer.redirect("/panel", TtTaskActionSubType.Success_Login, TtTaskActionStatus.Success);
     }
 }

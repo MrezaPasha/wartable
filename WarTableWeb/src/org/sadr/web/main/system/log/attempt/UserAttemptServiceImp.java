@@ -19,6 +19,8 @@ import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * @author masoud
@@ -33,14 +35,14 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
     }
 
     @Override
-    public TtUserAttemptResult attemptStatus(HttpServletRequest request, HttpServletResponse response, Model model, User user, TtUserAttemptType attemptType) {
+    public TtUserAttemptResult attemptStatus(HttpServletRequest request, HttpServletResponse response, Model model, User user, TtUserAttemptType attemptType) throws UnknownHostException {
         UserAttempt uatt = null;
         String uuid = Cookier.getValue(request, TtCookierVariable.UserPorterUUID.getKey());
         return attemptStatus(request, response, model, user, attemptType, uatt, uuid, true);
     }
 
     @Override
-    public TtUserAttemptResult attemptStatus(HttpServletRequest request, HttpServletResponse response, Model model, User user, TtUserAttemptType attemptType, boolean mergeNotice) {
+    public TtUserAttemptResult attemptStatus(HttpServletRequest request, HttpServletResponse response, Model model, User user, TtUserAttemptType attemptType, boolean mergeNotice) throws UnknownHostException {
         UserAttempt uatt = null;
         String uuid = Cookier.getValue(request, TtCookierVariable.UserPorterUUID.getKey());
         return attemptStatus(request, response, model, user, attemptType, uatt, uuid, mergeNotice);
@@ -59,12 +61,12 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
      * @return
      */
     @Override
-    public TtUserAttemptResult attemptStatus(HttpServletRequest request, HttpServletResponse response, Model model, User user, TtUserAttemptType attemptType, UserAttempt uatt, String uuid) {
+    public TtUserAttemptResult attemptStatus(HttpServletRequest request, HttpServletResponse response, Model model, User user, TtUserAttemptType attemptType, UserAttempt uatt, String uuid) throws UnknownHostException {
         return attemptStatus(request, response, model, user, attemptType, uatt, uuid, true);
     }
 
     @Override
-    public TtUserAttemptResult attemptStatus(HttpServletRequest request, HttpServletResponse response, Model model, User user, TtUserAttemptType attemptType, UserAttempt uatt, String uuid, boolean mergeNotice) {
+    public TtUserAttemptResult attemptStatus(HttpServletRequest request, HttpServletResponse response, Model model, User user, TtUserAttemptType attemptType, UserAttempt uatt, String uuid, boolean mergeNotice) throws UnknownHostException {
         if (!PropertorInWeb.getInstance().isOnProperty(TtPropertorInWebList.UserAttemptOn)) {
             model.addAttribute("noRecaptcha", true);
             return TtUserAttemptResult.Ok;
@@ -81,7 +83,7 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
 
                 } else {
                     uatt = this.findBy(Restrictions.and(
-                            Restrictions.eq(UserAttempt.COMPUTER_SIGNATURE, request.getRemoteAddr()),
+                            Restrictions.eq(UserAttempt.COMPUTER_SIGNATURE, InetAddress.getLocalHost().getHostAddress()),
                             Restrictions.eq(UserAttempt.ATTEMPT_TYPE, attemptType)));
 
                 }
@@ -111,7 +113,7 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
                 model.addAttribute("noRecaptcha", true);
                 return TtUserAttemptResult.Ok;
             }
-            if (!UserPorter.isValidateUUID(request.getHeader("User-Agent"), request.getRemoteAddr(), uuid)) {
+            if (!UserPorter.isValidateUUID(request.getHeader("User-Agent"), InetAddress.getLocalHost().getHostAddress(), uuid)) {
                 Cookier.deleteCookie(response, TtCookierVariable.UserPorterUUID.getKey());
                 model.addAttribute("noRecaptcha", false);
                 return TtUserAttemptResult.UuidNotValid;
@@ -119,21 +121,38 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
             // checkup integrity in post method
             model.addAttribute("noRecaptcha", true);
             return TtUserAttemptResult.Ok;
+        } else {
+            uatt = new UserAttempt();
+//                uatt.setUser(user);
+            uatt.setAgentSignature(request.getHeader("User-Agent"));
+            uatt.setComputerSignature(InetAddress.getLocalHost().getHostAddress());
+            uatt.refreshDateTime();
+            uatt.setAttemptType(attemptType);
+            uatt.setIsSuccess(false);
+            if (uuid == null || uuid.isEmpty()) {
+                uuid = uatt.generateSecureUUID();
+                Cookier.setCookie(response, TtCookierVariable.UserPorterUUID, uuid);
+            } else {
+                uatt.setUuid(uuid);
+            }
+            uatt.setCount(PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.UserAttemptSigninAttemptMax)+1);
+            this.save(uatt);
+
+            model.addAttribute("noRecaptcha", false);
+            return TtUserAttemptResult.NeedRecaptcha;
         }
-        model.addAttribute("noRecaptcha", false);
-        return TtUserAttemptResult.NeedRecaptcha;
     }
 
     @Override
     /**
      * بروزرسانی تعداد تلاش ها
      */
-    public void rebuildUerAttempt(HttpServletRequest request, HttpServletResponse response, TtUserAttemptType attemptType, String uuid, User user) {
+    public void rebuildUerAttempt(HttpServletRequest request, HttpServletResponse response, TtUserAttemptType attemptType, String uuid, User user) throws UnknownHostException {
         UserAttempt uatt;
         if (!PropertorInWeb.getInstance().isOnProperty(TtPropertorInWebList.UserAttemptOn)) {
         } else {
             uatt = this.findBy(Restrictions.and(
-                    Restrictions.eq(UserAttempt.COMPUTER_SIGNATURE, request.getRemoteAddr()),
+                    Restrictions.eq(UserAttempt.COMPUTER_SIGNATURE, InetAddress.getLocalHost().getHostAddress()),
                     Restrictions.isNull(UserAttempt._USER),
                     Restrictions.eq(UserAttempt.ATTEMPT_TYPE, attemptType)));
             if (uatt != null) {
@@ -152,7 +171,7 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
                 uatt = new UserAttempt();
 //                uatt.setUser(user);
                 uatt.setAgentSignature(request.getHeader("User-Agent"));
-                uatt.setComputerSignature(request.getRemoteAddr());
+                uatt.setComputerSignature(InetAddress.getLocalHost().getHostAddress());
                 uatt.refreshDateTime();
                 uatt.setAttemptType(attemptType);
                 uatt.setIsSuccess(false);
@@ -186,7 +205,7 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
                     uatt = new UserAttempt();
                     uatt.setUser(user);
                     uatt.setAgentSignature(request.getHeader("User-Agent"));
-                    uatt.setComputerSignature(request.getRemoteAddr());
+                    uatt.setComputerSignature(InetAddress.getLocalHost().getHostAddress());
                     uatt.refreshDateTime();
                     uatt.setAttemptType(attemptType);
                     uatt.setIsSuccess(false);

@@ -7,7 +7,7 @@
 <div class=" container">
     <div class="page-header">
         <h3 class="cred-header">
-            <span class="cred-title">تنظیمات پیکربندی</span>
+            <span class="cred-title">پیکربندی کنترل امنیت</span>
         </h3>
     </div>
     <div class="row">
@@ -26,17 +26,7 @@
                     </li>
                     <li style="float: left">
                         <a href="${cp}/panel/propertor/log/reset" class="btn btn-default btn-block">
-                            بازنشانی
-                        </a>
-                    </li>
-                    <li style="float: left">
-                        <a href="${cp}/panel/propertor/log/update" class="btn btn-default btn-block">
-                            بروزرسانی
-                        </a>
-                    </li>
-                    <li style="float: left">
-                        <a href="${cp}/panel/propertor/log/load" class="btn btn-default btn-block">
-                            بارگذاری مجدد
+                            بازنشانی به تنظیمات اولیه
                         </a>
                     </li>
                 </ul>

@@ -93,26 +93,17 @@
                 <span class="title"><spring:message code="rightmenu.sys.tow.level.confirm"/></span>
             </a>
         </li>
-        <li>
-            <a href="javascript:void(0)">
-                <i class="clip-users"></i>
-                <span class="title"><spring:message code="rightmenu.web.logging"/></span><i class="icon-arrow"></i>
-                <span class="selected"></span>
+        <li data-menu-id="|p_sys_log_list|p_sys_log_details|">
+            <a href="${cp}/panel/log/list">
+                <i class=" clip-loop light"></i>
+                <span class="title"><spring:message code="rightmenu.web.logging"/></span>
             </a>
-            <ul class="sub-menu">
-                <li data-menu-id="|p_sys_log_list|p_sys_log_details|">
-                    <a href="${cp}/panel/log/list">
-                        <i class=" clip-loop light"></i>
-                        <span class="title"><spring:message code="rightmenu.web.loggin.list"/></span>
-                    </a>
-                </li>
-                <li data-menu-id="p_sys_log_signin_list">
-                    <a href="${cp}/panel/log/signin/list">
-                        <i class=" clip-data light"></i>
-                        <span class="title"><spring:message code="rightmenu.web.logging.signin"/></span>
-                    </a>
-                </li>
-            </ul>
+        </li>
+        <li data-menu-id="p_sys_log_signin_list">
+            <a href="${cp}/panel/log/signin/list">
+                <i class=" clip-data light"></i>
+                <span class="title"><spring:message code="rightmenu.web.logging.signin"/></span>
+            </a>
         </li>
         <li>
             <a href="javascript:void(0)">
@@ -121,7 +112,7 @@
                 <span class="selected"></span>
             </a>
             <ul class="sub-menu">
-                <li data-menu-id="|p_backup_list||p_backup_upload|">
+                <li data-menu-id="|p_backup_list|p_backup_upload|">
                     <a href="${cp}/panel/backup/list">
                         <i class=" clip-tree light"></i>
                         <span class="title"><spring:message code="rightmenu.web.backup.list"/></span>
@@ -135,7 +126,7 @@
                 </li>
             </ul>
         </li>
-        <li data-menu-id="|p_ui_set|">
+        <li data-menu-id="|p_uiBag_set|">
             <a href="${cp}/panel/ui/set">
                 <i class=" clip-tree light"></i>
                 <span class="title"><spring:message code="rightmenu.web.ui.set"/></span>

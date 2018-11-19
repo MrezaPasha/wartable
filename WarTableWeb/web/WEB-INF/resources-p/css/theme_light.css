@@ -1,3 +1,9 @@
+ul.main-navigation-menu > li a > .light {
+    color: #57517B;
+    font-weight: normal;
+}
+
+
 body, .main-container, .footer, .main-navigation, ul.main-navigation-menu > li > ul.sub-menu, .navigation-small ul.main-navigation-menu > li > ul.sub-menu {
     background-color: #F6F6F6 !important;
 }

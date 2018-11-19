@@ -11,6 +11,7 @@ import org.sadr._core.meta.generic.JB;
 import org.sadr._core.utils.JsonBuilder;
 import org.sadr._core.utils.Searchee;
 import org.sadr._core.utils.SpringMessager;
+import org.sadr._core.utils.Validator;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.meta.annotation.LogManagerTask;
 import org.sadr.web.main._core.meta.annotation.MenuIdentity;
@@ -21,10 +22,7 @@ import org.sadr.web.main._core.utils._type.TtIxportRowIndex;
 import org.sadr.web.main._core.utils._type.TtIxportSubStrategy;
 import org.sadr.web.main._core.utils._type.TtIxportTtStrategy;
 import org.sadr.web.main._core.utils._type.TtNotice;
-import org.sadr.web.main.system._type.TtIrrorLevel;
-import org.sadr.web.main.system._type.TtIrrorPlace;
-import org.sadr.web.main.system._type.TtTaskActionStatus;
-import org.sadr.web.main.system._type.TtTaskActionSubType;
+import org.sadr.web.main.system._type.*;
 import org.sadr.web.main.system.irror.IrrorService;
 import org.sadr.web.main.system.module.Module;
 import org.sadr.web.main.system.module.ModuleService;
@@ -52,7 +50,7 @@ import java.util.List;
  * @author masoud
  */
 @RestController
-@PersianName("مدیریت رویدادنگاری برخط")
+@PersianName("کنترل امنیت")
 public class RemoteLogController extends GenericControllerImpl<RemoteLog, RemoteLogService> {
 
     ////////////////////
@@ -213,7 +211,7 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
 
     @LogManagerTask
     @MenuIdentity(TtTile___.p_sys_log_remote_details)
-    @PersianName("نمایش جزئیات رویدادنگاری")
+    @PersianName("نمایش جزئیات رویدادها")
     @RequestMapping(value = _PANEL_URL + "/details/{id}")
     public ModelAndView pShow(Model model,
                               @PathVariable("id") long id,
@@ -231,9 +229,9 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
 
     @LogManagerTask
     @MenuIdentity(TtTile___.p_sys_log_remote_moduleList)
-    @PersianName("لیست ماژول ها برای پیکربندی رویداد")
+    @PersianName("تنظیم سطح عملیات")
     @RequestMapping(value = _PANEL_URL + "/module/list")
-    public ModelAndView pListModule(Model model, final RedirectAttributes redirectAttributes
+    public ModelAndView pListModule(Model model
     ) {
         List<Module> mList = this.moduleService.findAll(Module._TASKS);
         List<Module> newList = new ArrayList<>();
@@ -256,32 +254,7 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
 
 
     @LogManagerTask
-    @MenuIdentity(TtTile___.p_sys_log_remote_taskList)
-    @PersianName("لیست عملیات های ماژول برای پیکربندی رویداد")
-    @RequestMapping(value = _PANEL_URL + "/task/list/{mid}")
-    public ModelAndView pListTask(Model model, @PathVariable("mid") long id, final RedirectAttributes redirectAttributes
-    ) {
-        Module module = moduleService.findById(id);
-        if (module == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.module.not.found", JsonBuilder.toJson("moduleId", id + ""), TtNotice.Warning)));
-            return Referer.redirect(_PANEL_URL + "/module/list", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure);
-        }
-
-        List<Task> tasks = this.taskService.findAllBy(
-                Restrictions.and(
-                        Restrictions.eq(Task._MODULE, module),
-                        Restrictions.eq(Task.IS_SUPER_ADMIN, false)
-                )
-        );
-
-        model.addAttribute("module", module);
-        model.addAttribute("tlist", tasks);
-        return TtTile___.p_sys_log_remote_taskList.___getDisModel(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
-    }
-
-
-    @LogManagerTask
-    @PersianName("پیکربندی رویدادنگاری عملیات")
+    @PersianName("اعمال سطح عملیات")
     @MenuIdentity(TtTile___.p_sys_log_remote_taskConfig)
     @RequestMapping(value = _PANEL_URL + "/task/config/{id}")
     public ModelAndView pTaskConfig(Model model, @PathVariable("id") long id,
@@ -302,10 +275,48 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
 
     @LogManagerTask
     @RequestMapping(value = _PANEL_URL + "/task/config", method = RequestMethod.POST)
-    public ModelAndView pTaskConfig(Model model,
-                                    @ModelAttribute("task") Task formObj,
-                                    final RedirectAttributes redirectAttributes
+    public ModelAndView pTaskConfig(
+            @ModelAttribute("task") Task formObj,
+            HttpServletRequest request,
+            final RedirectAttributes redirectAttributes
     ) {
+
+        if (formObj.getSensitivity() == null) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.remoteLog.task.sensitivity.is.null", formObj.getSecretNote(), TtNotice.Danger)));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, formObj);
+        }
+
+        if (formObj.getImportanceLevel() == null) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.remoteLog.task.importance.is.null", formObj.getSecretNote(), TtNotice.Danger)));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, formObj);
+        }
+        if (formObj.getIsOnlineLogging() == null) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.remoteLog.task.onlineLogging.is.null", formObj.getSecretNote(), TtNotice.Danger)));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, formObj);
+        }
+
+        if (formObj.getIsOnlineLogging()) {
+            if (formObj.getActionType() == null) {
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.remoteLog.task.actionType.is.null", formObj.getSecretNote(), TtNotice.Danger)));
+                return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, formObj);
+            }
+            if (formObj.getOnlineLoggingStrategy() == null) {
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.remoteLog.task.onlineStrategy.is.null", formObj.getSecretNote(), TtNotice.Danger)));
+                return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, formObj);
+            } else {
+                if (formObj.getOnlineLoggingStrategy() == TtTaskOnlineLoggingStrategy.Scheduling) {
+                    if (formObj.getOnlineSchedulingTime() == null) {
+                        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.remoteLog.task.time.is.null", formObj.getSecretNote(), TtNotice.Danger)));
+                        return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, formObj);
+                    } else if (!Validator.persianTime(formObj.getOnlineSchedulingTime())) {
+                        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.remoteLog.task.time.is.valid", formObj.getSecretNote(), TtNotice.Danger)));
+                        return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, formObj);
+                    }
+                }
+            }
+
+        }
+
         Task dbObj = this.taskService.findBy(
                 Restrictions.and(
                         Restrictions.eq(Task.ID, formObj.getId()),
@@ -315,6 +326,7 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
             Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.task.not.found", formObj.getSecretNote(), TtNotice.Warning)));
             return Referer.redirect(_PANEL_URL + "/module/list", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s);
         }
+
 
         dbObj.setSensitivity(formObj.getSensitivity());
         dbObj.setImportanceLevel(formObj.getImportanceLevel());
@@ -332,49 +344,8 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
 
     ///------------------------------ online logging
     @LogManagerTask
-    @MenuIdentity(TtTile___.p_sys_log_remote_onlineLogging)
-    @PersianName("فعالسازی رویدادنگاری برخط عملیاتها")
-    @RequestMapping(value = _PANEL_URL + "/task/online/logging/{mid}")
-    public ModelAndView pActiveOnlineLogging(org.springframework.ui.Model model,
-                                             @PathVariable("mid") long mid,
-                                             final RedirectAttributes redirectAttributes) {
-
-        Module mud = this.moduleService.findById(mid);
-        if (mud == null) {
-            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.module.not.found", JsonBuilder.toJson("moduleId", ""), TtNotice.Warning)));
-            return Referer.redirect(_PANEL_URL + "/module/list", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s);
-        }
-
-        List<Task> tasksNotActive = this.taskService.findAllBy(
-                Restrictions.and(
-                        Restrictions.eq(Task._MODULE, mud),
-                        Restrictions.eq(Task.IS_ONLINE_LOGGING, false),
-                        Restrictions.eq(Task.IS_SUPER_ADMIN, false)
-                ));
-
-        TaskViewModel taskViewModel = new TaskViewModel();
-
-        taskViewModel.setTasks(this.taskService.findAllBy(
-                Restrictions.and(
-                        Restrictions.eq(Task._MODULE, mud),
-                        Restrictions.eq(Task.IS_ONLINE_LOGGING, true),
-                        Restrictions.eq(Task.IS_SUPER_ADMIN, false)
-                )));
-
-        taskViewModel.setModuleId(mid);
-        taskViewModel.setModuleName(SpringMessager.get(mud.getMessageCode()));
-
-        model.addAttribute(taskViewModel);
-        model.addAttribute("tlist", tasksNotActive);
-
-        return TtTile___.p_sys_log_remote_onlineLogging.___getDisModel(_PANEL_URL + "/task/online/logging", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
-    }
-
-    @LogManagerTask
     @RequestMapping(value = _PANEL_URL + "/task/online/logging", method = RequestMethod.POST)
-    public ModelAndView pActiveOnlineLogging(org.springframework.ui.Model model,
-                                             HttpServletRequest request,
-                                             @ModelAttribute TaskViewModel taskViewModel,
+    public ModelAndView pActiveOnlineLogging(@ModelAttribute TaskViewModel taskViewModel,
                                              BindingResult taskViewModelBindingResult,
                                              final RedirectAttributes redirectAttributes
     ) {

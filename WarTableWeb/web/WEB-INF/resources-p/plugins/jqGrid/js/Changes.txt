@@ -1157,4 +1157,3 @@ formatter
 - the showLink now can accept custom name for the id The parameter is idName :
   'id' The default is id. Can be changed in formatoptions or in the language
   file.
-

@@ -1,9 +1,12 @@
 package org.sadr.web.main.system.irror;
 
+import org.sadr._core._type.TtDataType;
+import org.sadr._core._type.TtRestrictionOperator;
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GB;
 import org.sadr._core.meta.generic.GenericControllerImpl;
 import org.sadr._core.meta.generic.JB;
+import org.sadr._core.utils.Searchee;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.meta.annotation.OverChangePassword;
 import org.sadr.web.main._core.meta.annotation.TaskAccessLevel;
@@ -28,7 +31,7 @@ import javax.servlet.http.HttpSession;
  * @author masoud
  */
 @RestController
-@PersianName("مدیریت خطا")
+@PersianName("مرکز خطا")
 public class IrrorController extends GenericControllerImpl<Irror, IrrorService> {
 
     ////////////////////
@@ -87,6 +90,29 @@ public class IrrorController extends GenericControllerImpl<Irror, IrrorService> 
     @RequestMapping(value = _PANEL_URL + "/list")
     public ModelAndView pErrorList(Model model
     ) {
+
+        Searchee.getInstance().setAttributeArray(
+                model,
+                "f_username",
+                TtDataType.String,
+                TtRestrictionOperator.Like_ANY,
+                true,
+                Irror._USER, User.USERNAME);
+        Searchee.getInstance().setAttributeArray(
+                model,
+                "f_firstName",
+                TtDataType.String,
+                TtRestrictionOperator.Like_ANY,
+                true,
+                Irror._USER, User.FIRST_NAME);
+        Searchee.getInstance().setAttributeArray(
+                model,
+                "f_lastName",
+                TtDataType.String,
+                TtRestrictionOperator.Like_ANY,
+                true,
+                Irror._USER, User.LAST_NAME);
+
         GB.searchTableColumns(model,
                 Irror.class,
                 GB.col(Irror.ID),

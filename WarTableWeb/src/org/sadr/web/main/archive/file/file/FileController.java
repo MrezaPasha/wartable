@@ -36,8 +36,7 @@ public class FileController extends GenericControllerImpl<File, FileService> {
     @ResponseBody
     public void fDownloadSourceById(
             @PathVariable("id") long id,
-            HttpServletResponse response,
-            HttpSession session) throws IOException {
+            HttpServletResponse response) throws IOException {
         File f = this.service.findBy(Restrictions.and(Restrictions.eq(File.ID, id)));
         if (f == null) {
             OutLog.pl("");

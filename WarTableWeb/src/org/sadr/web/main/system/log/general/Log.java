@@ -27,6 +27,8 @@ import javax.persistence.Table;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -41,12 +43,12 @@ import java.util.Date;
                 @Parameter(name = "encryptorRegisteredName", value = "strongHibernateStringEncryptor")
         }
 )
-@PersianName("رویدادنگاری محلی")
+@PersianName("رویدادنگاری")
 @Entity
 @Table(name = "Web.System.Log")
 public class Log extends GenericDataModel<Log> implements Serializable {
 //#########++++++#######// StaticFields: Start //
-public static final String SERVER_ID = "serverId";public static final String IMPORTANCE_LEVEL = "importanceLevel";public static final String SENSITIVITY = "sensitivity";public static final String ACTION_TYPE = "actionType";public static final String ACTION_SUB_TYPE = "actionSubType";public static final String ACTION_STATUS = "actionStatus";public static final String USER_ID = "userId";public static final String USER_LEVEL = "userLevel";public static final String USER_GROUP_ID = "userGroupId";public static final String DATE_TIME_G = "dateTimeG";public static final String TASK_NAME = "taskName";public static final String TASK_TITLE = "taskTitle";public static final String IS_TASK_TWO_LEVEL_CONFIRM = "isTaskTwoLevelConfirm";public static final String MESSAGE = "message";public static final String SESSION_ID = "sessionId";public static final String COMPUTER_SIGNATURE = "computerSignature";public static final String AGENT_SIGNATURE = "agentSignature";public static final String PORTER_UUID = "porterUuid";public static final String PORT_NUMBER = "portNumber";public static final String URL = "url";public static final String REQUEST_METHOD = "requestMethod";public static final String HTTP_CODE = "httpCode";public static final String SEND_DATE_TIME_G = "sendDateTimeG";public static final String SEND_STATUS = "sendStatus";public static final String ONLINE_LOGGING_STRATEGY = "onlineLoggingStrategy";public static final String $SEND_DATE_TIME = "sendDateTime";public static final String $IS_TASK_TWO_LEVEL_CONFIRM_Y = "isTaskTwoLevelConfirmY";public static final String $ACT_COLUMNS = "actColumns";public static final String $REL_COLUMNS = "relColumns";public static final String $VIR_COLUMNS = "virColumns";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
+public static final String SERVER_ID = "serverId";public static final String IMPORTANCE_LEVEL = "importanceLevel";public static final String SENSITIVITY = "sensitivity";public static final String ACTION_TYPE = "actionType";public static final String ACTION_SUB_TYPE = "actionSubType";public static final String ACTION_STATUS = "actionStatus";public static final String USER_ID = "userId";public static final String USER_LEVEL = "userLevel";public static final String USER_GROUP_ID = "userGroupId";public static final String DATE_TIME_G = "dateTimeG";public static final String TASK_NAME = "taskName";public static final String TASK_TITLE = "taskTitle";public static final String IS_TASK_TWO_LEVEL_CONFIRM = "isTaskTwoLevelConfirm";public static final String MESSAGE = "message";public static final String SESSION_ID = "sessionId";public static final String COMPUTER_SIGNATURE = "computerSignature";public static final String AGENT_SIGNATURE = "agentSignature";public static final String PORTER_UUID = "porterUuid";public static final String PORT_NUMBER = "portNumber";public static final String URL = "url";public static final String REQUEST_METHOD = "requestMethod";public static final String HTTP_CODE = "httpCode";public static final String SEND_DATE_TIME_G = "sendDateTimeG";public static final String SEND_STATUS = "sendStatus";public static final String ONLINE_LOGGING_STRATEGY = "onlineLoggingStrategy";public static final String $IS_TASK_TWO_LEVEL_CONFIRM_Y = "isTaskTwoLevelConfirmY";public static final String $ACT_COLUMNS = "actColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $REL_COLUMNS = "relColumns";public static final String $SEND_DATE_TIME = "sendDateTime";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
 //#########******#######// StaticFields: End //
 
     private static final int MESSAGE_LEN = 2048;
@@ -58,7 +60,7 @@ public static final String SERVER_ID = "serverId";public static final String IMP
                HttpServletRequest request, String message,
                TtLogHandler handler,
                Task task,
-               User user) {
+               User user) throws UnknownHostException {
 
         this.serverId = PropertorInLog.getInstance().getProperty(TtPropertorInLogList.SystemName)
                 + "|" + PropertorInLog.getInstance().getProperty(TtPropertorInLogList.SystemHostName)
@@ -176,7 +178,7 @@ public static final String SERVER_ID = "serverId";public static final String IMP
         this.dateTimeG = new Date().getTime();
 
         this.agentSignature = request.getHeader("User-Agent");
-        this.computerSignature = request.getRemoteAddr();
+        this.computerSignature = InetAddress.getLocalHost().getHostAddress();
         this.porterUuid = Cookier.getValue(request, TtCookierVariable.UserPorterUUID.getKey());
         this.sessionId = request.getSession().getId();
         this.requestMethod = request.getMethod();
@@ -186,7 +188,7 @@ public static final String SERVER_ID = "serverId";public static final String IMP
 
     public Log(ModelAndView andView, HttpServletRequest request, String message, TtLogHandler handler,
                Task task,
-               User user, UserGroup ug) {
+               User user, UserGroup ug) throws UnknownHostException {
         this(andView, request, message, handler, task, user);
         this.userGroupId = ug != null ? ug.getId() : 0;
 
@@ -221,7 +223,7 @@ public static final String SERVER_ID = "serverId";public static final String IMP
     @PersianName("سطح دسترسی کاربر")
     private TtUserLevel userLevel;
 
-    @PersianName("شناسه گروه کاربری")
+    @PersianName("شناسه گروه کاربران")
     private long userGroupId;
 
     //////////////////////////////////////

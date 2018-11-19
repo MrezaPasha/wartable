@@ -15,4 +15,3 @@
         meridiem: []
     };
 }(jQuery));
-

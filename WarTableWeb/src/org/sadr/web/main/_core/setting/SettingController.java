@@ -19,7 +19,6 @@ import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.admin.user.user.UserService;
 import org.sadr.web.main.archive.directory.DirectoryService;
 import org.sadr.web.main.system.module.ModuleService;
-import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -50,9 +50,6 @@ public class SettingController {
     private ModuleService moduleService;
     private DirectoryService directoryService;
     private UserService userService;
-
-    @Autowired
-    private ListableBeanFactory beanFactory;
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -75,11 +72,6 @@ public class SettingController {
             OutLog.pl();
             return;
         }
-//        this.modelService.adaptAndRebuild(Module.class.getName());
-//        this.modelService.adaptAndRebuild(Directory.class.getName());
-//        this.modelService.adaptAndRebuild(File.class.getName());
-//        this.modelService.adaptAndRebuild(User.class.getName());
-
         moduleService.init();
         directoryService.init();
 
@@ -147,7 +139,6 @@ public class SettingController {
     @PersianName("پیشخوان تنظیمات")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ModelAndView pSetting(final RedirectAttributes redirectAttributes) {
-//        return new ModelAndView("p.setting");
         return TtTile___.p_setting_index.___getDisModel();
     }
 
@@ -169,9 +160,7 @@ public class SettingController {
                 }
             }
         }
-        ls.sort((String[] o1, String[] o2) -> {
-            return (o1[0]).compareTo(o2[0]);
-        });
+        ls.sort(Comparator.comparing(o -> (o[0])));
         return ls;
     }
 

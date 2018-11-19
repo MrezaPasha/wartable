@@ -93,25 +93,8 @@ public class AuthorizerAspect {
         this.taskService = taskService;
     }
 
-    /*-[HIDE::RECODE::START]-*/
-    private ModelAndView fillAndView(HttpServletRequest request, ModelAndView andView) {
-        return andView;
-    }
-    /*-[HIDE::RECODE::END]-*/
 
-    /*-[HIDE::RECODE::START]-*/
-    private ModelAndView fillNeedTwoLevelConfirm(String taskSignatureX, HttpServletRequest request) {
-        return TtTile___.p_user_reSignin.___getDisModel("/panel/user/reSignin")
-                .addObject("taskSignature", taskSignatureX)
-                .addObject("reSignUrl", request.getServletPath() + (request.getQueryString() == null ? "" : "?" + request.getQueryString()));
-    }
-    /*-[HIDE::RECODE::END]-*/
 
-    /*-[HIDE::RECODE::START]-*/
-    private ModelAndView fillPasswordForm() {
-        return Referer.redirect("/panel/user/your-pass?expired=true");
-    }
-    /*-[HIDE::RECODE::END]-*/
 
     private ModelAndView guest(HttpServletRequest request, User u, ProceedingJoinPoint joinPoint, Task task) throws Throwable {
 
@@ -125,7 +108,8 @@ public class AuthorizerAspect {
                             "As Guest- Dispatched to < " + TtTile___.f_develop_developing.getCode() + " > [Developing]",
                             TtLogHandler.AuthorizerAspect, task, u)
             );
-            return fillAndView(request, TtTile___.f_develop_developing.___getDisModel());
+
+            return TtTile___.f_develop_developing.___getDisModel();
         }
 
         // guest > ================================  OK
@@ -138,7 +122,8 @@ public class AuthorizerAspect {
                             "As Guest- Dispatched to <" + andView.getViewName() + ">",
                             TtLogHandler.AuthorizerAspect, task, u)
             );
-            return fillAndView(request, andView);
+
+            return andView;
         }
 
         // guest > ================================  Forbidden
@@ -168,7 +153,8 @@ public class AuthorizerAspect {
                             "As Client- Dispatched to < " + TtTile___.f_develop_developing.getCode() + " > [Developing]",
                             TtLogHandler.AuthorizerAspect, task, u)
             );
-            return fillAndView(request, TtTile___.f_develop_developing.___getDisModel());
+
+            return TtTile___.f_develop_developing.___getDisModel();
         }
 
         // client > ================================  Access Limit
@@ -220,7 +206,8 @@ public class AuthorizerAspect {
                             "As Client- Dispatched to < " + TtTile___.p_user_changeYourPass.getCode() + " > [Change Password]",
                             TtLogHandler.AuthorizerAspect, task, u)
             );
-            return fillPasswordForm();
+
+            return Referer.redirect("/panel/user/your-pass?expired=true");
         }
 
         // client > ================================  OK
@@ -234,7 +221,8 @@ public class AuthorizerAspect {
                             "As Client With Guest Task- Dispatched to <" + andView.getViewName() + ">",
                             TtLogHandler.AuthorizerAspect, task, u)
             );
-            return fillAndView(request, andView);
+
+            return andView;
         }
         if (task != null && task.getAccessLevel() == TtTaskAccessLevel.Free4Users) {
             // client > ================================  Two step confirm
@@ -246,7 +234,10 @@ public class AuthorizerAspect {
                                 "As Client- Dispatched to <" + TtTile___.p_user_reSignin + "> [Need Two Step Confirm]",
                                 TtLogHandler.AuthorizerAspect, task, u)
                 );
-                return fillNeedTwoLevelConfirm(task.getSignature(), request);
+
+                return TtTile___.p_user_reSignin.___getDisModel("/panel/user/reSignin")
+.addObject("taskSignature", task.getSignature())
+.addObject("reSignUrl", request.getServletPath() + (request.getQueryString() == null ? "" : "?" + request.getQueryString()));
             }
 
             // client > ================================  OK
@@ -257,7 +248,8 @@ public class AuthorizerAspect {
                             "As Client- Dispatched to <" + andView.getViewName() + ">",
                             TtLogHandler.AuthorizerAspect, task, u)
             );
-            return fillAndView(request, andView);
+
+            return andView;
         }
 
         // client > ================================  Forbidden
@@ -280,7 +272,8 @@ public class AuthorizerAspect {
                             "As Master- Dispatched to < " + TtTile___.f_develop_developing.getCode() + " > [Developing]",
                             TtLogHandler.AuthorizerAspect, task, u)
             );
-            return fillAndView(request, TtTile___.f_develop_developing.___getDisModel());
+
+            return TtTile___.f_develop_developing.___getDisModel();
         }
 
         // master > ================================  Access limit
@@ -332,7 +325,8 @@ public class AuthorizerAspect {
                             "As Master- Dispatched to < " + TtTile___.p_user_changeYourPass.getCode() + " > [Change Password]",
                             TtLogHandler.AuthorizerAspect, task, u)
             );
-            return fillPasswordForm();
+
+            return Referer.redirect("/panel/user/your-pass?expired=true");
         }
 
         // master > ================================  Two step confirm
@@ -345,7 +339,10 @@ public class AuthorizerAspect {
                                 "As Master- Dispatched to <" + TtTile___.p_user_reSignin + "> [Need Two Step Confirm]",
                                 TtLogHandler.AuthorizerAspect, task, u)
                 );
-                return fillNeedTwoLevelConfirm(task.getSignature(), request);
+
+                return TtTile___.p_user_reSignin.___getDisModel("/panel/user/reSignin")
+.addObject("taskSignature", task.getSignature())
+.addObject("reSignUrl", request.getServletPath() + (request.getQueryString() == null ? "" : "?" + request.getQueryString()));
             }
 
             // master > ================================  OK
@@ -356,7 +353,8 @@ public class AuthorizerAspect {
                             "As Master- Dispatched to <" + andView.getViewName() + ">",
                             TtLogHandler.AuthorizerAspect, task, u)
             );
-            return fillAndView(request, andView);
+
+            return andView;
         }
         ///////////////////////////
         if (task.getAccessLevel() == TtTaskAccessLevel.Grant) {
@@ -371,7 +369,10 @@ public class AuthorizerAspect {
                                         "As Master- Dispatched to <" + TtTile___.p_user_reSignin + "> [Need Two Step Confirm]",
                                         TtLogHandler.AuthorizerAspect, task, u)
                         );
-                        return fillNeedTwoLevelConfirm(task.getSignature(), request);
+
+                        return TtTile___.p_user_reSignin.___getDisModel("/panel/user/reSignin")
+.addObject("taskSignature", task.getSignature())
+.addObject("reSignUrl", request.getServletPath() + (request.getQueryString() == null ? "" : "?" + request.getQueryString()));
                     }
 
                     // master > ================================  OK
@@ -383,7 +384,8 @@ public class AuthorizerAspect {
                                     "As Master- Dispatched to <" + andView.getViewName() + ">",
                                     TtLogHandler.AuthorizerAspect, task, u)
                     );
-                    return fillAndView(request, andView);
+
+                    return andView;
                 }
             }
             for (UserGroup ug : u.getUserGroups()) {
@@ -399,7 +401,10 @@ public class AuthorizerAspect {
                                             "As Master- Dispatched to <" + TtTile___.p_user_reSignin + "> [Need Two Step Confirm]",
                                             TtLogHandler.AuthorizerAspect, task, u)
                             );
-                            return fillNeedTwoLevelConfirm(task.getSignature(), request);
+
+                            return TtTile___.p_user_reSignin.___getDisModel("/panel/user/reSignin")
+.addObject("taskSignature", task.getSignature())
+.addObject("reSignUrl", request.getServletPath() + (request.getQueryString() == null ? "" : "?" + request.getQueryString()));
                         }
 
                         // master > ================================  OK
@@ -411,7 +416,8 @@ public class AuthorizerAspect {
                                         "As Master (Group Access)- Dispatched to <" + andView.getViewName() + ">",
                                         TtLogHandler.AuthorizerAspect, task, u)
                         );
-                        return fillAndView(request, andView);
+
+                        return andView;
                     }
                 }
             }
@@ -451,7 +457,8 @@ public class AuthorizerAspect {
                             "As Admin- Dispatched to < " + TtTile___.f_develop_developing.getCode() + " > [Developing]",
                             TtLogHandler.AuthorizerAspect, task, u)
             );
-            return fillAndView(request, TtTile___.f_develop_developing.___getDisModel());
+
+            return TtTile___.f_develop_developing.___getDisModel();
         }
 
         // admin > ================================  Access limit
@@ -503,7 +510,8 @@ public class AuthorizerAspect {
                             "As Admin- Dispatched to < " + TtTile___.p_user_changeYourPass.getCode() + " > [Change Password]",
                             TtLogHandler.AuthorizerAspect, task, u)
             );
-            return fillPasswordForm();
+
+            return Referer.redirect("/panel/user/your-pass?expired=true");
         }
 
         // admin > ================================  Two step confirm
@@ -515,7 +523,10 @@ public class AuthorizerAspect {
                             "As Admin- Dispatched to <" + TtTile___.p_user_reSignin + "> [Need Two Step Confirm]",
                             TtLogHandler.AuthorizerAspect, task, u)
             );
-            return fillNeedTwoLevelConfirm(task.getSignature(), request);
+
+            return TtTile___.p_user_reSignin.___getDisModel("/panel/user/reSignin")
+.addObject("taskSignature", task.getSignature())
+.addObject("reSignUrl", request.getServletPath() + (request.getQueryString() == null ? "" : "?" + request.getQueryString()));
         }
 
         // admin > ================================  OK
@@ -529,28 +540,10 @@ public class AuthorizerAspect {
                 TtLogHandler.AuthorizerAspect,
                 task, u));
         ///////////////////////////
-        return fillAndView(request, andView);
-    }
-
-    private ModelAndView catchException(Exception e, ProceedingJoinPoint joinPoint, HttpServletRequest request, TtIrrorPlace place) {
-        ModelAndView andView;
-        e.printStackTrace();
-        if (((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(Front.class)) {
-            andView = TtHttpErrorCode___.InternalServerError_500.___getFrontDisModel();
-        } else {
-            andView = TtHttpErrorCode___.InternalServerError_500.___getPanelDisModel();
-        }
-
-        Irror irror = irrorService.submit(e, joinPoint, request, place);
-        if (irror != null) {
-            andView.addObject("errorMsg", irror.getMessage());
-            andView.addObject("errorId", irror.getId());
-        } else {
-            andView.addObject("errorMsg", e.toString());
-        }
 
         return andView;
     }
+
 
     @Around("@annotation(org.springframework.web.bind.annotation.RequestMapping)"
             + " && execution(org.springframework.web.servlet.ModelAndView *(..))"
@@ -580,52 +573,78 @@ public class AuthorizerAspect {
                 if (u.getIsNeedToChangePassword() == true
                         && !((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(OverChangePassword.class)) {
                     //*********(log)********* change password master
-//                    if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogSuperAdmin)) {
-//                        this.logService.log(new Log(
-//                                joinPoint, request,
-//                                "As SuperAdmin- Dispatched to < change password >.",
-//                                TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                                TtLogLevel.Trace, TtSecurityThreatLevel.Low, u));
-//                    }
-                    return fillPasswordForm();
+                    this.logService.log(
+                            new Log(
+                                    null, request,
+                                    "As Admin - Dispatched to < " + TtTile___.p_user_changeYourPass.getCode() + " > [Change Password]",
+                                    TtLogHandler.AuthorizerAspect, task, u));
+
+                    return Referer.redirect("/panel/user/your-pass?expired=true");
                 }
 
                 String taskSignature = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
                 if (taskService.isNeedToConfirm(taskSignature) && !userConfirmService.isConfirmed(u, taskSignature)) {
                     //*********(log)********* Admin
-//                    if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogSuperAdmin)) {
-//                        this.logService.log(new Log(
-//                                joinPoint, request,
-//                                "As SuperAdmin- Dispatched to < ReSignin >",
-//                                TtLogHandler.AuthorizerAspect, TtLogInforming.NoThing,
-//                                TtLogLevel.Trace, TtSecurityThreatLevel.Moderate, u));
-//                    }
-                    return fillNeedTwoLevelConfirm(taskSignature, request);
+                    //*********(log)********* LogManager
+                    this.logService.log(
+                            new Log(
+                                    null, request,
+                                    "As Admin - Dispatched to <" + TtTile___.p_user_reSignin + "> [Need Two Step Confirm]",
+                                    TtLogHandler.AuthorizerAspect, task, u)
+                    );
+
+                    return TtTile___.p_user_reSignin.___getDisModel("/panel/user/reSignin")
+.addObject("taskSignature", taskSignature)
+.addObject("reSignUrl", request.getServletPath() + (request.getQueryString() == null ? "" : "?" + request.getQueryString()));
                 }
 
                 ModelAndView andView = (ModelAndView) joinPoint.proceed();
                 //*********(log)********* superadmin
-//                if (PropertorInControl.getInstance().isOnProperty(TtPropertorInControlList.LogSuperAdmin)) {
-//                    this.logService.log(new Log(
-//                            joinPoint,
-//                            request,
-//                            "As SuperAdmin in superAdminAspect- Dispatched to <" + andView.getViewName() + ">",
-//                            TtLogHandler.AuthorizerAspect,
-//                            TtLogInforming.NoThing,
-//                            TtLogLevel.Trace,
-//                            TtSecurityThreatLevel.Substantial,
-//                            u
-//                    ));
-//                }
-                return fillAndView(request, andView);
+                this.logService.log(new Log(
+                        andView,
+                        request,
+                        "As Admin - Dispatched to <" + andView.getViewName() + ">",
+                        TtLogHandler.AuthorizerAspect,
+                        task, u));
+
+                return andView;
             }
             if (u.getLevel() != TtUserLevel.Client
                     && !((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(Front.class)) {
+                this.logService.log(
+                        new Log(
+                                null, request,
+                                "As - Dispatched to <" + TtHttpErrorCode___.Forbidden_403 + "> [403: Not Access]",
+                                TtLogHandler.AuthorizerAspect, task, u)
+                );
                 return TtHttpErrorCode___.Forbidden_403.___getPanelDisModel();
             }
+            this.logService.log(
+                    new Log(
+                            null, request,
+                            "As - Dispatched to <" + TtHttpErrorCode___.NotFound_404 + ">",
+                            TtLogHandler.AuthorizerAspect, task, u)
+            );
             return TtHttpErrorCode___.NotFound_404.___getFrontDisModel();
         } catch (Exception e) {
-            return catchException(e, joinPoint, request, TtIrrorPlace.AspectSuperAdmin);
+
+ModelAndView andViewZx;
+e.printStackTrace();
+if (((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(Front.class)) {
+andViewZx = TtHttpErrorCode___.InternalServerError_500.___getFrontDisModel();
+} else {
+andViewZx = TtHttpErrorCode___.InternalServerError_500.___getPanelDisModel();
+}
+
+Irror irror = irrorService.submit(e, joinPoint, request, TtIrrorPlace.AspectSuperAdmin);
+if (irror != null) {
+andViewZx.addObject("errorMsg", irror.getMessage());
+andViewZx.addObject("errorId", irror.getId());
+} else {
+andViewZx.addObject("errorMsg", e.toString());
+}
+
+            return andViewZx;
         }
     }
 
@@ -655,7 +674,24 @@ public class AuthorizerAspect {
                     return admin(request, u, joinPoint, task);
             }
         } catch (Exception e) {
-            return catchException(e, joinPoint, request, TtIrrorPlace.AspectMain);
+
+ModelAndView andViewZx;
+e.printStackTrace();
+if (((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(Front.class)) {
+andViewZx = TtHttpErrorCode___.InternalServerError_500.___getFrontDisModel();
+} else {
+andViewZx = TtHttpErrorCode___.InternalServerError_500.___getPanelDisModel();
+}
+
+Irror irror = irrorService.submit(e, joinPoint, request, TtIrrorPlace.AspectMain);
+if (irror != null) {
+andViewZx.addObject("errorMsg", irror.getMessage());
+andViewZx.addObject("errorId", irror.getId());
+} else {
+andViewZx.addObject("errorMsg", e.toString());
+}
+
+            return andViewZx;
         }
     }
 
@@ -672,7 +708,23 @@ public class AuthorizerAspect {
             return (ResponseEntity<String>) joinPoint.proceed();
 
         } catch (Exception e) {
-            catchException(e, joinPoint, request, TtIrrorPlace.JsonAspectSuperAdmin);
+
+ModelAndView andViewZx;
+e.printStackTrace();
+if (((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(Front.class)) {
+andViewZx = TtHttpErrorCode___.InternalServerError_500.___getFrontDisModel();
+} else {
+andViewZx = TtHttpErrorCode___.InternalServerError_500.___getPanelDisModel();
+}
+
+Irror irror = irrorService.submit(e, joinPoint, request, TtIrrorPlace.JsonAspectSuperAdmin);
+if (irror != null) {
+andViewZx.addObject("errorMsg", irror.getMessage());
+andViewZx.addObject("errorId", irror.getId());
+} else {
+andViewZx.addObject("errorMsg", e.toString());
+}
+
             return null;
         }
     }
@@ -726,7 +778,23 @@ public class AuthorizerAspect {
             }
         } catch (Exception e) {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-            catchException(e, joinPoint, request, TtIrrorPlace.JsonAspectMain);
+
+ModelAndView andViewZx;
+e.printStackTrace();
+if (((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(Front.class)) {
+andViewZx = TtHttpErrorCode___.InternalServerError_500.___getFrontDisModel();
+} else {
+andViewZx = TtHttpErrorCode___.InternalServerError_500.___getPanelDisModel();
+}
+
+Irror irror = irrorService.submit(e, joinPoint, request, TtIrrorPlace.JsonAspectMain);
+if (irror != null) {
+andViewZx.addObject("errorMsg", irror.getMessage());
+andViewZx.addObject("errorId", irror.getId());
+} else {
+andViewZx.addObject("errorMsg", e.toString());
+}
+
             return null;
         }
     }
@@ -766,7 +834,8 @@ public class AuthorizerAspect {
                                     "As LogManager- Dispatched to < " + TtTile___.p_user_changeYourPass.getCode() + " > [Change Password]",
                                     TtLogHandler.AuthorizerAspect, task, u)
                     );
-                    return fillPasswordForm();
+
+                    return Referer.redirect("/panel/user/your-pass?expired=true");
                 }
 
                 String taskSignature = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
@@ -778,7 +847,10 @@ public class AuthorizerAspect {
                                     "As LogManager- Dispatched to <" + TtTile___.p_user_reSignin + "> [Need Two Step Confirm]",
                                     TtLogHandler.AuthorizerAspect, task, u)
                     );
-                    return fillNeedTwoLevelConfirm(taskSignature, request);
+
+                    return TtTile___.p_user_reSignin.___getDisModel("/panel/user/reSignin")
+.addObject("taskSignature", taskSignature)
+.addObject("reSignUrl", request.getServletPath() + (request.getQueryString() == null ? "" : "?" + request.getQueryString()));
                 }
 
                 ModelAndView andView = (ModelAndView) joinPoint.proceed();
@@ -789,7 +861,8 @@ public class AuthorizerAspect {
                         "As LogManager- Dispatched to <" + andView.getViewName() + ">",
                         TtLogHandler.AuthorizerAspect,
                         task, u));
-                return fillAndView(request, andView);
+
+                return andView;
             }
             if (u.getLevel() != TtUserLevel.Client
                     && !((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(Front.class)) {
@@ -801,9 +874,32 @@ public class AuthorizerAspect {
                 );
                 return TtHttpErrorCode___.Forbidden_403.___getPanelDisModel();
             }
+            this.logService.log(
+                    new Log(
+                            null, request,
+                            "As - Dispatched to <" + TtHttpErrorCode___.NotFound_404 + ">",
+                            TtLogHandler.AuthorizerAspect, task, u)
+            );
             return TtHttpErrorCode___.NotFound_404.___getFrontDisModel();
         } catch (Exception e) {
-            return catchException(e, joinPoint, request, TtIrrorPlace.AspectLogManager);
+
+ModelAndView andViewZx;
+e.printStackTrace();
+if (((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(Front.class)) {
+andViewZx = TtHttpErrorCode___.InternalServerError_500.___getFrontDisModel();
+} else {
+andViewZx = TtHttpErrorCode___.InternalServerError_500.___getPanelDisModel();
+}
+
+Irror irror = irrorService.submit(e, joinPoint, request, TtIrrorPlace.AspectLogManager);
+if (irror != null) {
+andViewZx.addObject("errorMsg", irror.getMessage());
+andViewZx.addObject("errorId", irror.getId());
+} else {
+andViewZx.addObject("errorMsg", e.toString());
+}
+
+            return andViewZx;
         }
     }
 
@@ -820,7 +916,23 @@ public class AuthorizerAspect {
             return (ResponseEntity<String>) joinPoint.proceed();
 
         } catch (Exception e) {
-            catchException(e, joinPoint, request, TtIrrorPlace.JsonAspectSuperAdmin);
+
+ModelAndView andViewZx;
+e.printStackTrace();
+if (((MethodSignature) joinPoint.getSignature()).getMethod().isAnnotationPresent(Front.class)) {
+andViewZx = TtHttpErrorCode___.InternalServerError_500.___getFrontDisModel();
+} else {
+andViewZx = TtHttpErrorCode___.InternalServerError_500.___getPanelDisModel();
+}
+
+Irror irror = irrorService.submit(e, joinPoint, request, TtIrrorPlace.JsonAspectSuperAdmin);
+if (irror != null) {
+andViewZx.addObject("errorMsg", irror.getMessage());
+andViewZx.addObject("errorId", irror.getId());
+} else {
+andViewZx.addObject("errorMsg", e.toString());
+}
+
             return null;
         }
     }

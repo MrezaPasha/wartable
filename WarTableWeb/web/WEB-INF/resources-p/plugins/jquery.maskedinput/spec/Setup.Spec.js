@@ -15,4 +15,3 @@ feature("Masking an Input", function () {
         });
     });
 });
-

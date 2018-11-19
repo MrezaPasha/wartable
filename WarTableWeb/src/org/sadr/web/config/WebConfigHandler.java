@@ -9,8 +9,8 @@ import org.sadr.web.main._core.setting.SettingConfig;
 import org.sadr.web.main._core.setting.SettingController;
 import org.sadr.web.main._core.tools.authorizer.AuthorizerAspectConfig;
 import org.sadr.web.main._core.tools.schedule.SchedulerConfig;
-import org.sadr.web.main._core.ui.UiConfig;
-import org.sadr.web.main._core.ui.UiController;
+import org.sadr.web.main._core.uiBag.UiBag;
+import org.sadr.web.main._core.uiBag.UiBagConfig;
 import org.sadr.web.main.admin.user.confirm.UserConfirm;
 import org.sadr.web.main.admin.user.confirm.UserConfirmConfig;
 import org.sadr.web.main.admin.user.group.UserGroup;
@@ -169,6 +169,8 @@ public class WebConfigHandler {
         addModelClassRest(SigninLog.class);
         addModelClassRest(ValidationLog.class);
 
+        //============================  io
+        addModelClassRest(UiBag.class);
         //============================  archive
         addModelClassRest(File.class);
         addModelClassRest(Directory.class);
@@ -264,10 +266,11 @@ public class WebConfigHandler {
         addConfigClass(AuthorizerAspectConfig.class);
         addConfigClass(SchedulerConfig.class);
         addConfigClass(SettingConfig.class);
-        addConfigClass(UiConfig.class);
         addConfigClass(DevelopConfig.class);
         addConfigClass(PropertorConfig.class);
 
+        //============================  ui
+        addConfigClass(UiBagConfig.class);
         //============================  archive
         addConfigClass(FileConfig.class);
         addConfigClass(DirectoryConfig.class);
@@ -300,12 +303,5 @@ public class WebConfigHandler {
     }
 
     //=========================################===========================// Init Ui
-    public static void initUi() {
-        UiController ic;
-        ic = webApplicationContext.getBean(UiController.class);
-        if (ic != null) {
-            ic.init();
-        }
-    }
 
 }

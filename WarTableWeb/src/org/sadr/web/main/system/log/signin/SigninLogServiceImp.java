@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 
 /**
@@ -17,14 +19,14 @@ import java.util.Date;
 @Component
 public class SigninLogServiceImp extends GenericServiceImpl<SigninLog, SigninLogDao> implements SigninLogService {
     @Override
-    public void persistSigninLog(HttpServletRequest request, String uuid, User user, TtSigninLogStatus status) {
+    public void persistSigninLog(HttpServletRequest request, String uuid, User user, TtSigninLogStatus status) throws UnknownHostException {
 
         SigninLog signinLog = new SigninLog();
 
         signinLog.setUser(user);
         signinLog.setAgentSignature(request.getHeader("User-Agent"));
-        signinLog.setComputerSignature(request.getRemoteAddr());
-        signinLog.setIpAddress(request.getRemoteAddr());
+        signinLog.setComputerSignature(InetAddress.getLocalHost().getHostAddress());
+        signinLog.setIpAddress(InetAddress.getLocalHost().getHostAddress());
         signinLog.setDomainName(request.getServerName());
         signinLog.setLastDateTime(ParsCalendar.getInstance().getShortDateTime());
         signinLog.setLastDateTimeG(new Date().getTime());

@@ -34,7 +34,7 @@ import java.util.List;
  * @author masoud
  */
 @RestController
-@PersianName("مدیریت رویدادنگاری ورود کاربر")
+@PersianName("ورودهای ناموفق")
 public class SigninLogController extends GenericControllerImpl<SigninLog, SigninLogService> {
 
     private final String REQUEST_MAPPING_BASE = "/log/signin";
@@ -55,7 +55,7 @@ public class SigninLogController extends GenericControllerImpl<SigninLog, Signin
 
 
     @MenuIdentity(TtTile___.p_sys_log_list)
-    @PersianName("لیست رویدادها")
+    @PersianName("لیست")
     @RequestMapping(value = _PANEL_URL + "/list")
     public ModelAndView pList(Model model
     ) {

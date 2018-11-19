@@ -90,8 +90,6 @@ public class WebInitializer implements WebApplicationInitializer {
                 Environment.getInstance().setWebDomain(servletContext.getVirtualServerName());
             }
         }
-        Environment.getInstance().printInfo();
-        OutLog.sl("WebInitializer Completed.");
 
     }
 }

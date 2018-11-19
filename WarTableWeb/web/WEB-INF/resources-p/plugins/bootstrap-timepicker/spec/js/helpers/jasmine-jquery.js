@@ -528,4 +528,3 @@ afterEach(function () {
     jasmine.getStyleFixtures().cleanUp()
     jasmine.JQuery.events.cleanUp()
 })
-

@@ -21,10 +21,10 @@
                             <spring:message code="${varName}"/>
                         </label>
                         <div class="col-sm-8">
-                            <%--<input value="${username}" class="form-control" name="username" id="username" autofocus="autofocus" autocomplete="off" placeholder="<spring:message code='user.signin.enter.username'/>"/>--%>
-                            <input value="admin" class="form-control" name="username" id="username" autofocus="autofocus"
-                                   placeholder="<spring:message code='user.signin.enter.username'/>"
-                                   autocomplete="off" readonly onfocus="this.removeAttribute('readonly');"/>
+                            <input value="${username}" class="form-control string-required" name="username" id="username" autofocus="autofocus" autocomplete="off" placeholder="<spring:message code='user.signin.enter.username'/>"/>
+                            <%--<input value="" class="form-control" name="username" id="username" autofocus="autofocus"--%>
+                            <%--placeholder="<spring:message code='user.signin.enter.username'/>"--%>
+                            <%--autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" onblur="this.attribute('readonly','readonly');"/>--%>
                             <i class="fa fa-user form-control-feedback"></i>
                             <span class="symbol required"></span>
                         </div>
@@ -38,10 +38,10 @@
                             <spring:message code="${varName}"/>
                         </label>
                         <div class="col-sm-8">
-                            <%--<input value="${password}" class="form-control password-format" type="password" name="password" autocomplete="off" placeholder="<spring:message code='user.signin.enter.password'/>"/>--%>
-                            <input value="admin" class="form-control password-format" type="password" name="password"
-                                   placeholder="<spring:message code='user.signin.enter.password'/>"
-                                   autocomplete="off" readonly onfocus="this.removeAttribute('readonly');"/>
+                            <input value="${password}" class="form-control password-format" type="text" name="password" autocomplete="off" placeholder="<spring:message code='user.signin.enter.password'/>"/>
+                            <%--<input value="" class="form-control password-format" type="password" name="password"--%>
+                            <%--placeholder="<spring:message code='user.signin.enter.password'/>"--%>
+                            <%--autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" onblur="this.attribute('readonly','readonly');"/>--%>
                             <i class="fa fa-lock form-control-feedback"></i>
                             <span class="symbol required"></span>
                         </div>
@@ -70,15 +70,15 @@
                             <c:choose>
                                 <c:when test="${isForceToLogin}">
                                     <button name="force" <c:if test="${blocked}"> disabled="true"</c:if> type="submit" class="btn btn-group btn-signin-force btn-animated btn-animated-right">
-                                        <spring:message code="user.signout.others" />
+                                        <spring:message code="user.signout.others"/>
                                     </button>
-                                    <a href="${cp}/signin"  class="btn btn-group btn-signin-cancel btn-animated btn-animated-right">
-                                        <spring:message code="user.signin.cancel" />
+                                    <a href="${cp}/signin" class="btn btn-group btn-signin-cancel btn-animated btn-animated-right">
+                                        <spring:message code="user.signin.cancel"/>
                                     </a>
                                 </c:when>
                                 <c:otherwise>
                                     <button <c:if test="${blocked}"> disabled="true"</c:if> type="submit" class="btn btn-group btn-signin btn-animated btn-animated-right">
-                                        <spring:message code="user.signin" />
+                                        <spring:message code="user.signin"/>
                                         <i class="fa fa-hand-o-left"></i>
                                     </button>
                                 </c:otherwise>

@@ -39,7 +39,7 @@ import javax.servlet.http.HttpSession;
  * @author masoud
  */
 @RestController
-@PersianName("مدیریت پشتیبانی")
+@PersianName("پشتیبان گیری")
 public class BackupController extends GenericControllerImpl<Backup, BackupService> {
 
     ////////////////////

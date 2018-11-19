@@ -40,7 +40,7 @@ import java.util.List;
  * @version 1.95.03.31
  */
 @RestController
-@PersianName("مدیریت رویدادنگاری محلی")
+@PersianName("رویدادنگاری")
 public class LogController extends GenericControllerImpl<Log, LogService> {
 
     ////////////////////
@@ -61,7 +61,7 @@ public class LogController extends GenericControllerImpl<Log, LogService> {
 
 
     @MenuIdentity(TtTile___.p_sys_log_list)
-    @PersianName("لیست رویدادها")
+    @PersianName("لیست")
     @RequestMapping(value = _PANEL_URL + "/list")
     public ModelAndView pList(Model model
     ) {

@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -33,107 +32,8 @@ import java.util.List;
 @RestController
 @PersianName("مدیریت حامل اطلاعات کاربر")
 public class UserPorterController extends GenericControllerImpl<UserPorter, UserPorterService> {
-    private final String REQUEST_MAPPING_BASE = "/user/porter";
-    //===================================================
-    private final String _FRONT_URL = "" + REQUEST_MAPPING_BASE;
-    private final String _PANEL_URL = "/panel" + REQUEST_MAPPING_BASE;
-    private final String _MANAGE_URL = "/manage" + REQUEST_MAPPING_BASE;
 
     public UserPorterController() {
     }
 
-    private UserService userService;
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    /////////////////////////////////////@PersianName("مرورگرهای فعال")
-    @SuperAdminTask
-    @PersianName("لیست نشست های کاربر")
-    @RequestMapping(value = _PANEL_URL + "/list/{uid}", method = RequestMethod.GET)
-    public ModelAndView pUserPorterList(@PathVariable("uid") long uid, Model model,
-                                        HttpSession session, final RedirectAttributes redirectAttributes) {
-
-        User u = this.userService.findById(uid);
-        if (u == null) {
-            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + uid), TtNotice.Success)));
-            return Referer.redirect(_PANEL_URL + "/list", null, TtTaskActionStatus.Failure, notice2s);
-
-        }
-
-        List<UserPorter> ups = this.service.findAllBy(Restrictions.eq(UserPorter._USER, u));
-        OutLog.pl(u.getPorterUuid());
-        if (ups != null && !ups.isEmpty()) {
-            for (UserPorter up : ups) {
-                OutLog.p(up.getUuid());
-                if (u.getPorterUuid() != null && !u.getPorterUuid().isEmpty()
-                        && u.getPorterUuid().contains(up.getUuid())) {
-                    if (up.getIsActiveTwoStepConfirm() != Boolean.TRUE) {
-                        up.setIsActiveTwoStepConfirm(true);
-                        this.service.update(up);
-                        OutLog.p();
-                    }
-                } else if (up.getIsActiveTwoStepConfirm() != Boolean.FALSE) {
-                    up.setIsActiveTwoStepConfirm(false);
-                    this.service.update(up);
-                    OutLog.p();
-                }
-            }
-        }
-        model.addAttribute("user", u);
-        model.addAttribute("uplist", ups);
-        return TtTile___.p_user_porter_list.___getDisModel(null, TtTaskActionStatus.Success);
-    }
-
-    @SuperAdminTask
-    @PersianName("جزئیات نشست کاربر")
-    @RequestMapping(value = _PANEL_URL + "/details/{uid}/{pid}", method = RequestMethod.GET)
-    public ModelAndView pUserPorterDetails(@PathVariable("uid") long uid, @PathVariable("pid") long pid, Model model,
-                                           HttpSession session, final RedirectAttributes redirectAttributes) {
-
-        UserPorter up = this.service.findBy(
-                Restrictions.and(
-                        Restrictions.eq(UserPorter.ID, pid),
-                        Restrictions.eq(RePa.p__(UserPorter._USER, User.ID), uid)
-                ), UserPorter._USER
-        );
-        if (up == null) {
-            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.userPorter.not.found", JsonBuilder.toJson("userId", "" + uid), TtNotice.Success)));
-            return Referer.redirect(_PANEL_URL + "/list/" + uid, null, TtTaskActionStatus.Failure, notice2s);
-
-        }
-
-        model.addAttribute("userPorter", up);
-        return TtTile___.p_user_porter_details.___getDisModel(null, TtTaskActionStatus.Success);
-    }
-
-    @SuperAdminTask
-    @PersianName("لغو تاییدیه دو مرحله ای")
-    @RequestMapping(value = _PANEL_URL + "/unconfirm/{uid}/{pid}", method = RequestMethod.GET)
-    public ModelAndView pUserPorterUnconfirm(@PathVariable("uid") int uid, @PathVariable("pid") int pid, Model model,
-                                             HttpSession session, final RedirectAttributes redirectAttributes) {
-
-        UserPorter up = this.service.findBy(
-                Restrictions.and(
-                        Restrictions.eq(UserPorter.ID, pid),
-                        Restrictions.eq(RePa.p__(UserPorter._USER, User.ID), uid)
-                ), UserPorter._USER
-        );
-        if (up == null) {
-            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.userPorter.not.found", JsonBuilder.toJson("userId", "" + uid), TtNotice.Success)));
-            return Referer.redirect(_PANEL_URL + "/list/" + uid, null, TtTaskActionStatus.Failure, notice2s);
-        }
-
-        if (up.getIsActiveTwoStepConfirm()) {
-            up.getUser().removePorterUuid(up.getUuid());
-            this.userService.update(up.getUser());
-            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.userPorter.unconfirm.success", JsonBuilder.toJson("userId", "" + uid), TtNotice.Success)));
-            return Referer.redirect(_PANEL_URL + "/list/" + uid, null, TtTaskActionStatus.Success, notice2s);
-
-        }
-        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.userPorter.unconfirm.previously", JsonBuilder.toJson("userId", "" + uid), TtNotice.Info)));
-        return Referer.redirect(_PANEL_URL + "/list/" + uid, null, TtTaskActionStatus.Failure, notice2s);
-    }
 }

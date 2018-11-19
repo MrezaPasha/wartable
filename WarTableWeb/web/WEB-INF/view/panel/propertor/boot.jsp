@@ -21,17 +21,7 @@
 
                     <li style="float: left">
                         <a href="${cp}/panel/propertor/control/reset" class="btn btn-default btn-block">
-                            بازنشانی
-                        </a>
-                    </li>
-                    <li style="float: left">
-                        <a href="${cp}/panel/propertor/control/update" class="btn btn-default btn-block">
-                            بروزرسانی
-                        </a>
-                    </li>
-                    <li style="float: left">
-                        <a href="${cp}/panel/propertor/control/load" class="btn btn-default btn-block">
-                            بارگذاری مجدد
+                            بازنشانی به تنظیمات اولیه
                         </a>
                     </li>
                 </ul>

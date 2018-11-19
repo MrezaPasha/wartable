@@ -896,7 +896,7 @@ var FormValidator = function () {
             $(this).rules('add', {
                 required: true,
                 messages: {
-                    required: "لطفا کد تایید دو مرحله ای را وارد کنید ."
+                    required: "لطفا کد تایید دوسطحی را وارد کنید ."
                 }
             });
         });

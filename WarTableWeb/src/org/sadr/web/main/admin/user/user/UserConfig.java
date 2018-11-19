@@ -1,5 +1,6 @@
 package org.sadr.web.main.admin.user.user;
 
+import org.sadr.web.main._core.uiBag.UiBagConfig;
 import org.sadr.web.main.admin.user.confirm.UserConfirmConfig;
 import org.sadr.web.main.admin.user.group.UserGroupConfig;
 import org.sadr.web.main.admin.user.uuid.UserUuidConfig;
@@ -44,6 +45,7 @@ public class UserConfig extends WebMvcConfigurerAdapter {
         uc.setUserAttemptService(new UserAttemptConfig().userAttemptServiceImp());
         uc.setUserConfirmService(new UserConfirmConfig().userConfirmServiceImp());
         uc.setIrrorService(new IrrorConfig().irrorServiceImp());
+        uc.setUiBagService(new UiBagConfig().uiBagServiceImp());
         return uc;
     }
 

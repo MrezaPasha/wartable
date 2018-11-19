@@ -53,6 +53,27 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
     @Override
     public boolean clean() {
         try {
+            ///=======================================
+            Thread.sleep(3000);
+
+            List<Task> dupTasks = this.taskDao.findAllBy(
+                    Restrictions.and(
+                            Restrictions.eq(Task.IS_REFRESHED, true),
+                            Restrictions.eq(Task.METHOD, TtRequestMethod.Get)
+                    ));
+
+            for (Task dt : dupTasks) {
+                Task by = this.taskDao.findBy(
+                        Restrictions.and(
+                                Restrictions.eq(Task.SIGNATURE, dt.getSignature()),
+                                Restrictions.eq(Task.METHOD, TtRequestMethod.Post)
+                        )
+                );
+                if (by != null) {
+                    this.delete(by.getIdi());
+                }
+            }
+
             List<Task> delTasks = this.taskDao.findAllBy(Restrictions.eq(Task.IS_REFRESHED, false), Task._USERS, Task._USER_GROUPS);
             if (delTasks.size() == 0) {
                 return true;
@@ -180,7 +201,13 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
                             }
 
                             //////////// Tasks
-                            task = taskDao.findBy(Restrictions.eq(Task.SIGNATURE, controllerBean.getName() + "." + method.getName()), Task._MODULE);
+                            task = taskDao.findBy(
+                                    Restrictions.and(
+                                            Restrictions.eq(Task.SIGNATURE, controllerBean.getName() + "." + method.getName()),
+                                            Restrictions.eq(Task.METHOD, TtRequestMethod.Get)
+                                    )
+                                    , Task._MODULE
+                            );
 
                             task = fillTask(task, method, controllerBean, modelName, module, TtRequestMethod.Get);
 
@@ -196,7 +223,6 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
                             }
                         }
 
-                        // اعمال وضعیت تسک هایی که فقط متد پست هستند.
                         for (Method postTask : postTasks) {
                             if (taskDao.isExist(Restrictions.and(
                                     Restrictions.eq(Task.SIGNATURE, controllerBean.getName() + "." + postTask.getName()),
@@ -221,7 +247,34 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
                 System.out.println(msg);
             }
 
-            List<Task> delTasks = this.taskDao.findAllBy(Restrictions.eq(Task.IS_REFRESHED, false), Task._USERS, Task._USER_GROUPS);
+
+            ///=======================================
+            Thread.sleep(3000);
+
+            List<Task> dupTasks = this.taskDao.findAllBy(
+                    Restrictions.and(
+                            Restrictions.eq(Task.IS_REFRESHED, true),
+                            Restrictions.eq(Task.METHOD, TtRequestMethod.Get)
+                    ));
+
+            for (Task dt : dupTasks) {
+                Task by = this.taskDao.findBy(
+                        Restrictions.and(
+                                Restrictions.eq(Task.SIGNATURE, dt.getSignature()),
+                                Restrictions.eq(Task.METHOD, TtRequestMethod.Post)
+                        )
+                );
+                if (by != null) {
+                    this.delete(by.getIdi());
+                }
+            }
+
+            ///=======================================
+
+            List<Task> delTasks = this.taskDao.findAllBy(
+                    Restrictions.eq(Task.IS_REFRESHED, false),
+                    Task._USERS, Task._USER_GROUPS);
+
             for (Task delTask : delTasks) {
                 OutLog.pl("Deleted T:  " + delTask.getSignature());
                 delTask.setUserGroups(null);
@@ -242,11 +295,10 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
             OutLog.pl("Continue...");
 
             List<Module> delModules = this.findAllBy(Restrictions.eq(Module.IS_REFRESHED, false));
-//            for (Module delModule : delModules) {
-//                OutLog.pl("Deleted M:  " + delModule.getClassName());
-//                delete(delModule);
-//            }
-            deleteAllBy(0163, delModules);
+            for (Module delModule : delModules) {
+                OutLog.pl("Deleted M:  " + delModule.getClassName());
+                delete(delModule);
+            }
 
 
             ////////////////////////////////////////////////////////////////////
@@ -277,7 +329,6 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
             }
         }
     }
-
 
     private Task fillTask(Task task, Method method, Class controllerBean, String modelName, Module module, TtRequestMethod requestMethod) {
         String menuId = null;
@@ -384,4 +435,5 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
         }
         return task;
     }
+
 }

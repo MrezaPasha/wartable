@@ -109,7 +109,7 @@
                                         </c:forEach>
                                     </td>
                                     <td class="btn-tools">
-                                        <a href="${cp}/panel/user/access/${user.id}/${myvar.id}" class="btn btn-sm btn-l-edit tooltips " data-placement="top" data-original-title="<spring:message code="all.edit"/> ">
+                                        <a href="${cp}/panel/user/access/${user.id}/${myvar.id}" class="btn btn-sm btn-l-edit tooltips " data-placement="top" data-original-title="<spring:message code="user.access.submit"/> ">
                                             <i class="fa fa-edit"></i>
                                         </a>
                                     </td>

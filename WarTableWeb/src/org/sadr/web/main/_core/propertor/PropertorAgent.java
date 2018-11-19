@@ -155,14 +155,6 @@ public class PropertorAgent {
         return false;
     }
 
-    public void printProperties() {
-        Enumeration em = props.keys();
-        OutLog.pl("properties :: ");
-        while (em.hasMoreElements()) {
-            String str = (String) em.nextElement();
-            System.out.println(str + ": " + props.get(str));
-        }
-    }
 
     ///======================================
     public void addProperty(String key, String value) {

@@ -17,18 +17,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SessionListener implements HttpSessionListener {
 
     private static final Map<String, Object[]> sessions = new HashMap<>();
-    private static String defaultFont;
-    private static String defaultStyle;
+//    private static String defaultFont;
+//    private static String defaultStyle;
 
     /////////////////////////////// OVERRIDES
     @Override
     public void sessionCreated(HttpSessionEvent event) {
         HttpSession session = event.getSession();
         session.setMaxInactiveInterval(PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.UserSessionTimeOut));
-        session.setAttribute("font", defaultFont);
-        session.setAttribute("style", defaultStyle);
         sessions.put(session.getId(), new Object[]{session, null});
-        CacheStatic.addSessionCount();
     }
 
     @Override
@@ -37,17 +34,6 @@ public class SessionListener implements HttpSessionListener {
     }
 
     ///////////////////////////////////// STATIC OPERATIONS
-    public static void printSessions() {
-        OutLog.pl("Session Print");
-        ConcurrentHashMap<String, Object[]> chm = new ConcurrentHashMap(sessions);
-        Map.Entry<String, Object[]> entry;
-        Iterator<Map.Entry<String, Object[]>> it = chm.entrySet().iterator();
-        while (it.hasNext()) {
-            entry = it.next();
-            OutLog.p("sid: " + entry.getKey() + " | sess  " + entry.getValue()[0] + " | uid:   " + entry.getValue()[1]);
-        }
-    }
-
     public static boolean invalidate(String sessionId) {
         try {
             HttpSession session = (HttpSession) sessions.get(sessionId)[0];
@@ -85,10 +71,11 @@ public class SessionListener implements HttpSessionListener {
         while (it.hasNext()) {
             entry = it.next();
             try {
-                if (((Long) entry.getValue()[1]) == userId) {
+                if (entry.getValue()[1] != null && ((Long) entry.getValue()[1]) == userId) {
                     return true;
                 }
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return false;
@@ -110,12 +97,10 @@ public class SessionListener implements HttpSessionListener {
 
     public static boolean setUser(String sessionId, long userId) {
         try {
-            if (((HttpSession) sessions.get(sessionId)[1]) == null) {
-                CacheStatic.addUserCount();
-            }
             sessions.get(sessionId)[1] = userId;
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -129,18 +114,21 @@ public class SessionListener implements HttpSessionListener {
         }
     }
 
-    public static void refreshUiSetting() {
+    public static void refreshUiSetting(String defaultFont, String defaultStyle, long userId) {
         ConcurrentHashMap<String, Object[]> chm = new ConcurrentHashMap(sessions);
         Map.Entry<String, Object[]> entry;
         Iterator<Map.Entry<String, Object[]>> it = chm.entrySet().iterator();
         while (it.hasNext()) {
             entry = it.next();
-            ((HttpSession) entry.getValue()[0]).setAttribute("font", defaultFont);
-            ((HttpSession) entry.getValue()[0]).setAttribute("style", defaultStyle);
+            if (entry.getValue()[1] != null && ((Long) entry.getValue()[1]) == userId) {
+                ((HttpSession) entry.getValue()[0]).setAttribute("font", defaultFont);
+                ((HttpSession) entry.getValue()[0]).setAttribute("style", defaultStyle);
+            }
         }
     }
 
     //////////////////////////////////////// STATIC GETTERS
+
     public static HttpSession getSession(String sessionId) {
         return (HttpSession) sessions.get(sessionId)[0];
     }
@@ -164,39 +152,10 @@ public class SessionListener implements HttpSessionListener {
     }
 
 
-    public static Map getSessions() {
-        return sessions;
-    }
 
-    public static int getCurrentGuestCount() {
-        int c = 0;
-        for (Map.Entry<String, Object[]> entrySet : sessions.entrySet()) {
-            if (((Long) entrySet.getValue()[1]) == null) {
-                c++;
-            }
-        }
-        return c;
-    }
 
-    public static int getCurrentUserCount() {
-        int c = 0;
-        for (Map.Entry<String, Object[]> entrySet : sessions.entrySet()) {
-            if (((Long) entrySet.getValue()[1]) != null) {
-                c++;
-            }
-        }
-        return c;
-    }
 
-    public static int getCurrentSessionCount() {
-        return sessions.size();
-    }
 
-    public static void setDefaultFont(String defaultFont) {
-        SessionListener.defaultFont = defaultFont;
-    }
 
-    public static void setDefaultStyle(String defaultStyle) {
-        SessionListener.defaultStyle = defaultStyle;
-    }
+
 }

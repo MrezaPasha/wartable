@@ -27,6 +27,7 @@ public class ModuleConfig extends WebMvcConfigurerAdapter {
     public ModuleController moduleController() {
         ModuleController uc = new ModuleController();
         uc.setService(moduleServiceImp());
+        uc.setTaskService(new TaskConfig().taskServiceImp());
         return uc;
     }
 

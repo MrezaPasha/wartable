@@ -35,21 +35,11 @@ public class CacheStatic {
     }
 
     ///==================================== SESSION
-    private static int sessionCount = 0;
-    private static int userCount = 0;
 
     private static boolean developingMode = false;
 
 
     ///==================================== SESSION
-    public static void addUserCount() {
-        userCount++;
-    }
-
-    public static void addSessionCount() {
-        sessionCount++;
-    }
-
 
     public static boolean isDevelopingMode() {
         return developingMode;

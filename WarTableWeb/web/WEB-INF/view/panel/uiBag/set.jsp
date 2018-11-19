@@ -25,6 +25,7 @@
         </div>
         <div class="tab-content">
             <form id="form" accept-charset="UTF-8" action="${action}" method="POST">
+                <form:hidden path="uiBag.id"/>
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="form-group">

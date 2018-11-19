@@ -13,7 +13,6 @@ public class UserPorterConfig extends WebMvcConfigurerAdapter {
     public UserPorterController userPorterController() {
         UserPorterController uc = new UserPorterController();
         uc.setService(userPorterServiceImp());
-        uc.setUserService(new UserConfig().userServiceImp());
         return uc;
     }
 

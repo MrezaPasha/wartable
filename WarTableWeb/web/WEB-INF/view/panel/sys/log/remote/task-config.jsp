@@ -22,7 +22,7 @@
         </button>
         <ul class="disabled-li margin-bottom xs-center-ul">
             <li class="tooltips " data-original-title="<spring:message code="task.list"/>" data-placement="bottom">
-                <a href="${cp}/panel/log/task/list/${task.module.id}" class="btn btn-default btn-block btn-act">
+                <a href="${cp}/panel/log/remote/module/list" class="btn btn-default btn-block btn-act">
                     <i class="clip-list-2 light"></i>
                     <span class="title"></span>
                 </a>
@@ -124,10 +124,10 @@
     </div>
 </div>
 <script type="text/javascript" src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
-<script type="text/javascript" src="${cp}/resources/js/form-validation.js"></script>
 <script type="text/javascript" src="${cp}/resources-p/plugins/jquery-inputlimiter/jquery.inputlimiter.1.3.1.min.js"></script>
 <script type="text/javascript" src="${cp}/resources-p/plugins/autosize/jquery.autosize.min.js"></script>
 <script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js"></script>
+<script type="text/javascript" src="${cp}/resources/js/form-validation.js"></script>
 <script>
     jQuery(document).ready(function () {
         CustomJs.initSelect2();

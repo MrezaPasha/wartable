@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <div class="container" style="min-height: 300px;">
     <h3 class="cred-header">
-        <span class="cred-title"><spring:message code="error.system"/></span>
+        <span class="cred-title"><spring:message code="log.details"/></span>
     </h3>
     <div class="well well-act">
         <a href="${cp}/panel/log/remote/list" class="btn btn-p-back btn-sm btn-default btn-animated btn-animated-right float-left">

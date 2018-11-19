@@ -17,9 +17,6 @@ public interface DirectoryService extends GenericService<Directory> {
 
     public Directory getDirectoryAndSubs(TtRepoDirectory repoDirectory);
 
-    public Directory getDirectoryAndSubs(String path);
-
-    public Directory getAutoSubDirectory(TtRepoDirectory repoDirectory);
-
     public Directory getAutoSubDirectory(Directory directory);
+
 }

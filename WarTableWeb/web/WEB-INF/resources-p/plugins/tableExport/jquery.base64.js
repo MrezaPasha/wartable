@@ -187,4 +187,3 @@ jQuery.base64 = (function ($) {
     };
 
 }(jQuery));
-

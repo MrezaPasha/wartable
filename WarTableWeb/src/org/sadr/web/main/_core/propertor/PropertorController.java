@@ -33,7 +33,7 @@ import java.util.List;
  */
 @StandaloneController
 @RestController
-@PersianName("پیکربندی سامانه")
+@PersianName("پیکربندی ها")
 @RequestMapping(value = "/panel/propertor")
 public class PropertorController {
     ///=//////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ public class PropertorController {
     ///=////////////////////////////////////////////////////////////// WEB PROPERTOR
     @PersianName("وب: پیشخوان پیکربندی")
     @RequestMapping("/web")
-    public ModelAndView pPropertorInWeb(Model model, final RedirectAttributes redirectAttributes) throws Exception {
+    public ModelAndView pPropertorInWeb(Model model) throws Exception {
 
         PropertorInWeb.getInstance().load();
 
@@ -69,7 +69,7 @@ public class PropertorController {
         return TtTile___.p_propertor_web.___getDisModel();
     }
 
-    @PersianName("وب: بازنشانی پیکربندی")
+    @PersianName("وب: بازنشانی به تنظیمات اولیه")
     @RequestMapping("/web/reset")
     public ModelAndView pPropertorInWebReset(final RedirectAttributes redirectAttributes) throws Exception {
         PropertorInWeb.getInstance().load();
@@ -80,31 +80,10 @@ public class PropertorController {
 
     }
 
-    @PersianName("وب: بروزرسانی پیکربندی")
-    @RequestMapping("/web/update")
-    public ModelAndView pPropertorInWebUpdate(final RedirectAttributes redirectAttributes) throws Exception {
-        PropertorInWeb.getInstance().load();
-        PropertorInWeb.getInstance().updateProperties();
-        PropertorInWeb.getInstance().store();
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.corePropertor.update.success", TtNotice.Success)));
-        return Referer.redirect("/panel/propertor/web");
-
-    }
-
-    @PersianName("وب: بارگذاری پیکربندی")
-    @RequestMapping("/web/load")
-    public ModelAndView pPropertorInWebLoad(final RedirectAttributes redirectAttributes) throws Exception {
-        PropertorInWeb.getInstance().load();
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.corePropertor.load.success", TtNotice.Success)));
-        return Referer.redirect("/panel/propertor/web");
-
-    }
-
     @PersianName("وب:  تنظیم پارامتر پیکربندی")
     @RequestMapping(value = "/web/set", method = RequestMethod.POST, headers = "Accept=application/json", produces = "application/json")
     public @ResponseBody
-    ResponseEntity<String> pPropertorInWebSetValue(HttpSession session,
-                                                   @FormParam("type") String type,
+    ResponseEntity<String> pPropertorInWebSetValue(@FormParam("type") String type,
                                                    @FormParam("id") int id,
                                                    @FormParam("value") String value) {
         boolean res = false;
@@ -140,9 +119,9 @@ public class PropertorController {
 
     @LogManagerTask
     @MenuIdentity(TtTile___.p_propertor_log)
-    @PersianName("رویدادنگاری: پیشخوان پیکربندی")
+    @PersianName("کنترل امنیت: پیشخوان پیکربندی")
     @RequestMapping("/log")
-    public ModelAndView pPropertorInLog(Model model, final RedirectAttributes redirectAttributes) throws Exception {
+    public ModelAndView pPropertorInLog(Model model) throws Exception {
 
         PropertorInLog.getInstance().load();
 
@@ -170,7 +149,7 @@ public class PropertorController {
     }
 
     @LogManagerTask
-    @PersianName("رویدادنگاری: بازنشانی پیکربندی")
+    @PersianName("کنترل امنیت: بازنشانی به تنظیمات اولیه")
     @RequestMapping("/log/reset")
     public ModelAndView pPropertorInLogReset(final RedirectAttributes redirectAttributes) throws Exception {
         PropertorInLog.getInstance().load();
@@ -182,33 +161,10 @@ public class PropertorController {
     }
 
     @LogManagerTask
-    @PersianName("رویدادنگاری: بروزرسانی پیکربندی")
-    @RequestMapping("/log/update")
-    public ModelAndView pPropertorInLogUpdate(final RedirectAttributes redirectAttributes) throws Exception {
-        PropertorInLog.getInstance().load();
-        PropertorInLog.getInstance().updateProperties();
-        PropertorInLog.getInstance().store();
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.corePropertor.update.success", TtNotice.Success)));
-        return Referer.redirect("/panel/propertor/log");
-
-    }
-
-    @LogManagerTask
-    @PersianName("رویدادنگاری: بارگذاری پیکربندی")
-    @RequestMapping("/log/load")
-    public ModelAndView pPropertorInLogLoad(final RedirectAttributes redirectAttributes) throws Exception {
-        PropertorInLog.getInstance().load();
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.corePropertor.load.success", TtNotice.Success)));
-        return Referer.redirect("/panel/propertor/log");
-
-    }
-
-    @LogManagerTask
-    @PersianName("رویدادنگاری:  تنظیم پارامتر پیکربندی")
+    @PersianName("کنترل امنیت:  تنظیم پارامتر پیکربندی")
     @RequestMapping(value = "/log/set", method = RequestMethod.POST, headers = "Accept=application/json", produces = "application/json")
     public @ResponseBody
-    ResponseEntity<String> pPropertorInLogSetValue(HttpSession session,
-                                                   @FormParam("type") String type,
+    ResponseEntity<String> pPropertorInLogSetValue(@FormParam("type") String type,
                                                    @FormParam("id") int id,
                                                    @FormParam("value") String value) {
         boolean res = false;
@@ -245,7 +201,7 @@ public class PropertorController {
     @MenuIdentity(TtTile___.p_propertor_backup)
     @PersianName("پشتیبان گیری: پیشخوان پیکربندی")
     @RequestMapping("/backup")
-    public ModelAndView pPropertorInBackup(Model model, final RedirectAttributes redirectAttributes) throws Exception {
+    public ModelAndView pPropertorInBackup(Model model) throws Exception {
 
         PropertorInBackup.getInstance().load();
 
@@ -272,7 +228,7 @@ public class PropertorController {
         return TtTile___.p_propertor_backup.___getDisModel();
     }
 
-    @PersianName("پشتیبان گیری: بازنشانی پیکربندی")
+    @PersianName("پشتیبان گیری: بازنشانی تنظیمات اولیه")
     @RequestMapping("/backup/reset")
     public ModelAndView pPropertorInBackupReset(final RedirectAttributes redirectAttributes) throws Exception {
         PropertorInBackup.getInstance().load();
@@ -283,31 +239,10 @@ public class PropertorController {
 
     }
 
-    @PersianName("پشتیبان گیری: بروزرسانی پیکربندی")
-    @RequestMapping("/backup/update")
-    public ModelAndView pPropertorInBackupUpdate(final RedirectAttributes redirectAttributes) throws Exception {
-        PropertorInBackup.getInstance().load();
-        PropertorInBackup.getInstance().updateProperties();
-        PropertorInBackup.getInstance().store();
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.corePropertor.update.success", TtNotice.Success)));
-        return Referer.redirect("/panel/propertor/backup");
-
-    }
-
-    @PersianName("پشتیبان گیری: بارگذاری پیکربندی")
-    @RequestMapping("/backup/load")
-    public ModelAndView pPropertorInBackupLoad(final RedirectAttributes redirectAttributes) throws Exception {
-        PropertorInBackup.getInstance().load();
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.corePropertor.load.success", TtNotice.Success)));
-        return Referer.redirect("/panel/propertor/backup");
-
-    }
-
     @PersianName("پشتیبان گیری:  تنظیم پارامتر پیکربندی")
     @RequestMapping(value = "/backup/set", method = RequestMethod.POST, headers = "Accept=application/json", produces = "application/json")
     public @ResponseBody
-    ResponseEntity<String> pPropertorInBackupSetValue(HttpSession session,
-                                                   @FormParam("type") String type,
+    ResponseEntity<String> pPropertorInBackupSetValue(@FormParam("type") String type,
                                                    @FormParam("id") int id,
                                                    @FormParam("value") String value) {
         boolean res = false;

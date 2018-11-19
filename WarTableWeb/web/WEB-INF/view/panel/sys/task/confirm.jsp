@@ -29,7 +29,7 @@
                 </a>
             </li>
             <li class="tooltips" data-original-title=" <spring:message code="all.reload"/>" data-placement="bottom">
-                <a href="${cp}/panel/task/confirm/${taskViewModel.moduleId}" class="btn btn-default btn-block">
+                <a href="${cp}/panel/module/confirm/${taskViewModel.moduleId}" class="btn btn-default btn-block">
                     <i class=" clip-refresh light"></i>
                     <span class="title"></span>
                 </a>
