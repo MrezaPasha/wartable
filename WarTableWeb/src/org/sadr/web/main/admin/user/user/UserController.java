@@ -13,10 +13,7 @@ import org.sadr._core.meta.generic.GB;
 import org.sadr._core.meta.generic.GenericControllerImpl;
 import org.sadr._core.meta.generic.JB;
 import org.sadr._core.utils.*;
-import org.sadr._core.utils._type.TtCalendarItem;
-import org.sadr._core.utils._type.TtCookierVariable;
-import org.sadr._core.utils._type.TtPasswordType;
-import org.sadr._core.utils._type.TtUsernameType;
+import org.sadr._core.utils._type.*;
 import org.sadr.web.main._core._type.TtTaskAccessLevel;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.meta.annotation.OverActiveTask;
@@ -25,11 +22,18 @@ import org.sadr.web.main._core.meta.annotation.OverDevelopingMode;
 import org.sadr.web.main._core.meta.annotation.TaskAccessLevel;
 import org.sadr.web.main._core.propertor.PropertorInWeb;
 import org.sadr.web.main._core.propertor._type.TtPropertorInWebList;
+import org.sadr.web.main._core.tools._type.TtIxportRowIndex;
+import org.sadr.web.main._core.tools._type.TtIxportSubStrategy;
+import org.sadr.web.main._core.tools._type.TtIxportTtStrategy;
+import org.sadr.web.main._core.tools._type.TtIxporterDownloadMode;
+import org.sadr.web.main._core.tools.ixporter.Ixporter;
 import org.sadr.web.main._core.tools.listener.SessionListener;
 import org.sadr.web.main._core.uiBag.UiBag;
 import org.sadr.web.main._core.uiBag.UiBagService;
 import org.sadr.web.main._core.utils.*;
-import org.sadr.web.main._core.utils._type.*;
+import org.sadr.web.main._core.utils._type.TtCookierVariable;
+import org.sadr.web.main._core.utils._type.TtIsonStatus;
+import org.sadr.web.main._core.utils._type.TtNotice;
 import org.sadr.web.main.admin._type.TtUserAttemptType;
 import org.sadr.web.main.admin._type.TtUserIpRangeType;
 import org.sadr.web.main.admin._type.TtUserLevel;
@@ -50,8 +54,6 @@ import org.sadr.web.main.system.task.Task;
 import org.sadr.web.main.system.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomCollectionEditor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -64,6 +66,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -164,7 +167,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
 
     @PersianName("ثبت کاربر")
     @RequestMapping(value = _PANEL_URL + "/create")
-    public ModelAndView pCreateUser(Model model) {
+    public ModelAndView pCreate(Model model) {
         User u = (User) model.asMap().get("user");
         if (u == null) {
             u = new User();
@@ -175,10 +178,10 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     }
 
     @RequestMapping(value = _PANEL_URL + "/create", method = RequestMethod.POST)
-    public ModelAndView pCreateUser(@ModelAttribute("user") @Valid User fuser,
-                                    BindingResult userBindingResult,
-                                    HttpServletRequest request,
-                                    final RedirectAttributes redirectAttributes) {
+    public ModelAndView pCreate(@ModelAttribute("user") @Valid User fuser,
+                                BindingResult userBindingResult,
+                                HttpServletRequest request,
+                                final RedirectAttributes redirectAttributes) {
 
 
         if (userBindingResult.hasErrors()) {
@@ -263,7 +266,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
 
     @PersianName("ویرایش کاربر")
     @RequestMapping(value = _PANEL_URL + "/edit/{uid}")
-    public ModelAndView pEditUser(Model model, @PathVariable("uid") int uid, RedirectAttributes redirectAttributes) {
+    public ModelAndView pEdit(Model model, @PathVariable("uid") int uid, RedirectAttributes redirectAttributes) {
         User dbuser = (User) model.asMap().get("user");
         if (dbuser == null) {
             dbuser = this.service.findById(uid, User._USER_GROUPS);
@@ -296,7 +299,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     }
 
     @RequestMapping(value = _PANEL_URL + "/edit", method = RequestMethod.POST)
-    public ModelAndView pEditUser(
+    public ModelAndView pEdit(
             @ModelAttribute("user")
             @Valid User fuser,
             BindingResult userBindingResult,
@@ -681,27 +684,24 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     @RequestMapping(value = _PANEL_URL + "/list/inactive")
     public ModelAndView pListInactive(Model model) {
 
-        Searchee.getInstance().setAttributeArray(
-                model,
-                "f_username",
-                TtDataType.String,
-                TtRestrictionOperator.Like_ANY,
-                true,
-                User.USERNAME);
-        Searchee.getInstance().setAttributeArray(
-                model,
-                "f_firstName",
-                TtDataType.String,
-                TtRestrictionOperator.Like_ANY,
-                true,
-                User.FIRST_NAME);
-        Searchee.getInstance().setAttributeArray(
-                model,
-                "f_lastName",
-                TtDataType.String,
-                TtRestrictionOperator.Like_ANY,
-                true,
-                User.LAST_NAME);
+        Searchee.init(User.class, model)
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.Like_ANY,
+                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        User.USERNAME)
+
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.Like_ANY,
+                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        User.FIRST_NAME)
+
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.Like_ANY,
+                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        User.LAST_NAME);
 
         GB.searchTableColumns(model,
                 User.class,
@@ -719,27 +719,30 @@ public class UserController extends GenericControllerImpl<User, UserService> {
 
     @RequestMapping(value = _PANEL_URL + "/list/inactive", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<String> pListInactive(@RequestParam(value = "ap", required = false) String ajaxParam, HttpServletRequest request) {
+    ResponseEntity<String> pListInactive(@RequestParam(value = "ap", required = false) String ajaxParam,
+                                         @RequestParam(value = "ixp", required = false) String ixportParam,
+                                         HttpServletResponse response) throws IOException {
         int range = PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.UserDeactivateTimeout);
 
-        try {
-            GB gb = GB.init(User.class)
-                    .set(
-                            User.CREATE_DATE_TIME,
-                            User.GENDER,
-                            User.FIRST_NAME,
-                            User.LAST_NAME,
-                            User.USERNAME,
-                            User.STATUS,
-                            User.LEVEL,
-                            User.LAST_SIGNIN_DATE_TIME,
-                            User.PASSWORD_DATE_TIME,
-                            User.IS_BLOCKED
-                    )
-                    .setSearchParams(ajaxParam)
-                    .addRestrictionsAnd(
-                            Restrictions.le(User.LAST_SIGNIN_DATE_TIME, ParsCalendar.getInstance().getShortDateTime(TtCalendarItem.Day, -range))
-                    );
+        GB gb = GB.init(User.class)
+                .set(
+                        User.CREATE_DATE_TIME,
+                        User.GENDER,
+                        User.FIRST_NAME,
+                        User.LAST_NAME,
+                        User.USERNAME,
+                        User.STATUS,
+                        User.LEVEL,
+                        User.LAST_SIGNIN_DATE_TIME,
+                        User.PASSWORD_DATE_TIME,
+                        User.IS_BLOCKED
+                )
+                .setSearchParams(ajaxParam).addRestrictionsAnd(
+                        Restrictions.le(User.LAST_SIGNIN_DATE_TIME, ParsCalendar.getInstance().getShortDateTime(TtCalendarItem.Day, -range))
+                );
+
+        if (ixportParam == null) {
+
             JB jb = JB.init()
                     .set(
                             User.CREATE_DATE_TIME,
@@ -755,46 +758,46 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                             User.LAST_SIGNIN_DATE_TIME,
                             User.PASSWORD_DATE_TIME
                     );
-            String json = this.service.findAllJson(gb, jb);
-            HttpHeaders headers = new HttpHeaders();
 
-            headers.add("Content-Type", "application/json; charset=utf-8");
-            return new ResponseEntity<>(json, headers, HttpStatus.OK);
-        } catch (Exception e) {
-            irrorService.submit(e, request, TtIrrorPlace.Controller, TtIrrorLevel.Error);
+            String jSearch = this.service.findAllJson(gb, jb);
+
+            return Ison.init(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success)
+                    .setStatus(TtIsonStatus.Ok)
+                    .setPropertySearch(jSearch)
+                    .toResponse();
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        return new ResponseEntity<>("", headers, HttpStatus.OK);
+        gb.setIxportParams(ixportParam);
+        return Ixporter.init(User.class)
+                .exportToFileInList(this.service.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
+
     }
 
 
     @PersianName("لیست کاربران")
     @RequestMapping(value = _PANEL_URL + "/list")
     public ModelAndView pList(Model model) {
-//int i=1/0;
-        Searchee.getInstance().setAttributeArray(
-                model,
-                "f_username",
-                TtDataType.String,
-                TtRestrictionOperator.Like_ANY,
-                true,
-                User.USERNAME);
-        Searchee.getInstance().setAttributeArray(
-                model,
-                "f_firstName",
-                TtDataType.String,
-                TtRestrictionOperator.Like_ANY,
-                true,
-                User.FIRST_NAME);
-        Searchee.getInstance().setAttributeArray(
-                model,
-                "f_lastName",
-                TtDataType.String,
-                TtRestrictionOperator.Like_ANY,
-                true,
-                User.LAST_NAME);
+        Searchee.init(User.class, model)
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.Like_ANY,
+                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        User.USERNAME
+                )
+
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.Like_ANY,
+                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        User.FIRST_NAME
+                )
+
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.Like_ANY,
+                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        User.LAST_NAME
+                );
 
         GB.searchTableColumns(model,
                 User.class,
@@ -816,12 +819,12 @@ public class UserController extends GenericControllerImpl<User, UserService> {
 
     @RequestMapping(value = _PANEL_URL + "/list", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<String> pList(HttpServletRequest request,
-                                 @RequestParam(value = "ap", required = false) String ajaxParam,
-                                 @RequestParam(value = "submit", required = false) String submit,
-                                 HttpServletResponse response) {
-        try {
-            GB gb = GB.init(User.class)
+    ResponseEntity<String> pList(@RequestParam(value = "ap", required = false) String ajaxParam,
+                                 @RequestParam(value = "ixp", required = false) String ixportParam,
+                                 HttpServletResponse response) throws IOException {
+        GB gb;
+        if (ixportParam == null) {
+            gb = GB.init(User.class)
                     .set(
                             User.CREATE_DATE_TIME,
                             User.GENDER,
@@ -856,68 +859,140 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                             User.PASSWORD_DATE_TIME
                     );
 
-            String json = this.service.findAllJson(gb, jb);
+            String jSearch = this.service.findAllJson(gb, jb);
 
-            if (submit != null && submit.equals("export")) {
-                gb = GB.init(User.class)
-                        .set(
-                                User.ID,
-                                User.CREATE_DATE_TIME,
-                                User.GENDER,
-                                User.FIRST_NAME,
-                                User.LAST_NAME,
-                                User.USERNAME,
-                                User.STATUS,
-                                User.LEVEL,
-                                User.LAST_SIGNIN_DATE_TIME,
-                                User.PASSWORD_DATE_TIME,
-                                User.IS_BLOCKED,
-                                User.IP_RANGE_TYPE,
-                                User.IP_ADDRESS,
-                                User.IP_ADDRESS_FIRST_SIGNIN,
-                                User.IP_ADDRESS_START,
-                                User.IP_ADDRESS_END
-                        )
-                        .setSearchParams(ajaxParam);
-                gb.getPaging().setSize(-1);
-                gb.getPaging().setIndex(1);
-                List<User> all = this.service.findAll(gb);
-
-                new Ixporter(User.class)
-                        .exportToFile(all, response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On);
-            }
-
-            HttpHeaders headers = new HttpHeaders();
-
-            headers.add("Content-Type", "application/json; charset=utf-8");
-            return new ResponseEntity<>(json, headers, HttpStatus.OK);
-        } catch (Exception e) {
-            irrorService.submit(e, request, TtIrrorPlace.Controller, TtIrrorLevel.Error);
-            e.printStackTrace();
+            return Ison.init(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success)
+                    .setStatus(TtIsonStatus.Ok)
+                    .setPropertySearch(jSearch)
+                    .toResponse();
         }
 
+        gb = GB.init(User.class)
+                .set(
+                        User.ID,
+                        User.CREATE_DATE_TIME,
+                        User.GENDER,
+                        User.FIRST_NAME,
+                        User.LAST_NAME,
+                        User.USERNAME,
+                        User.STATUS,
+                        User.LEVEL,
+                        User.LAST_SIGNIN_DATE_TIME,
+                        User.PASSWORD_DATE_TIME,
+                        User.IS_BLOCKED,
+                        User.IP_RANGE_TYPE,
+                        User.IP_ADDRESS,
+                        User.IP_ADDRESS_FIRST_SIGNIN,
+                        User.IP_ADDRESS_START,
+                        User.IP_ADDRESS_END
+                )
+                .setSearchParams(ajaxParam);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        return new ResponseEntity<>("", headers, HttpStatus.OK);
+        gb.setIxportParams(ixportParam);
+        return Ixporter.init(User.class)
+                .exportToFileInList(this.service.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
+
+
     }
 
     //=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* ONLINE USER LIST
     @PersianName("لیست کاربران آنلاین")
     @RequestMapping(value = _PANEL_URL + "/list/online")
-    public ModelAndView pListOnline(Model model
-    ) {
+    public ModelAndView pListOnline(Model model) {
+
+        Searchee.init(User.class, model)
+
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.Like_ANY,
+                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        User.USERNAME)
+
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.Like_ANY,
+                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        User.FIRST_NAME)
+
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.Like_ANY,
+                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        User.LAST_NAME);
+
+        GB.searchTableColumns(model,
+                User.class,
+                GB.col(User.ID),
+                GB.col(User.$FULL_NAME, GB.path(User.FIRST_NAME)),
+                GB.col(User.USERNAME),
+                GB.col(User.LAST_SIGNIN_DATE_TIME)
+        );
+        return TtTile___.p_user_listOnline.___getDisModel(null, TtTaskActionStatus.Success);
+    }
+
+    @RequestMapping(value = _PANEL_URL + "/list/online", method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseEntity<String> pListOnline(@RequestParam(value = "ap", required = false) String ajaxParam,
+                                       @RequestParam(value = "ixp", required = false) String ixportParam,
+                                       HttpServletResponse response) throws IOException {
 
         List<Long> onlineUsersId = SessionListener.getOnlineUsersId();
 
-        List<User> allBy = service.findAllBy(
-                Restrictions.in(User.ID, onlineUsersId)
-        );
+        GB gb;
+        if (onlineUsersId.size() == 0) {
+            gb = GB.init(User.class)
+                    .set(
+                            User.CREATE_DATE_TIME,
+                            User.GENDER,
+                            User.FIRST_NAME,
+                            User.LAST_NAME,
+                            User.USERNAME,
+                            User.LAST_SIGNIN_DATE_TIME
+                    )
+                    .setSearchParams(ajaxParam).addRestrictionsAnd(
+                            Restrictions.eq(User.ID, 0l));
+        } else {
+            gb = GB.init(User.class)
+                    .set(
+                            User.CREATE_DATE_TIME,
+                            User.GENDER,
+                            User.FIRST_NAME,
+                            User.LAST_NAME,
+                            User.USERNAME,
+                            User.LAST_SIGNIN_DATE_TIME
+                    )
+                    .setSearchParams(ajaxParam).addRestrictionsAnd(
+                            Restrictions.in(User.ID, onlineUsersId));
+        }
 
-        model.addAttribute("ulist", allBy);
 
-        return TtTile___.p_user_listOnline.___getDisModel(null, TtTaskActionStatus.Success);
+        if (ixportParam == null) {
+
+            JB jb = JB.init()
+                    .set(
+                            User.CREATE_DATE_TIME,
+                            User.GENDER,
+                            User.FIRST_NAME,
+                            User.LAST_NAME,
+                            User.USERNAME,
+                            User.$FULL_NAME,
+                            User.LAST_SIGNIN_DATE_TIME,
+                            User.PASSWORD_DATE_TIME
+                    );
+
+            String jSearch = this.service.findAllJson(gb, jb);
+
+            return Ison.init(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success)
+                    .setStatus(TtIsonStatus.Ok)
+                    .setPropertySearch(jSearch)
+                    .toResponse();
+        }
+        gb.setIxportParams(ixportParam);
+        return Ixporter.init(User.class)
+                .exportToFileInList(this.service.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
+
     }
+
     //=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* DEACTIVATE & EXPIRE
 
     @PersianName("غیرفعالسازی کاربران بدون فعالیت")
@@ -1096,7 +1171,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         model.addAttribute("user", us);
         model.addAttribute("moduleId", mid);
 
-        return TtTile___.p_user_access_assign.___getDisModel(TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Success);
+        return TtTile___.p_user_access_assign.___getDisModel(_PANEL_URL + "/access", TtTaskActionSubType.Change_User_Access, TtTaskActionStatus.Success);
     }
 
     @RequestMapping(value = _PANEL_URL + "/access", method = RequestMethod.POST)
@@ -1235,32 +1310,39 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     //=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* OTHERS
     @PersianName("حذف کاربر")
     @RequestMapping(value = _PANEL_URL + "/trash/{id}")
-    public ModelAndView pTrash(@PathVariable("id") int id,
-                               final RedirectAttributes redirectAttributes, HttpSession session) {
+    public @ResponseBody
+    ResponseEntity<String> pTrash(@PathVariable("id") long id, HttpSession session) {
 
         User dbus = this.service.findById(id, User._TASKS);
         if (dbus == null) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + id))));
-            return new ModelAndView("redirect:/panel/user/list");
+            return Ison.init(TtTaskActionSubType.delete_User, TtTaskActionStatus.Failure)
+                    .setStatus(TtIsonStatus.Nok)
+                    .setMessages(new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + id)))
+                    .toResponse();
         }
         //----------- verify super admin
         User suser = (User) session.getAttribute("sUser");
         if (suser == null) {
-            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.all.validation.try.exceed")));
-
-            return TtHttpErrorCode___.Unauthorized_401.___getFrontDisModel();
+            return Ison.init(TtTaskActionSubType.delete_User, TtTaskActionStatus.Failure)
+                    .setStatus(TtIsonStatus.Nok)
+                    .setMessages(new Notice2("N.user.not.found", JsonBuilder.toJson("userId", "" + id)))
+                    .toResponse();
         }
         if (!suser.getIsSuperAdmin() && (dbus.getIsSuperAdmin() || dbus.getIsLogManager())) {
-            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.user.trash.impossible", dbus.getSecretNote(), TtNotice.Danger, dbus.getFullName())));
-            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.delete_User, TtTaskActionStatus.Failure, notice2s);
+            return Ison.init(TtTaskActionSubType.delete_User, TtTaskActionStatus.Failure)
+                    .setStatus(TtIsonStatus.Nok)
+                    .setMessages(new Notice2("N1.user.trash.impossible", dbus.getSecretNote(), TtNotice.Danger, dbus.getFullName()))
+                    .toResponse();
         }
-
+        String fullName = dbus.getFullName();
         dbus.setTasks(null);
         dbus.setEntityState(TtEntityState.Trash);
         this.service.update(dbus);
         SessionListener.invalidate(id);
-        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.trash.success", dbus.getSecretNote(), TtNotice.Success, dbus.getFullName())));
-        return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.delete_User, TtTaskActionStatus.Success, notice2s);
+        return Ison.init(TtTaskActionSubType.delete_User, TtTaskActionStatus.Success)
+                .setStatus(TtIsonStatus.Ok)
+                .setMessages(new Notice2("N1.all.trash.success", dbus.getSecretNote(), TtNotice.Success, fullName))
+                .toResponse();
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -1295,8 +1377,8 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                                 HttpServletRequest request, HttpServletResponse response, HttpSession session) throws UnknownHostException {
 
 
-        if ((User) session.getAttribute("sUser") != null) {
-            return new ModelAndView("redirect:/");
+        if (session.getAttribute("sUser") != null) {
+            return Referer.redirect("/");
         }
 
         if (limit != null) {
@@ -1318,7 +1400,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     public ModelAndView fSignin(Model model, HttpServletResponse response, HttpServletRequest request, HttpSession session,
                                 @RequestParam(value = "username") String username,
                                 @RequestParam(value = "password", required = false) String password,
-                                @RequestParam(value = "force", required = false) String isFoceToSignin,
+                                @RequestParam(value = "force", required = false) String isForceLogin,
                                 @RequestParam(value = "captchaCode", required = false) String captchaCode,
                                 final RedirectAttributes redirectAttributes) throws UnknownHostException {
 
@@ -1388,7 +1470,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         }
 
         if (SessionListener.isUserInSession(user.getIdi())) {
-            if (isFoceToSignin != null) {
+            if (isForceLogin != null) {
                 SessionListener.invalidate(user.getId());
                 Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.previous.signed.out.try.again", user.getSecretNote(), TtNotice.Info)));
                 return Referer.redirect("/signin");

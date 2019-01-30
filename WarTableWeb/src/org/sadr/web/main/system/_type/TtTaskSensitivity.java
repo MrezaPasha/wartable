@@ -10,8 +10,7 @@ public enum TtTaskSensitivity {
     Info("اطلاع رسانی"),
     Warn("هشدار"),
     Error("خطا"),
-    Fatal("مهلک")
-    ;
+    Fatal("مهلک");
     private final String title;
 
     private TtTaskSensitivity(String k) {

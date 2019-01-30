@@ -20,6 +20,8 @@ public enum TtPropertorInBackupList {
     AutoRestoreOn("N.propertor.auto.restore.on", false, TtPropertorType.OnOff, TtPropertorInBackupSection.AutoRestore, false), ///
     AutoRestoreHourMin("N.propertor.auto.restore.hour.min", "09:30", TtPropertorType.String, TtPropertorInBackupSection.AutoRestore, false), ///
     AutoRestoreBackupId("N.propertor.auto.restore.backup.id", 0, TtPropertorType.Integer, TtPropertorInBackupSection.AutoRestore, false), ///
+    //
+    UploadMaxSize("N.propertor.backup.upload.size", 20, TtPropertorType.Integer, TtPropertorInBackupSection.Upload, false), ///
 
 
     ;

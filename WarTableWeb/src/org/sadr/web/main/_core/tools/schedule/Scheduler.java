@@ -78,7 +78,7 @@ public class Scheduler {
             e.printStackTrace();
         }
 
-        this.backupService.backup(TtBackupType.Scheduling, false);
+        this.backupService.backup(TtBackupType.Scheduling, false, true, true);
 
         try {
             Thread.sleep(5000);
@@ -163,10 +163,10 @@ public class Scheduler {
         }
 
         //========= auto backup
-        this.backupService.backup(TtBackupType.BeforeRestore, false);
+        this.backupService.backup(TtBackupType.BeforeRestore, false, true, true);
         //--------------
 
-        String restore = this.backupService.restore(backup);
+        String restore = this.backupService.restore(backup, true, true);
 
         try {
             Thread.sleep(5000);

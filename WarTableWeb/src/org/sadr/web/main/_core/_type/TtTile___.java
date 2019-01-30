@@ -14,6 +14,22 @@ public enum TtTile___ {
     a_archive_file_cred(TtSystemTileLayout.Panel, null),
     a_user_cred(TtSystemTileLayout.Panel, null),
     a_note_cred(TtSystemTileLayout.Panel, null),
+    ///============== A Share
+    a_service_baseConfig_cred(TtSystemTileLayout.Panel, null),
+    a_service_baseErrors_cred(TtSystemTileLayout.Panel, null),
+    a_service_grade_cred(TtSystemTileLayout.Panel, null),
+    a_service_layer_cred(TtSystemTileLayout.Panel, null),
+    a_service_map_cred(TtSystemTileLayout.Panel, null),
+    a_service_map_room_cred(TtSystemTileLayout.Panel, null),
+    a_service_meeting_cred(TtSystemTileLayout.Panel, null),
+    a_service_object_cred(TtSystemTileLayout.Panel, null),
+    a_service_orgPosition_cred(TtSystemTileLayout.Panel, null),
+    a_service_room_cred(TtSystemTileLayout.Panel, null),
+    a_service_room_map_cred(TtSystemTileLayout.Panel, null),
+    a_service_room_user_cred(TtSystemTileLayout.Panel, null),
+    a_service_room_ServiceUser_cred(TtSystemTileLayout.Panel, null),
+    a_service_room_ServiceUser_credR(TtSystemTileLayout.Panel, null),
+    a_service_serviceUser_cred(TtSystemTileLayout.Panel, null),
 
 
     ///============== F
@@ -52,7 +68,7 @@ public enum TtTile___ {
     p_e_500(TtSystemTileLayout.Panel, null),
     p_e_503(TtSystemTileLayout.Panel, null),
     p_e_list(TtSystemTileLayout.Panel, null),
-    p_e_show(TtSystemTileLayout.Panel, null),
+    p_e_details(TtSystemTileLayout.Panel, null),
     p_dashboard(TtSystemTileLayout.Panel, null),
     p_setting_index(TtSystemTileLayout.Panel, null),
     p_setting_init(TtSystemTileLayout.Panel, null),
@@ -104,7 +120,60 @@ public enum TtTile___ {
     p_user_listInactive(TtSystemTileLayout.Panel, null),
     p_user_listOnline(TtSystemTileLayout.Panel, null),
     p_user_profile(TtSystemTileLayout.Panel, null),
-    p_user_reSignin(TtSystemTileLayout.Panel, null),;
+    p_user_reSignin(TtSystemTileLayout.Panel, null),
+
+    ///============== Panel Share
+    p_service_baseConfig_edit(TtSystemTileLayout.Panel, a_service_baseConfig_cred),
+    p_service_baseConfig_list(TtSystemTileLayout.Panel, null),
+    p_service_baseErrors_create(TtSystemTileLayout.Panel, a_service_baseErrors_cred),
+    p_service_baseErrors_edit(TtSystemTileLayout.Panel, a_service_baseErrors_cred),
+    p_service_baseErrors_list(TtSystemTileLayout.Panel, null),
+    p_service_criticalLog_details(TtSystemTileLayout.Panel, null),
+    p_service_criticalLog_list(TtSystemTileLayout.Panel, null),
+    p_service_grade_create(TtSystemTileLayout.Panel, a_service_grade_cred),
+    p_service_grade_edit(TtSystemTileLayout.Panel, a_service_grade_cred),
+    p_service_grade_list(TtSystemTileLayout.Panel, null),
+    p_service_layer_create(TtSystemTileLayout.Panel, a_service_layer_cred),
+    p_service_layer_edit(TtSystemTileLayout.Panel, a_service_layer_cred),
+    p_service_layer_list(TtSystemTileLayout.Panel, null),
+    p_service_map_create(TtSystemTileLayout.Panel, a_service_map_cred),
+    p_service_map_edit(TtSystemTileLayout.Panel, a_service_map_cred),
+    p_service_map_list(TtSystemTileLayout.Panel, null),
+    p_service_map_room_create(TtSystemTileLayout.Panel, a_service_map_room_cred),
+    p_service_map_room_edit(TtSystemTileLayout.Panel, a_service_map_room_cred),
+    p_service_map_room_list(TtSystemTileLayout.Panel, null),
+    p_service_meeting_edit(TtSystemTileLayout.Panel, a_service_meeting_cred),
+    p_service_meeting_details(TtSystemTileLayout.Panel, null),
+    p_service_meeting_list(TtSystemTileLayout.Panel, null),
+    p_service_object_create(TtSystemTileLayout.Panel, a_service_object_cred),
+    p_service_object_edit(TtSystemTileLayout.Panel, a_service_object_cred),
+    p_service_object_list(TtSystemTileLayout.Panel, null),
+    p_service_object_preview(TtSystemTileLayout.Panel, null),
+    p_service_orgPosition_create(TtSystemTileLayout.Panel, a_service_orgPosition_cred),
+    p_service_orgPosition_edit(TtSystemTileLayout.Panel, a_service_orgPosition_cred),
+    p_service_orgPosition_list(TtSystemTileLayout.Panel, null),
+    p_service_room_create(TtSystemTileLayout.Panel, a_service_room_cred),
+    p_service_room_edit(TtSystemTileLayout.Panel, a_service_room_cred),
+    p_service_room_list(TtSystemTileLayout.Panel, null),
+    p_service_room_map_create(TtSystemTileLayout.Panel, a_service_room_map_cred),
+    p_service_room_map_edit(TtSystemTileLayout.Panel, a_service_room_map_cred),
+    p_service_room_map_list(TtSystemTileLayout.Panel, null),
+    p_service_room_user_create(TtSystemTileLayout.Panel, a_service_room_user_cred),
+    p_service_room_user_edit(TtSystemTileLayout.Panel, a_service_room_user_cred),
+    p_service_room_user_details(TtSystemTileLayout.Panel, null),
+    p_service_room_user_list(TtSystemTileLayout.Panel, null),
+    //    p_service_room_ServiceUser_details(TtSystemTileLayout.Panel, null),
+//    p_service_room_ServiceUser_create(TtSystemTileLayout.Panel, a_service_room_ServiceUser_cred),
+//    p_service_room_ServiceUser_edit(TtSystemTileLayout.Panel, a_service_room_ServiceUser_cred),
+//    p_service_room_ServiceUser_list(TtSystemTileLayout.Panel, null),
+    p_service_serviceLog_details(TtSystemTileLayout.Panel, null),
+    p_service_serviceLog_list(TtSystemTileLayout.Panel, null),
+    p_service_serviceUser_create(TtSystemTileLayout.Panel, a_service_serviceUser_cred),
+    p_service_serviceUser_edit(TtSystemTileLayout.Panel, a_service_serviceUser_cred),
+    p_service_serviceUser_list(TtSystemTileLayout.Panel, null),
+    p_service_serviceUser_changeUserPass(TtSystemTileLayout.Panel, null),
+    p_service_serviceUser_listOnline(TtSystemTileLayout.Panel, null),
+    p_service_serviceUser_room(TtSystemTileLayout.Panel, null),;
 
     private final TtTile___ alternative;// alternative codes link the page of a TtTile to another file. sharing jsp files
     private final TtSystemTileLayout template;
@@ -135,7 +204,8 @@ public enum TtTile___ {
 
     public ModelAndView ___getDisModel(String action, TtTaskActionSubType subType, TtTaskActionStatus actionStatus) {
         return new ModelAndView(this.getCode())
-                .addObject("action", Environment.getInstance().getContextPath() + action).addObject("actionStatus", actionStatus)
+                .addObject("action", Environment.getInstance().getContextPath() + action)
+                .addObject("actionStatus", actionStatus)
                 .addObject("actionSubType", subType);
     }
 

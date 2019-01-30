@@ -183,7 +183,7 @@ public class Referer {
                 .addObject("noticeList", notice2);
     }
 
-    public static ModelAndView redirectObjects(TtTaskActionSubType subType, TtTaskActionStatus actionStatus, Notice2[] notice2s,String uri, RedirectAttributes redirectAttributes, Object... attributes) {
+    public static ModelAndView redirectObjects(TtTaskActionSubType subType, TtTaskActionStatus actionStatus, Notice2[] notice2s, String uri, RedirectAttributes redirectAttributes, Object... attributes) {
         if (attributes != null) {
             for (int i = 0; i < attributes.length; i++) {
                 redirectAttributes.addFlashAttribute(attributes[i]);

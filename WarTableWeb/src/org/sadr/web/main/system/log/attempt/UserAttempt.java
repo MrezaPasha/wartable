@@ -28,7 +28,7 @@ import java.util.Date;
 @Table(name = "Web.System.Log.User")
 public class UserAttempt extends GenericDataModel<UserAttempt> implements Serializable {
 //#########++++++#######// StaticFields: Start //
-public static final String AGENT_SIGNATURE = "agentSignature";public static final String COMPUTER_SIGNATURE = "computerSignature";public static final String UUID = "uuid";public static final String DATE_TIME_G = "dateTimeG";public static final String LAST_DATE_TIME_G = "lastDateTimeG";public static final String IS_SUCCESS = "isSuccess";public static final String COUNT = "count";public static final String ATTEMPT_TYPE = "attemptType";public static final String _USER = "user";public static final String $AGENT_HASH_CODE = "agentHashCode";public static final String $ACT_COLUMNS = "actColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $REL_COLUMNS = "relColumns";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
+public static final String AGENT_SIGNATURE = "agentSignature";public static final String COMPUTER_SIGNATURE = "computerSignature";public static final String UUID = "uuid";public static final String DATE_TIME_G = "dateTimeG";public static final String LAST_DATE_TIME_G = "lastDateTimeG";public static final String IS_SUCCESS = "isSuccess";public static final String COUNT = "count";public static final String ATTEMPT_TYPE = "attemptType";public static final String _USER = "user";public static final String $ACT_COLUMNS = "actColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $REL_COLUMNS = "relColumns";public static final String $AGENT_HASH_CODE = "agentHashCode";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
 //#########******#######// StaticFields: End //
 
     public UserAttempt() {
@@ -141,12 +141,12 @@ public static final String AGENT_SIGNATURE = "agentSignature";public static fina
 
     public boolean isBlocked() {
         return this.dateTimeG > (new Date().getTime() - (attemptType.getBlockDuringMiliSec()))
-            && this.count > attemptType.getBlockMaxCount();
+                && this.count > attemptType.getBlockMaxCount();
     }
 
     public boolean needVerification() {
         return this.dateTimeG > (new Date().getTime() - (attemptType.getRangeMiliSec()))
-            && this.count > attemptType.getAttemptMaxCount();
+                && this.count > attemptType.getAttemptMaxCount();
     }
 
     public boolean isInAttemptCount() {
@@ -164,7 +164,7 @@ public static final String AGENT_SIGNATURE = "agentSignature";public static fina
     @Override
     public String toString() {
         return "id: " + getId()
-            + "\n Count: " + count;
+                + "\n Count: " + count;
     }
 
     public String getUuid() {
@@ -177,7 +177,7 @@ public static final String AGENT_SIGNATURE = "agentSignature";public static fina
 
     public String generateSecureUUID() {
         uuid = java.util.UUID.randomUUID().toString() + "_"
-            + (agentSignature == null ? "" : agentSignature.trim().codePoints().sum());
+                + (agentSignature == null ? "" : agentSignature.trim().codePoints().sum());
 //                + (computerSignature == null ? "" : computerSignature.trim().replace(".", "-").toUpperCase().codePoints().sum());
         return uuid;
     }

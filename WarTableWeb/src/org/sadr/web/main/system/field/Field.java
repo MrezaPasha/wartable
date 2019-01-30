@@ -25,7 +25,7 @@ import java.util.Objects;
 @Table(name = "Web.System.Field")
 public class Field extends GenericDataModel<Field> implements Serializable {
 //#########++++++#######// StaticFields: Start //
-public static final String IS_BIDIRECTIONAL = "isBidirectional";public static final String IS_ENCRYPTED = "isEncrypted";public static final String STATUS = "status";public static final String MO_TITLE = "moTitle";public static final String MO_PREVIOUS_TITLE = "moPreviousTitle";public static final String IS_MO_NULLABLE = "isMoNullable";public static final String MO_DEFAULT_VALUE = "moDefaultValue";public static final String MO_EXTRA = "moExtra";public static final String MO_KEY = "moKey";public static final String MO_ANNOTATIONS = "moAnnotations";public static final String IS_MO_REFRESHED = "isMoRefreshed";public static final String MO_MODIFIER = "moModifier";public static final String MO_TYPE = "moType";public static final String MO_MIN_SIZE = "moMinSize";public static final String MO_MAX_SIZE = "moMaxSize";public static final String MO_DATA_RELATION = "moDataRelation";public static final String MO_DATA_RELATION_DES = "moDataRelationDes";public static final String DB_TITLE = "dbTitle";public static final String DB_TYPE = "dbType";public static final String DB_SIZE = "dbSize";public static final String IS_DB_NULLABLE = "isDbNullable";public static final String DB_DEFAULT_VALUE = "dbDefaultValue";public static final String DB_EXTRA = "dbExtra";public static final String DB_KEY = "dbKey";public static final String DB_INDEX = "dbIndex";public static final String DB_CONSTRAINT = "dbConstraint";public static final String DB_REF_TABLE = "dbRefTable";public static final String DB_REF_COLUMN = "dbRefColumn";public static final String IS_DB_REFRESHED = "isDbRefreshed";public static final String IS_DB_F_K = "isDbFK";public static final String IS_DB_PRIMARY = "isDbPrimary";public static final String _MODEL = "model";public static final String $MO_DATA_TYPE_TT = "moDataTypeTt";public static final String $IS_CHANGED = "isChanged";public static final String $DB_TITLE_FROM_MO = "dbTitleFromMo";public static final String $DB_TYPE_FROM_MO = "dbTypeFromMo";public static final String $DB_NULL_FROM_MO = "dbNullFromMo";public static final String $IS_NEW = "isNew";public static final String $IS_ENCRYPTED_Y = "isEncryptedY";public static final String $IS_DB_PRIMARY_Y = "isDbPrimaryY";public static final String $IS_DB_NULLABLE_Y = "isDbNullableY";public static final String $IS_DB_F_K_Y = "isDbFKY";public static final String $IS_MO_NULLABLE_Y = "isMoNullableY";public static final String $IS_REMOVE_FROM_MODEL = "isRemoveFromModel";public static final String $IS_BIDIRECTIONAL_Y = "isBidirectionalY";public static final String $IS_DB_REFRESHED_Y = "isDbRefreshedY";public static final String $IS_MO_REFRESHED_Y = "isMoRefreshedY";public static final String $SECRET_NOTE = "secretNote";public static final String $ACT_COLUMNS = "actColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $REL_COLUMNS = "relColumns";public static final String $IS_REMOVE_FROM_MODEL_AND_D_B = "isRemoveFromModelAndDB";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
+public static final String IS_BIDIRECTIONAL = "isBidirectional";public static final String IS_ENCRYPTED = "isEncrypted";public static final String STATUS = "status";public static final String MO_TITLE = "moTitle";public static final String MO_PREVIOUS_TITLE = "moPreviousTitle";public static final String IS_MO_NULLABLE = "isMoNullable";public static final String MO_DEFAULT_VALUE = "moDefaultValue";public static final String MO_EXTRA = "moExtra";public static final String MO_KEY = "moKey";public static final String MO_ANNOTATIONS = "moAnnotations";public static final String IS_MO_REFRESHED = "isMoRefreshed";public static final String MO_MODIFIER = "moModifier";public static final String MO_TYPE = "moType";public static final String MO_MIN_SIZE = "moMinSize";public static final String MO_MAX_SIZE = "moMaxSize";public static final String MO_DATA_RELATION = "moDataRelation";public static final String MO_DATA_RELATION_DES = "moDataRelationDes";public static final String DB_TITLE = "dbTitle";public static final String DB_TYPE = "dbType";public static final String DB_SIZE = "dbSize";public static final String IS_DB_NULLABLE = "isDbNullable";public static final String DB_DEFAULT_VALUE = "dbDefaultValue";public static final String DB_EXTRA = "dbExtra";public static final String DB_KEY = "dbKey";public static final String DB_INDEX = "dbIndex";public static final String DB_CONSTRAINT = "dbConstraint";public static final String DB_REF_TABLE = "dbRefTable";public static final String DB_REF_COLUMN = "dbRefColumn";public static final String IS_DB_REFRESHED = "isDbRefreshed";public static final String IS_DB_F_K = "isDbFK";public static final String IS_DB_PRIMARY = "isDbPrimary";public static final String _MODEL = "model";public static final String $IS_REMOVE_FROM_MODEL_AND_D_B = "isRemoveFromModelAndDB";public static final String $IS_BIDIRECTIONAL_Y = "isBidirectionalY";public static final String $IS_MO_REFRESHED_Y = "isMoRefreshedY";public static final String $IS_REMOVE_FROM_MODEL = "isRemoveFromModel";public static final String $IS_DB_REFRESHED_Y = "isDbRefreshedY";public static final String $SECRET_NOTE = "secretNote";public static final String $ACT_COLUMNS = "actColumns";public static final String $MO_DATA_TYPE_TT = "moDataTypeTt";public static final String $DB_TITLE_FROM_MO = "dbTitleFromMo";public static final String $IS_CHANGED = "isChanged";public static final String $DB_NULL_FROM_MO = "dbNullFromMo";public static final String $DB_TYPE_FROM_MO = "dbTypeFromMo";public static final String $VIR_COLUMNS = "virColumns";public static final String $REL_COLUMNS = "relColumns";public static final String $IS_DB_PRIMARY_Y = "isDbPrimaryY";public static final String $IS_ENCRYPTED_Y = "isEncryptedY";public static final String $IS_MO_NULLABLE_Y = "isMoNullableY";public static final String $IS_DB_NULLABLE_Y = "isDbNullableY";public static final String $IS_NEW = "isNew";public static final String $IS_DB_F_K_Y = "isDbFKY";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
 //#########******#######// StaticFields: End //
 
     @PersianName("دو طرفه")
@@ -158,14 +158,14 @@ public static final String IS_BIDIRECTIONAL = "isBidirectional";public static fi
 
         return Objects.equals(dbField.isDbNullable, isMoNullable)
                 && TtDataType.isEqual(dbField.dbType, moType)
-            && (dbField.getDbKey() == null ? dbKey == null : dbField.getDbKey().equals(dbKey))
-            && (dbField.getDbExtra() == null ? dbExtra == null : dbField.getDbExtra().equals(dbExtra))
-            && dbField.getMoDataRelation() == moDataRelation;
+                && (dbField.getDbKey() == null ? dbKey == null : dbField.getDbKey().equals(dbKey))
+                && (dbField.getDbExtra() == null ? dbExtra == null : dbField.getDbExtra().equals(dbExtra))
+                && dbField.getMoDataRelation() == moDataRelation;
     }
 
     public boolean verifyStatus() {
         boolean isForignRel = (moDataRelation == TtDataRelation.ManyToOne
-            || (moDataRelation == TtDataRelation.OneToOne && moDataRelationDes != null));
+                || (moDataRelation == TtDataRelation.OneToOne && moDataRelationDes != null));
 
         TtDataType tdt = TtDataType.getByMoType(moType);
         OutLog.pl(moTitle + " ++++  tdt  " + tdt);
@@ -175,11 +175,11 @@ public static final String IS_BIDIRECTIONAL = "isBidirectional";public static fi
         OutLog.p(dbType + "  " + moType);
         OutLog.p(moMaxSize + "  " + dbSize);
         OutLog.p(isBidirectional
-            + "  " + ((moTitle != null && (isForignRel ? !(moTitle + "_id").equals(dbTitle) : !moTitle.equals(dbTitle))))
-            + "  " + !Objects.equals(isDbNullable, isMoNullable)
-            + "  " + !TtDataType.isEqual(dbType, moType)
-            + "  " + (tdt == TtDataType.String && moMaxSize != dbSize)
-            + "  ");
+                + "  " + ((moTitle != null && (isForignRel ? !(moTitle + "_id").equals(dbTitle) : !moTitle.equals(dbTitle))))
+                + "  " + !Objects.equals(isDbNullable, isMoNullable)
+                + "  " + !TtDataType.isEqual(dbType, moType)
+                + "  " + (tdt == TtDataType.String && moMaxSize != dbSize)
+                + "  ");
 
         boolean isChanged = false;
         if (isBidirectional != null && !isBidirectional) {
@@ -194,9 +194,9 @@ public static final String IS_BIDIRECTIONAL = "isBidirectional";public static fi
             status = TtFieldStatus.RemoveFromModelAndDB;
             isChanged = true;
         } else if ((moTitle != null && (isForignRel ? !(moTitle + "_id").equals(dbTitle) : !moTitle.equals(dbTitle)))
-            || !Objects.equals(isDbNullable, isMoNullable)
-            || !TtDataType.isEqual(dbType, moType)
-            || (tdt == TtDataType.String && moMaxSize != dbSize)) {
+                || !Objects.equals(isDbNullable, isMoNullable)
+                || !TtDataType.isEqual(dbType, moType)
+                || (tdt == TtDataType.String && moMaxSize != dbSize)) {
             status = TtFieldStatus.Changed;
             isChanged = true;
         } else {
@@ -244,7 +244,7 @@ public static final String IS_BIDIRECTIONAL = "isBidirectional";public static fi
 
     public String getDbTitleFromMo() {
         return (moDataRelation == TtDataRelation.ManyToOne
-            || (moDataRelation == TtDataRelation.OneToOne && moDataRelationDes != null)) ? moTitle + "_id" : moTitle;
+                || (moDataRelation == TtDataRelation.OneToOne && moDataRelationDes != null)) ? moTitle + "_id" : moTitle;
 
     }
 
@@ -274,6 +274,10 @@ public static final String IS_BIDIRECTIONAL = "isBidirectional";public static fi
         return status;
     }
 
+    public void setStatus(TtFieldStatus status) {
+        this.status = status;
+    }
+
     public TtYesNo getIsEncryptedY() {
         return TtYesNo.getValueByBool(isEncrypted);
     }
@@ -286,16 +290,16 @@ public static final String IS_BIDIRECTIONAL = "isBidirectional";public static fi
         this.isEncrypted = isEncrypted;
     }
 
-    public void setStatus(TtFieldStatus status) {
-        this.status = status;
-    }
-
     public TtYesNo getIsBidirectionalY() {
         return TtYesNo.getValueByBool(isBidirectional);
     }
 
     public Boolean getIsBidirectional() {
         return isBidirectional;
+    }
+
+    public void setIsBidirectional(Boolean isBidirectional) {
+        this.isBidirectional = isBidirectional;
     }
 
     public String getDbIndex() {
@@ -386,10 +390,6 @@ public static final String IS_BIDIRECTIONAL = "isBidirectional";public static fi
         this.dbSize = dbSize;
     }
 
-    public void setIsBidirectional(Boolean isBidirectional) {
-        this.isBidirectional = isBidirectional;
-    }
-
     public TtYesNo getIsDbRefreshedY() {
         return TtYesNo.getValueByBool(isDbRefreshed == null ? false : isDbRefreshed);
     }
@@ -430,12 +430,12 @@ public static final String IS_BIDIRECTIONAL = "isBidirectional";public static fi
         return isMoNullable == null ? false : isMoNullable;
     }
 
-    public TtYesNo getIsMoNullableY() {
-        return TtYesNo.getValueByBool(isMoNullable);
-    }
-
     public void setIsMoNullable(Boolean isMoNullable) {
         this.isMoNullable = isMoNullable;
+    }
+
+    public TtYesNo getIsMoNullableY() {
+        return TtYesNo.getValueByBool(isMoNullable);
     }
 
     public String getMoDataRelationDes() {
@@ -510,12 +510,12 @@ public static final String IS_BIDIRECTIONAL = "isBidirectional";public static fi
         return isDbNullable;
     }
 
-    public TtYesNo getIsDbNullableY() {
-        return TtYesNo.getValueByBool(isDbNullable);
-    }
-
     public void setIsDbNullable(Boolean isDbNullable) {
         this.isDbNullable = isDbNullable;
+    }
+
+    public TtYesNo getIsDbNullableY() {
+        return TtYesNo.getValueByBool(isDbNullable);
     }
 
     public String getDbDefaultValue() {

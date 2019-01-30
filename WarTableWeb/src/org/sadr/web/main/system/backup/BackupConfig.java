@@ -1,15 +1,14 @@
 package org.sadr.web.main.system.backup;
 
-import org.sadr.web.config.Config;
+import org.sadr.web.config.WebConfig;
 import org.sadr.web.main.archive.directory.DirectoryConfig;
 import org.sadr.web.main.archive.file.file.FileConfig;
-import org.sadr.web.main.system.irror.IrrorConfig;
 import org.springframework.context.annotation.Bean;
 
 /**
  * @author masoud
  */
-public class BackupConfig extends Config {
+public class BackupConfig extends WebConfig {
 
     @Bean
     public BackupDaoImp backupDaoImp() {
@@ -30,7 +29,6 @@ public class BackupConfig extends Config {
     public BackupController backupController() {
         BackupController uc = new BackupController();
         uc.setService(backupServiceImp());
-        uc.setIrrorService(new IrrorConfig().irrorServiceImp());
         uc.setFileService(new FileConfig().fileServiceImp());
         return uc;
     }

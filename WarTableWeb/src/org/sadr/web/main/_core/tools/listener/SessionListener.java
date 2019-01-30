@@ -3,7 +3,6 @@ package org.sadr.web.main._core.tools.listener;
 import org.sadr._core.utils.OutLog;
 import org.sadr.web.main._core.propertor.PropertorInWeb;
 import org.sadr.web.main._core.propertor._type.TtPropertorInWebList;
-import org.sadr.web.main._core.utils.CacheStatic;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
@@ -150,11 +149,6 @@ public class SessionListener implements HttpSessionListener {
         }
         return ids;
     }
-
-
-
-
-
 
 
 

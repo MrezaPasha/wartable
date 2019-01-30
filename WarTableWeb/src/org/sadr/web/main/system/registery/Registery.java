@@ -20,7 +20,7 @@ import java.io.Serializable;
 @Table(name = "Web.System.Registery")
 public class Registery extends GenericDataModel<Registery> implements Serializable {
 //#########++++++#######// StaticFields: Start //
-public static final String TITLE = "title";public static final String KEY = "key";public static final String TYPE = "type";public static final String VALUE = "value";public static final String VALUE_JSON = "valueJson";public static final String VALUE_TYPE = "valueType";public static final String $IS_NORMAL_VALUE = "isNormalValue";public static final String $PURE_JSON_VALUE_ARRAY = "pureJsonValueArray";public static final String $PURE_JSON_VALUE_NO_COUT = "pureJsonValueNoCout";public static final String $SECRET_NOTE = "secretNote";public static final String $ACT_COLUMNS = "actColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $REL_COLUMNS = "relColumns";public static final String $PURE_JSON_VALUE_BRACKET = "pureJsonValueBracket";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
+public static final String TITLE = "title";public static final String KEY = "key";public static final String TYPE = "type";public static final String VALUE = "value";public static final String VALUE_JSON = "valueJson";public static final String VALUE_BYTE = "valueByte";public static final String VALUE_TYPE = "valueType";public static final String $PURE_JSON_VALUE_BRACKET = "pureJsonValueBracket";public static final String $PURE_JSON_VALUE_NO_COUT = "pureJsonValueNoCout";public static final String $PURE_JSON_VALUE_ARRAY = "pureJsonValueArray";public static final String $SECRET_NOTE = "secretNote";public static final String $ACT_COLUMNS = "actColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $REL_COLUMNS = "relColumns";public static final String $IS_NORMAL_VALUE = "isNormalValue";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
 //#########******#######// StaticFields: End //
     @SafeHtml
     @Size(max = 255)
@@ -42,6 +42,10 @@ public static final String TITLE = "title";public static final String KEY = "key
     @Type(type = "text")
     @PersianName("مقدار")
     private String valueJson;
+
+    @PersianName("مقدار (بایت)")
+    private byte[] valueByte;
+
     @PersianName("نوع رجیستری")
     private TtRegisteryValueType valueType;
 
@@ -151,4 +155,11 @@ public static final String TITLE = "title";public static final String KEY = "key
         this.type = type;
     }
 
+    public byte[] getValueByte() {
+        return valueByte;
+    }
+
+    public void setValueByte(byte[] valueByte) {
+        this.valueByte = valueByte;
+    }
 }

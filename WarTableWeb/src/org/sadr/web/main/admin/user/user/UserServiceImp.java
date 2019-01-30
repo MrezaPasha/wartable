@@ -5,16 +5,15 @@ import org.hibernate.criterion.Restrictions;
 import org.sadr._core._type.TtCompareResult;
 import org.sadr._core.meta.generic.GenericServiceImpl;
 import org.sadr._core.utils.JsonBuilder;
+import org.sadr._core.utils.OutLog;
 import org.sadr._core.utils.ParsCalendar;
-import org.sadr._core.utils._type.TtCookierVariable;
+import org.sadr.web.main._core.utils._type.TtCookierVariable;
 import org.sadr.web.main._core.tools.listener.SessionListener;
 import org.sadr.web.main._core.utils.Cookier;
 import org.sadr.web.main._core.utils.Notice2;
 import org.sadr.web.main._core.utils._type.TtNotice;
 import org.sadr.web.main.admin.user.group.UserGroup;
 import org.sadr.web.main.admin.user.group.UserGroupService;
-import org.sadr.web.main.admin.user.uuid.UserUuid;
-import org.sadr.web.main.admin.user.uuid.UserUuidService;
 import org.sadr.web.main.system.task.Task;
 import org.sadr.web.main.system.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,6 @@ import java.util.List;
 //@Component
 public class UserServiceImp extends GenericServiceImpl<User, UserDao> implements UserService {
 
-    private UserUuidService userUuidService;
     private UserGroupService userGroupService;
     private TaskService taskService;
 
@@ -49,12 +47,8 @@ public class UserServiceImp extends GenericServiceImpl<User, UserDao> implements
         this.userGroupService = userGroupService;
     }
 
-    @Autowired
-    public void setUserUuidService(UserUuidService userUuidService) {
-        this.userUuidService = userUuidService;
-    }
-
     /////////////////////////////////////////////////////=====
+
 
     ////----------------- UPDATE USER SESSION
     @Override
@@ -97,62 +91,6 @@ public class UserServiceImp extends GenericServiceImpl<User, UserDao> implements
         return user;
     }
 
-    ////----------------- AUTHENTICATION
-    @Override
-    public User authenticateE(String username, String password) {
-        return dao.authenticateE(username, password);
-    }
-
-    @Override
-    public User authenticateEAndLogin(String username, String password, HttpSession session) {
-        User u = dao.authenticateE(username, password);
-        if (u == null) {
-            return null;
-        }
-        updateUserSession(session, u);
-        return u;
-    }
-
-    @Override
-    public boolean authenticateE(String username) {
-        return dao.authenticateE(username);
-    }
-
-    ////----------------- AUTO LOGIN
-    @Override
-    public User autoLogin(HttpServletRequest request) {
-        String uuid = Cookier.getValue(request, TtCookierVariable.UserAutoLoginUUID.getKey());
-        if (uuid == null) {
-            return null;
-        }
-        UserUuid uu = this.userUuidService.findBy(Restrictions.eq(UserUuid.UUID, uuid), UserUuid._USER);
-        if (uu == null) {
-            return null;
-        }
-        // security check
-        if (!uu.isPassSecureCheck(request)) {
-            return null;
-        }
-        return updateUserSession(request.getSession(), findById(uu.getUser().getId()));
-    }
-
-    @Override
-    public User autoLogin(HttpServletRequest request, User suser) {
-        if (suser == null) {
-            return null;
-        }
-        return updateUserSession(request.getSession(), findById(suser.getId()));
-    }
-
-    @Override
-    public User autoLogin(HttpServletRequest request, int userId) {
-        if (userId < 1) {
-            return null;
-        }
-        return updateUserSession(request.getSession(), findById(userId));
-    }
-
-    ////----------------- LOGOUT
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
@@ -176,17 +114,8 @@ public class UserServiceImp extends GenericServiceImpl<User, UserDao> implements
             return;
         }
 
-        String value = Cookier.getValue(request, TtCookierVariable.UserAutoLoginUUID.getKey());
-        if (value != null && !value.isEmpty()) {
-            UserUuid uui = userUuidService.findBy(Restrictions.and(
-                    Restrictions.eq(UserUuid._USER, duser),
-                    Restrictions.eq(UserUuid.UUID, value)));
-            if (uui != null) {
-                this.userUuidService.deleteUUID(uui.getUuid());
-            }
-        }
-        Cookier.deleteCookie(response, TtCookierVariable.UserAutoLoginUUID.getKey());
 
+        OutLog.pl();
         session.removeAttribute("sUser");
         Enumeration<String> ss = session.getAttributeNames();
         while (ss.hasMoreElements()) {
@@ -195,63 +124,30 @@ public class UserServiceImp extends GenericServiceImpl<User, UserDao> implements
         }
     }
 
+    ////----------------- AUTHENTICATION
     @Override
-    public void logoutAll(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-        User suser = (User) session.getAttribute("sUser");
-        if (suser == null) {
-            return;
-        }
-        User duser;
-        try {
-            duser = this.findById(suser.getId(), User._USER_UUIDS);
-        } catch (Exception e) {
-            duser = null;
-        }
-        if (duser == null) {
-            session.removeAttribute("sUser");
-            Enumeration<String> ss = session.getAttributeNames();
-            while (ss.hasMoreElements()) {
-                String s = ss.nextElement();
-                session.removeAttribute(s);
-            }
-            return;
-        }
-
-        userUuidService.deleteAllBy(0163, duser.getUserUuids());
-
-        Cookier.deleteCookie(response, TtCookierVariable.UserAutoLoginUUID.getKey());
-
-        session.removeAttribute("sUser");
-        SessionListener.invalidate(duser.getId());
-        Enumeration<String> ss = session.getAttributeNames();
-        while (ss.hasMoreElements()) {
-            String s = ss.nextElement();
-            session.removeAttribute(s);
-        }
-
+    public User authenticateE(String username, String password) {
+        return dao.authenticateE(username, password);
     }
 
     @Override
-    public void logoutAll(User user) {
-        User duser;
-        try {
-            duser = this.findById(user.getId(), User._USER_UUIDS);
-        } catch (Exception e) {
-            return;
+    public User authenticateEAndLogin(String username, String password, HttpSession session) {
+        User u = dao.authenticateE(username, password);
+        if (u == null) {
+            return null;
         }
-        userUuidService.deleteAllBy(0163, duser.getUserUuids());
-
-        SessionListener.invalidate(duser.getId());
+        updateUserSession(session, u);
+        return u;
     }
 
-    ////----------------- GO TO
     @Override
-    public ModelAndView goToSignin(HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
-        Cookier.setCookie(response, TtCookierVariable.ReturnUrlAfterSignin, request.getServletPath() + "?" + request.getQueryString());
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.for.continue", JsonBuilder.toJson("path", request.getServletPath() + "?" + request.getQueryString()), TtNotice.Warning)));
-        redirectAttributes.addFlashAttribute("isShowRegister", true);
-        return new ModelAndView("redirect:/signin");
+    public boolean authenticateE(String username) {
+        return dao.authenticateE(username);
     }
+
+    ////----------------- LOGOUT
+
+
 
     @Override
     public boolean isAccessLimitPassed(User user) {

@@ -1,5 +1,6 @@
 package org.sadr._core.meta.generic;
 
+import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 
@@ -14,6 +15,7 @@ public interface GenericDao<T> {
 
     public Class getClazz();
 
+    public Session getCurrentSession();
     //=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
     public T find(GB gb);
 

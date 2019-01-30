@@ -5,7 +5,8 @@ package org.sadr.web.main.system._type;
  */
 public enum TtRegisteryType {
 
-    Ui("ui", "تنظیمات ظاهر"),;
+    Ixport("ixport", "خروجی گزارش"),
+    Backup("backup", "پشتیبانی"),;
 
     private final String key;
     private final String title;

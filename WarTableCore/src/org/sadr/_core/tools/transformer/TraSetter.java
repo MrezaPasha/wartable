@@ -127,7 +127,7 @@ public class TraSetter {
     }
 
     public String getParentKey() {
-        int h = key.lastIndexOf("_");
+        int h = key.lastIndexOf("__");
         if (h != -1) {
             return key.substring(0, h);
         }

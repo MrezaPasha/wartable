@@ -16,16 +16,16 @@ public class DirectoryDaoImp extends GenericDaoImpl<Directory> implements Direct
     @Override
     public Directory getDirectory(TtRepoDirectory repoDirectory) {
         return (Directory) getCurrentSession()
-            .createQuery("FROM " + Directory.class.getName() + " WHERE entityState= :es AND repoDirectory= :rd")
-            .setInteger("es", TtEntityState.Exist.ordinal())
-            .setInteger("rd", repoDirectory.ordinal()).uniqueResult();
+                .createQuery("FROM " + Directory.class.getName() + " WHERE entityState= :es AND repoDirectory= :rd")
+                .setInteger("es", TtEntityState.Exist.ordinal())
+                .setInteger("rd", repoDirectory.ordinal()).uniqueResult();
     }
 
     @Override
     public Directory getDirectory(String path) {
         return (Directory) getCurrentSession()
-            .createQuery("FROM " + Directory.class.getName() + " WHERE entityState= :es AND path= :rd")
-            .setInteger("es", TtEntityState.Exist.ordinal())
-            .setString("rd", path).uniqueResult();
+                .createQuery("FROM " + Directory.class.getName() + " WHERE entityState= :es AND path= :rd")
+                .setInteger("es", TtEntityState.Exist.ordinal())
+                .setString("rd", path).uniqueResult();
     }
 }

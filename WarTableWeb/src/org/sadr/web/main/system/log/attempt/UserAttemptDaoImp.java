@@ -16,7 +16,7 @@ public class UserAttemptDaoImp extends GenericDaoImpl<UserAttempt> implements Us
     @Override
     public void deleteAttempt(User u) {
         Query query = getCurrentSession().createQuery("DELETE FROM " + UserAttempt.class.getName()
-            + " WHERE user_id= :ud");
+                + " WHERE user_id= :ud");
         query.setLong("ud", u.getId());
         query.executeUpdate();
     }

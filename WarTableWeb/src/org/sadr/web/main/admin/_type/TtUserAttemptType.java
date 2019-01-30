@@ -56,8 +56,9 @@ public enum TtUserAttemptType {
     public int getBlockDuringSec() {
         return PropertorInWeb.getInstance().getPropertyInt(blockDuring);
     }
+
     public int getBlockDuringMiliSec() {
-        return PropertorInWeb.getInstance().getPropertyInt(blockDuring)* 1000;
+        return PropertorInWeb.getInstance().getPropertyInt(blockDuring) * 1000;
     }
 
 

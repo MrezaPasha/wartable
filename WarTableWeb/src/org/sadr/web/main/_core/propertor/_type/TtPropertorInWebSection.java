@@ -7,11 +7,15 @@ import org.sadr._core.utils.SpringMessager;
  */
 public enum TtPropertorInWebSection {
     Startup("N.propertor.generic.startup", TtPropertorInWebTab.Generic),
-    UserAttempt("N.propertor.User.userAttempt", TtPropertorInWebTab.User),
-    UserPasswordPolicy("N.propertor.User.passwordPolicy", TtPropertorInWebTab.User),
-    UserDeactivate("N.propertor.User.deactivate", TtPropertorInWebTab.User),
-    UserSession("N.propertor.User.session", TtPropertorInWebTab.User),
-//    UserCreateDefault("N.propertor.User.create.default", TtPropertorInWebTab.User),
+    UserAttempt("N.propertor.user.userAttempt", TtPropertorInWebTab.User),
+    UserPasswordPolicy("N.propertor.user.passwordPolicy", TtPropertorInWebTab.User),
+    UserDeactivate("N.propertor.user.deactivate", TtPropertorInWebTab.User),
+    UserSession("N.propertor.user.session", TtPropertorInWebTab.User),
+    LoadConcurrentUser("N.propertor.load.concurrent.user", TtPropertorInWebTab.LoadThreshold),
+    LoadUpload("N.propertor.load.upload", TtPropertorInWebTab.LoadThreshold),
+    ServiceUpload("N.propertor.service.upload", TtPropertorInWebTab.Service),
+    ServiceUser("N.propertor.service.user", TtPropertorInWebTab.Service),
+//    UserCreateDefault("N.propertor.user.create.default", TtPropertorInWebTab.User),
 
     ;
 

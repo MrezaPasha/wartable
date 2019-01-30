@@ -8,8 +8,7 @@ public enum TtRepoDirectory {
     Root("root"),
     _Trash("_trash"),
     Db_Backup("dbBackup"),
-    ExportExcel("exportExcel")
-    ,;
+    Export("export"),;
 
     private final String key;
 

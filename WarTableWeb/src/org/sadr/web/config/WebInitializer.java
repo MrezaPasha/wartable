@@ -17,7 +17,6 @@ import org.tuckey.web.filters.urlrewrite.UrlRewriteFilter;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration.Dynamic;
 import java.util.EnumSet;
 
@@ -27,7 +26,7 @@ import java.util.EnumSet;
 public class WebInitializer implements WebApplicationInitializer {
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
+    public void onStartup(ServletContext servletContext) {
         OutLog.sl("  ----------<([ IN THE NAME OF ALLAH ])>----------\n\n\n ");
         OutLog.sl(Environment.getInstance().getProjectName());
         OutLog.sl("Starting WebInitializer...");
@@ -35,10 +34,12 @@ public class WebInitializer implements WebApplicationInitializer {
         AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
         WebConfigHandler.loadConfigs();
         ShareConfigHandler.loadConfigs();
+//        ServiceConfigHandler.loadConfigs();
 
-        ctx.register(Config.class);
+        ctx.register(WebConfig.class);
         ctx.register(WebConfigHandler.getConfigClassArrays());
         ctx.register(ShareConfigHandler.getConfigClassArrays());
+//        ctx.register(ServiceConfigHandler.getConfigClassArrays());
         ctx.setServletContext(servletContext);
         servletContext.addListener(new ContextLoaderListener(ctx));
         servletContext.addListener(new SessionListener());
@@ -90,6 +91,11 @@ public class WebInitializer implements WebApplicationInitializer {
                 Environment.getInstance().setWebDomain(servletContext.getVirtualServerName());
             }
         }
+
+
+
+        /*************** Service Initializer **************/
+//        HttpService.start();
 
     }
 }

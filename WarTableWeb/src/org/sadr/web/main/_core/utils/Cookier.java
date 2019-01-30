@@ -5,7 +5,7 @@
  */
 package org.sadr.web.main._core.utils;
 
-import org.sadr._core.utils._type.TtCookierVariable;
+import org.sadr.web.main._core.utils._type.TtCookierVariable;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

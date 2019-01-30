@@ -8,7 +8,7 @@ import org.sadr.web.main.system._type.TtBackupType;
  */
 public interface BackupService extends GenericService<Backup> {
 
-    public Backup backup(TtBackupType backupType, boolean isLog);
+    public Backup backup(TtBackupType backupType, boolean isLog, boolean isEncrypted, boolean isSigned);
 
-    public String restore(Backup backup);
+    public String restore(Backup backup, boolean isEncrypted, boolean isSigned);
 }

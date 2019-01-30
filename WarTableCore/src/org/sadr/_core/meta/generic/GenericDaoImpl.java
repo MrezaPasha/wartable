@@ -55,6 +55,7 @@ public abstract class GenericDaoImpl<T extends Serializable> implements GenericD
     @Autowired
     private SessionFactory sessionFactoryLog;
 
+    @Override
     public final Session getCurrentSession() {
         if (clazz.getName().endsWith(".RemoteLog")) {
             return sessionFactoryLog.getCurrentSession();
@@ -700,7 +701,7 @@ public abstract class GenericDaoImpl<T extends Serializable> implements GenericD
                 m_set = clazz.getMethod("getId");
                 idsa[i++] = (Long) m_set.invoke(list);
             } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                Logger.getLogger(GenericDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
+                ex.printStackTrace();
             }
         }
 

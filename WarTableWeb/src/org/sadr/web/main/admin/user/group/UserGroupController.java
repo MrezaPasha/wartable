@@ -34,7 +34,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.PathParam;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -47,10 +46,8 @@ import java.util.Set;
 @RestController
 public class UserGroupController extends GenericControllerImpl<UserGroup, UserGroupService> {
 
-    ////////////////////
-    private final String REQUEST_MAPPING_BASE = "/user/group";
     //===================================================
-    private final String _PANEL_URL = "/panel" + REQUEST_MAPPING_BASE;
+    private final String _PANEL_URL = "/panel/user/group";
     ////////////////////
 
     public UserGroupController() {
@@ -113,7 +110,7 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
     @PersianName("میز کار (لیست-ثبت-ویرایش)")
     @RequestMapping(value = _PANEL_URL + "/desk")
     public ModelAndView pDesk(Model model,
-                              @RequestParam(value = "ix",required = false) String ix) {
+                              @RequestParam(value = "ix", required = false) String ix) {
 
         UserGroup obj = (UserGroup) model.asMap().get("userGroup");
         if (obj == null) {
@@ -135,7 +132,7 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
 
         model.addAttribute("uglist", this.service.findAll(UserGroup._PARENT));
         model.addAttribute("userGroup", obj);
-        return TtTile___.p_user_group_desk.___getDisModel();
+        return TtTile___.p_user_group_desk.___getDisModel(_PANEL_URL + "/desk");
     }
 
     @RequestMapping(value = _PANEL_URL + "/desk", method = RequestMethod.POST)
@@ -243,7 +240,7 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
                 model.addAttribute("userGroup", nc);
             }
         }
-        return TtTile___.p_user_group_assign.___getDisModel();
+        return TtTile___.p_user_group_assign.___getDisModel(_PANEL_URL + "/assign");
     }
 
     @RequestMapping(value = _PANEL_URL + "/assign", method = RequestMethod.POST)
@@ -417,7 +414,7 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
         model.addAttribute("moduleName", mud.getMessageCode());
         model.addAttribute("userGroup", ug);
         model.addAttribute("moduleId", mid);
-        return TtTile___.p_user_group_access_assign.___getDisModel();
+        return TtTile___.p_user_group_access_assign.___getDisModel(_PANEL_URL + "/access");
     }
 
     @RequestMapping(value = _PANEL_URL + "/access", method = RequestMethod.POST)
@@ -471,7 +468,7 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
 
     @PersianName("حذف")
     @RequestMapping(value = _PANEL_URL + "/trash/{id}")
-    public ModelAndView pTrash(@PathVariable("id") int id,
+    public ModelAndView pTrash(@PathVariable("id") long id,
                                final RedirectAttributes redirectAttributes
     ) {
         UserGroup ug = this.service.findById(id, UserGroup._PARENT);

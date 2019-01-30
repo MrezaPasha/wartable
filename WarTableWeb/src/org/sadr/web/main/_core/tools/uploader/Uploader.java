@@ -1,38 +1,23 @@
 package org.sadr.web.main._core.tools.uploader;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.hibernate.criterion.Restrictions;
 import org.imgscalr.Scalr;
-import org.sadr._core._type.TtEntityState;
 import org.sadr._core.utils.Environment;
-import org.sadr._core.utils.OutLog;
 import org.sadr.web.config.WebConfigHandler;
-import org.sadr.web.main._core.tools._type.*;
-import org.sadr.web.main.archive._type.TtDirectoryOrigin;
-import org.sadr.web.main.archive._type.TtFileUploadStatus;
+import org.sadr.web.main._core.tools._type.TtThumbnailSize;
+import org.sadr.web.main._core.tools._type.TtThumnailCropMode;
+import org.sadr.web.main._core.tools._type.TtUploadIfExist;
+import org.sadr.web.main._core.tools._type.TtUploadOrginalFile;
 import org.sadr.web.main.archive._type.TtRepoDirectory;
 import org.sadr.web.main.archive.directory.Directory;
 import org.sadr.web.main.archive.directory.DirectoryService;
 import org.sadr.web.main.archive.file.file.File;
 import org.sadr.web.main.archive.file.file.FileService;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author masoud
@@ -92,7 +77,7 @@ public class Uploader {
         String fileExt = fe.isEmpty() ? "" : "." + fe.toLowerCase();
         try {
             byte[] bytes = sourceFile.getBytes();
-            java.io.File dir = new java.io.File(file.getDirectory().getAbsolutePath());
+            java.io.File dir = new java.io.File(file.getDirectoryAbsolutePath());
 
             if (!dir.exists()) {
                 dir.mkdirs();
@@ -107,7 +92,9 @@ public class Uploader {
 
             if (serverFile.exists()) {
                 for (String taDir : file.getThumbnailsArray()) {
-                    new java.io.File(file.getDirectory().getAbsolutePath() + Environment.FILE_SEPARATOR + taDir + Environment.FILE_SEPARATOR + file.getThumbnailName()).delete();
+                    if (taDir != null) {
+                        new java.io.File(file.getDirectory().getAbsolutePath() + Environment.FILE_SEPARATOR + taDir + Environment.FILE_SEPARATOR + file.getThumbnailName()).delete();
+                    }
                 }
                 serverFile.delete();
                 serverFile = new java.io.File(dir.getAbsolutePath() + Environment.FILE_SEPARATOR + acceptedFileName);
@@ -137,8 +124,8 @@ public class Uploader {
         //  outlog.pl("");
         originalFileName = sourceFile.getOriginalFilename().replace("#", "_").replace(" ", "_").replace("(", "_").replace(")", "_");
         fe = (originalFileName == null || originalFileName.lastIndexOf(".") == -1)
-            ? ""
-            : originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+                ? ""
+                : originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
         fe = fe.isEmpty() ? "" : "." + fe.toLowerCase();
         fn = originalFileName.substring(0, originalFileName.lastIndexOf("."));
         //  outlog.pl(orginalFileName + "  " + fn + "   " + fe + "  " + fileExt + "   " + sourceFile.getName());
@@ -147,8 +134,8 @@ public class Uploader {
         boolean isFound = false;
         //  outlog.pl();
         if (fileService.isExist(Restrictions.and(
-            Restrictions.eq(File.ORGINAL_NAME, originalFileName),
-            Restrictions.eq(File._DIRECTORY, dir)))) {
+                Restrictions.eq(File.ORGINAL_NAME, originalFileName),
+                Restrictions.eq(File._DIRECTORY, dir)))) {
             //  outlog.pl("");
             switch (ifExist) {
                 case KeepFileNameByFoldering:
@@ -157,8 +144,8 @@ public class Uploader {
                     for (Directory d : dir.getDirectorys()) {
                         //  outlog.pl("");
                         if (!fileService.isExist(Restrictions.and(
-                            Restrictions.eq(File.ORGINAL_NAME, originalFileName),
-                            Restrictions.eq(File._DIRECTORY, d)))) {
+                                Restrictions.eq(File.ORGINAL_NAME, originalFileName),
+                                Restrictions.eq(File._DIRECTORY, d)))) {
                             dir = d;
                             isFound = true;
                             //  outlog.p("");
@@ -177,11 +164,11 @@ public class Uploader {
                     //  outlog.pl("");
                     int i = 1;
                     while (fileService.isExist(Restrictions.and(
-                        Restrictions.eq(File.ORGINAL_NAME, acceptedFileName),
-                        Restrictions.eq(File._DIRECTORY, dir)))) {
+                            Restrictions.eq(File.ORGINAL_NAME, acceptedFileName),
+                            Restrictions.eq(File._DIRECTORY, dir)))) {
                         acceptedFileName
-                            = fn + "_" + i
-                            + fe;
+                                = fn + "_" + i
+                                + fe;
                         i++;
                     }
                     break;
@@ -192,14 +179,54 @@ public class Uploader {
         }
         //  outlog.pl(acceptedFileName);
         File file = new File(
-            acceptedFileName,
-            sourceFile.getContentType(),
-            sourceFile.getSize(),
-            dir,
-            true);
+                acceptedFileName,
+                sourceFile.getContentType(),
+                sourceFile.getSize(),
+                dir,
+                true);
         //  outlog.pl("");
         if (upload(sourceFile, file)) {
-            if (sizes != null  && tuof == TtUploadOrginalFile.DeleteOrginalFile) {
+            if (sizes != null && tuof == TtUploadOrginalFile.DeleteOrginalFile) {
+                //  outlog.pl("Deleting orginal file...");
+                new java.io.File(file.getAbsolutePathName()).delete();
+            }
+            //  outlog.pl("");
+            file.setIsContainOrginal(tuof == TtUploadOrginalFile.KeepOrginalFile);
+            fileService.save(file);
+            return file;
+        }
+        //  outlog.pl("");
+        return null;
+    }
+
+    private File uploadAndReturnFile(MultipartFile sourceFile, String dirPath, TtUploadIfExist ifExist, TtUploadOrginalFile tuof, Scalr.Method method, Scalr.Mode mode, TtThumnailCropMode cropMode, BufferedImageOp op, TtThumbnailSize... sizes) {
+        //  outlog.pl("");
+        if (sourceFile == null || sourceFile.isEmpty()) {
+            //  outlog.pl();
+            return null;
+        }
+        String originalFileName, fe, fn, acceptedFileName;
+        //  outlog.pl("");
+        originalFileName = sourceFile.getOriginalFilename().replace("#", "_").replace(" ", "_").replace("(", "_").replace(")", "_");
+        fe = (originalFileName == null || originalFileName.lastIndexOf(".") == -1)
+                ? ""
+                : originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+        fe = fe.isEmpty() ? "" : "." + fe.toLowerCase();
+        fn = originalFileName.substring(0, originalFileName.lastIndexOf("."));
+        //  outlog.pl(orginalFileName + "  " + fn + "   " + fe + "  " + fileExt + "   " + sourceFile.getName());
+        acceptedFileName = originalFileName;
+
+        //  outlog.pl(acceptedFileName);
+        File file = new File(
+                acceptedFileName,
+                sourceFile.getContentType(),
+                sourceFile.getSize(),
+                null,
+                true);
+        //  outlog.pl("");
+        file.setDirectoryAbsolutePath(dirPath);
+        if (upload(sourceFile, file)) {
+            if (sizes != null && tuof == TtUploadOrginalFile.DeleteOrginalFile) {
                 //  outlog.pl("Deleting orginal file...");
                 new java.io.File(file.getAbsolutePathName()).delete();
             }
@@ -215,5 +242,11 @@ public class Uploader {
     public File upload(MultipartFile sourceFile, TtRepoDirectory repoDirectory, TtUploadIfExist ifExist) {
         return uploadAndReturnFile(sourceFile, directoryService.getDirectory(repoDirectory), ifExist, TtUploadOrginalFile.KeepOrginalFile, Scalr.Method.SPEED, Scalr.Mode.AUTOMATIC, TtThumnailCropMode.Crop, null, null);
     }
+
+
+    public File uploadOnTheFly(MultipartFile sourceFile, String repoPath) {
+        return uploadAndReturnFile(sourceFile, repoPath, TtUploadIfExist.ReplaceOldFile, TtUploadOrginalFile.KeepOrginalFile, Scalr.Method.SPEED, Scalr.Mode.AUTOMATIC, TtThumnailCropMode.Crop, null, null);
+    }
+
 
 }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,9 +49,6 @@ public class FileController extends GenericControllerImpl<File, FileService> {
 //        }
         OutLog.pl(f.getAbsolutePathName());
         String apn = f.getAbsolutePathName();
-        if (apn.contains(":")) {
-            apn = apn.substring(1);
-        }
         Path fpath = Paths.get(apn);
         if (Files.exists(fpath)) {
             OutLog.pl("");

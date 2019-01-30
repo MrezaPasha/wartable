@@ -10,8 +10,7 @@ public enum TtTaskActionType {
     Report("گزارش - Report"),
     Error("خطا - Error"),
     Delete("حذف - Delete"),
-    User_Management("مدیریت کاربر - User Management"),
-    ;
+    User_Management("مدیریت کاربر - User Management"),;
     private final String title;
 
     private TtTaskActionType(String k) {

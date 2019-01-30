@@ -9,6 +9,8 @@ import org.sadr._core.utils.SpringMessager;
 import org.sadr.web.main._core.utils._type.TtIsonStatus;
 import org.sadr.web.main._core.utils._type.TtNotice;
 import org.sadr.web.main.system._type.TtHttpErrorCode___;
+import org.sadr.web.main.system._type.TtTaskActionStatus;
+import org.sadr.web.main.system._type.TtTaskActionSubType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,15 @@ import java.util.List;
 public class Ison {
 
     public static Ison init() {
+        Ison obj = new Ison();
+        obj.props = new StringBuilder();
+        obj.status = TtIsonStatus.Unknown;
+        obj.isBuilt = false;
+        return obj;
+
+    }
+
+    public static Ison init(TtTaskActionSubType subType, TtTaskActionStatus actionStatus) {
         Ison obj = new Ison();
         obj.props = new StringBuilder();
         obj.status = TtIsonStatus.Unknown;
@@ -45,40 +56,31 @@ public class Ison {
         return obj;
     }
 
-    public static Ison initMessages(String spMsg, TtNotice tn) {
-        Ison obj = new Ison();
-        obj.props = new StringBuilder();
-        obj.status = TtIsonStatus.Nok;
-        obj.isBuilt = false;
-        obj.nots = Notice2.addNotices(new Notice2(spMsg, tn));
-        return obj;
-    }
-
     public static ResponseEntity<String> response(HttpHeaders headers, String spMsg, TtNotice tn) {
         return new ResponseEntity<>(
-            Ison.init()
-                .setStatus(TtIsonStatus.Nok)
-                .setMessages(Notice2.addNotices(new Notice2(spMsg, tn)))
-                .toJson(),
-            headers, HttpStatus.OK);
+                Ison.init()
+                        .setStatus(TtIsonStatus.Nok)
+                        .setMessages(Notice2.addNotices(new Notice2(spMsg, tn)))
+                        .toJson(),
+                headers, HttpStatus.OK);
     }
 
     public static ResponseEntity<String> response(HttpHeaders headers, String spMsg, TtNotice tn, TtIsonStatus tis) {
         return new ResponseEntity<>(
-            Ison.init()
-                .setStatus(tis)
-                .setMessages(Notice2.addNotices(new Notice2(spMsg, tn)))
-                .toJson(),
-            headers, HttpStatus.OK);
+                Ison.init()
+                        .setStatus(tis)
+                        .setMessages(Notice2.addNotices(new Notice2(spMsg, tn)))
+                        .toJson(),
+                headers, HttpStatus.OK);
     }
 
     public static ResponseEntity<String> response(HttpHeaders headers, String spMsg, TtNotice tn, TtIsonStatus tis, String params) {
         return new ResponseEntity<>(
-            Ison.init()
-                .setStatus(tis)
-                .setMessages(Notice2.addNotices(new Notice2(spMsg, tn, params)))
-                .toJson(),
-            headers, HttpStatus.OK);
+                Ison.init()
+                        .setStatus(tis)
+                        .setMessages(Notice2.addNotices(new Notice2(spMsg, tn, params)))
+                        .toJson(),
+                headers, HttpStatus.OK);
     }
 
     private Ison() {
@@ -101,6 +103,11 @@ public class Ison {
 
     public Ison setPropertyJson(String prop, String value) {
         props.append(",\"").append(prop).append("\":").append(value);
+        return this;
+    }
+
+    public Ison setPropertySearch(String value) {
+        props.append(",\"search\":").append(value);
         return this;
     }
 
@@ -183,12 +190,12 @@ public class Ison {
         if (!isBuilt) {
             isBuilt = true;
             props.replace(0, 1, "{\"result\":{")
-                .append("},\"status\":\"")
-                .append(status.getKey())
-                .append("\",\"messages\":[");
+                    .append("},\"status\":\"")
+                    .append(status.getKey())
+                    .append("\",\"messages\":[");
             if (nots != null && nots.length > 0) {
                 props.append("{\"text\":\"").append(SpringMessager.get(nots[0].getCode(), nots[0].getParams()))
-                    .append("\",\"cssClass\":\"").append(nots[0].getCssClass()).append("\"}");
+                        .append("\",\"cssClass\":\"").append(nots[0].getCssClass()).append("\"}");
 
                 for (int i = 1; i < nots.length; i++) {
                     try {
@@ -196,7 +203,7 @@ public class Ison {
                         ).append("\",\"cssClass\":\"").append(nots[i].getCssClass()).append("\"}");
                     } catch (Exception e) {
                         props.append("{\"text\":\"").append("<متن یافت نشد>")
-                            .append("\",\"cssClass\":\"").append(nots[0].getCssClass()).append("\"}");
+                                .append("\",\"cssClass\":\"").append(nots[0].getCssClass()).append("\"}");
                     }
                 }
             }
@@ -210,7 +217,7 @@ public class Ison {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
         return new ResponseEntity<>(
-            toJson(),
-            headers, HttpStatus.OK);
+                toJson(),
+                headers, HttpStatus.OK);
     }
 }

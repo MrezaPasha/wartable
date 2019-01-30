@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.FormParam;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +43,14 @@ public class PropertorController {
     ///=////////////////////////////////////////////////////////////// WEB PROPERTOR
     @PersianName("وب: پیشخوان پیکربندی")
     @RequestMapping("/web")
-    public ModelAndView pPropertorInWeb(Model model) throws Exception {
+    public ModelAndView pPropertorInWeb(Model model) {
 
         PropertorInWeb.getInstance().load();
 
         List<PropertorBag> glist = new ArrayList<>();
         List<PropertorBag> ulist = new ArrayList<>();
+        List<PropertorBag> llist = new ArrayList<>();
+        List<PropertorBag> slist = new ArrayList<>();
 
         String pn = "";
         for (TtPropertorInWebList value : TtPropertorInWebList.values()) {
@@ -60,11 +61,19 @@ public class PropertorController {
                 case User:
                     ulist.add(new PropertorBag(value, PropertorInWeb.getInstance().getProperty(value), !value.getSection().toString().equals(pn)));
                     break;
+                case LoadThreshold:
+                    llist.add(new PropertorBag(value, PropertorInWeb.getInstance().getProperty(value), !value.getSection().toString().equals(pn)));
+                    break;
+                case Service:
+                    slist.add(new PropertorBag(value, PropertorInWeb.getInstance().getProperty(value), !value.getSection().toString().equals(pn)));
+                    break;
             }
             pn = value.getSection().toString();
         }
         model.addAttribute("glist", glist);
         model.addAttribute("ulist", ulist);
+        model.addAttribute("llist", llist);
+        model.addAttribute("slist", slist);
 
         return TtTile___.p_propertor_web.___getDisModel();
     }
@@ -201,12 +210,13 @@ public class PropertorController {
     @MenuIdentity(TtTile___.p_propertor_backup)
     @PersianName("پشتیبان گیری: پیشخوان پیکربندی")
     @RequestMapping("/backup")
-    public ModelAndView pPropertorInBackup(Model model) throws Exception {
+    public ModelAndView pPropertorInBackup(Model model) {
 
         PropertorInBackup.getInstance().load();
 
         List<PropertorBag> blist = new ArrayList<>();
         List<PropertorBag> rlist = new ArrayList<>();
+        List<PropertorBag> ulist = new ArrayList<>();
 
         String pn = "";
         for (TtPropertorInBackupList value : TtPropertorInBackupList.values()) {
@@ -217,12 +227,16 @@ public class PropertorController {
                 case Restore:
                     rlist.add(new PropertorBag(value, PropertorInBackup.getInstance().getProperty(value), !value.getSection().toString().equals(pn)));
                     break;
+                case Upload:
+                    ulist.add(new PropertorBag(value, PropertorInBackup.getInstance().getProperty(value), !value.getSection().toString().equals(pn)));
+                    break;
 
             }
             pn = value.getSection().toString();
         }
         model.addAttribute("blist", blist);
         model.addAttribute("rlist", rlist);
+        model.addAttribute("ulist", ulist);
 
 
         return TtTile___.p_propertor_backup.___getDisModel();
@@ -243,8 +257,8 @@ public class PropertorController {
     @RequestMapping(value = "/backup/set", method = RequestMethod.POST, headers = "Accept=application/json", produces = "application/json")
     public @ResponseBody
     ResponseEntity<String> pPropertorInBackupSetValue(@FormParam("type") String type,
-                                                   @FormParam("id") int id,
-                                                   @FormParam("value") String value) {
+                                                      @FormParam("id") int id,
+                                                      @FormParam("value") String value) {
         boolean res = false;
         switch (type) {
             case "OnOff":

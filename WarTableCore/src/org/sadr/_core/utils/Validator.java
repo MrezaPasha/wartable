@@ -21,7 +21,6 @@ public class Validator {
     private Validator() {
     }
 
-
     public static boolean email(final String value, boolean required) {
         if (!required && (value == null || value.isEmpty())) {
             return true;
@@ -64,6 +63,19 @@ public class Validator {
     }
 
 
+    ///////=============
+    public static boolean isValidateUUID(String agentSignature, String computerSignature, String uuid) {
+        if (uuid == null || uuid.isEmpty()) {
+            return false;
+        }
+        String[] sp = uuid.split("_");
+        if (sp.length < 2) {
+            return false;
+        }
+
+        String s = "" + (agentSignature == null ? "" : agentSignature.trim().replace(" ", "").toUpperCase().codePoints().sum());
+        return (s.equals(sp[1]));
+    }
     //////  PERSIAN DATE TIME
 
     public static boolean persianDateTime(String value) {

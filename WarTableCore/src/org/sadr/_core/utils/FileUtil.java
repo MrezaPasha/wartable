@@ -82,6 +82,57 @@ public class FileUtil {
 
     /////////////////////////// ZIP
 
+    public static File zip(File directoryToZip) {
+        List<File> fileList = new ArrayList<>();
+        _getAllFiles(directoryToZip, fileList);
+
+        String s = directoryToZip.getAbsolutePath() + ".zip";
+        try {
+            FileOutputStream fos = new FileOutputStream(s);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+
+            for (File file : fileList) {
+                if (!file.isDirectory()) { // we only zip files, not directories
+                    _addToZip(directoryToZip, file, zos);
+                }
+            }
+
+            zos.close();
+            fos.close();
+            return new File(s);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static File zipFiles(String zipPathName, File... files) {
+
+        try {
+            FileOutputStream fos = new FileOutputStream(zipPathName);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+
+            for (File file : files) {
+                if (!file.isDirectory()) { // we only zip files, not directories
+                    _addToZip(file, zos);
+                }
+            }
+
+            zos.close();
+            fos.close();
+            return new File(zipPathName);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private static void _getAllFiles(File dir, List<File> fileList) {
         try {
             File[] files = dir.listFiles();
@@ -96,7 +147,7 @@ public class FileUtil {
         }
     }
 
-    public static void _addToZip(File directoryToZip, File file, ZipOutputStream zos) throws FileNotFoundException,
+    private static void _addToZip(File directoryToZip, File file, ZipOutputStream zos) throws FileNotFoundException,
         IOException {
 
         FileInputStream fis = new FileInputStream(file);
@@ -107,6 +158,27 @@ public class FileUtil {
             file.getCanonicalPath().length());
         OutLog.p("Writing '" + zipFilePath + "' to zip file");
         ZipEntry zipEntry = new ZipEntry(zipFilePath);
+        zos.putNextEntry(zipEntry);
+
+        byte[] bytes = new byte[1024];
+        int length;
+        while ((length = fis.read(bytes)) >= 0) {
+            zos.write(bytes, 0, length);
+        }
+
+        zos.closeEntry();
+        fis.close();
+    }
+
+    private static void _addToZip(File file, ZipOutputStream zos) throws FileNotFoundException,
+        IOException {
+
+        FileInputStream fis = new FileInputStream(file);
+
+        // we want the zipEntry's path to be a relative path that is relative
+        // to the directory being zipped, so chop off the rest of the path
+        OutLog.p("Writing '" + file.getName() + "' to zip file");
+        ZipEntry zipEntry = new ZipEntry(file.getName());
         zos.putNextEntry(zipEntry);
 
         byte[] bytes = new byte[1024];

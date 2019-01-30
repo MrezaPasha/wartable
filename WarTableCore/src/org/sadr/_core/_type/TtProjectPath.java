@@ -8,9 +8,7 @@ public enum TtProjectPath {
     View("view"),
     Config("conf"),
     ConfigLayout("conf/layouts"),
-    ConfigMessage("conf/message"),
-    ConfigMessageCore("conf/message/core"),
-    ConfigMessageProject("conf/message/project"),
+    ConfigMessage("web/props/message"),
     ConfigSystem("conf/system"),;
 
     private final String path;

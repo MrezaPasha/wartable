@@ -5,8 +5,7 @@ package org.sadr.web.main._core.propertor._type;
  */
 public enum TtPropertorInLogTab {
     System("وب"),
-    Connection("ارتباط با سرور رویدادنگاری"),
-    ;
+    Connection("ارتباط با سرور رویدادنگاری"),;
 
     private final String title;
 

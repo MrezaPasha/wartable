@@ -1,14 +1,12 @@
 package org.sadr.web.main.note.note;
 
-import org.sadr.web.config.Config;
-import org.sadr.web.main.system.irror.IrrorConfig;
+import org.sadr.web.config.WebConfig;
 import org.springframework.context.annotation.Bean;
 
 /**
- *
  * @author masoud
  */
-public class NoteConfig extends Config {
+public class NoteConfig extends WebConfig {
 
     @Bean
     public NoteDaoImp noteDaoImp() {
@@ -27,7 +25,6 @@ public class NoteConfig extends Config {
     public NoteController noteController() {
         NoteController uc = new NoteController();
         uc.setService(noteServiceImp());
-        uc.setIrrorService(new IrrorConfig().irrorServiceImp());
         return uc;
     }
 }

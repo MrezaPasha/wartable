@@ -16,4 +16,4 @@ public interface IrrorService extends GenericService<Irror> {
 
     public Irror submit(Exception e, HttpServletRequest request, TtIrrorPlace place, TtIrrorLevel level);
 
-    }
+}

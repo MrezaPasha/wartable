@@ -4,15 +4,15 @@ import org.hibernate.criterion.Restrictions;
 import org.sadr._core.meta.generic.GenericServiceImpl;
 import org.sadr._core.utils.JsonBuilder;
 import org.sadr._core.utils.ParsCalendar;
-import org.sadr._core.utils._type.TtCookierVariable;
+import org.sadr._core.utils.Validator;
 import org.sadr.web.main._core.propertor.PropertorInWeb;
 import org.sadr.web.main._core.propertor._type.TtPropertorInWebList;
 import org.sadr.web.main._core.utils.Cookier;
 import org.sadr.web.main._core.utils.Notice2;
+import org.sadr.web.main._core.utils._type.TtCookierVariable;
 import org.sadr.web.main._core.utils._type.TtNotice;
 import org.sadr.web.main.admin._type.TtUserAttemptResult;
 import org.sadr.web.main.admin._type.TtUserAttemptType;
-import org.sadr.web.main.admin.user.porter.UserPorter;
 import org.sadr.web.main.admin.user.user.User;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -113,7 +113,7 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
                 model.addAttribute("noRecaptcha", true);
                 return TtUserAttemptResult.Ok;
             }
-            if (!UserPorter.isValidateUUID(request.getHeader("User-Agent"), InetAddress.getLocalHost().getHostAddress(), uuid)) {
+            if (!Validator.isValidateUUID(request.getHeader("User-Agent"), InetAddress.getLocalHost().getHostAddress(), uuid)) {
                 Cookier.deleteCookie(response, TtCookierVariable.UserPorterUUID.getKey());
                 model.addAttribute("noRecaptcha", false);
                 return TtUserAttemptResult.UuidNotValid;
@@ -135,7 +135,7 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
             } else {
                 uatt.setUuid(uuid);
             }
-            uatt.setCount(PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.UserAttemptSigninAttemptMax)+1);
+            uatt.setCount(PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.UserAttemptSigninAttemptMax) + 1);
             this.save(uatt);
 
             model.addAttribute("noRecaptcha", false);

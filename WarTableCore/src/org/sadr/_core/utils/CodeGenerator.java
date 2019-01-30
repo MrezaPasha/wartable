@@ -15,6 +15,12 @@ import java.util.Random;
  * @author dev3
  */
 public class CodeGenerator {
+    public static int code(int length) {
+        Random rnd = new Random();
+        rnd.setSeed(new Date().getTime());
+        return (rnd.nextInt((int) Math.pow(10, length)));
+    }
+
     public static String password(TtPasswordType type, int length) {
         Random rnd = new Random();
         rnd.setSeed(new Date().getTime());

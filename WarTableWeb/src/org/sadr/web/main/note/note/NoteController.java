@@ -9,21 +9,21 @@ import org.sadr._core.meta.generic.GB;
 import org.sadr._core.meta.generic.GenericControllerImpl;
 import org.sadr._core.meta.generic.JB;
 import org.sadr._core.utils.*;
+import org.sadr._core.utils._type.TtSearcheeStrategy;
 import org.sadr.web.main._core._type.TtTile___;
+import org.sadr.web.main._core.tools._type.TtIxportRowIndex;
+import org.sadr.web.main._core.tools._type.TtIxportSubStrategy;
+import org.sadr.web.main._core.tools._type.TtIxportTtStrategy;
+import org.sadr.web.main._core.tools._type.TtIxporterDownloadMode;
+import org.sadr.web.main._core.tools.ixporter.Ixporter;
 import org.sadr.web.main._core.utils.Ison;
 import org.sadr.web.main._core.utils.Notice2;
 import org.sadr.web.main._core.utils.Referer;
 import org.sadr.web.main._core.utils._type.TtIsonStatus;
 import org.sadr.web.main._core.utils._type.TtNotice;
 import org.sadr.web.main.admin.user.user.User;
-import org.sadr.web.main.system._type.TtIrrorLevel;
-import org.sadr.web.main.system._type.TtIrrorPlace;
 import org.sadr.web.main.system._type.TtTaskActionStatus;
 import org.sadr.web.main.system._type.TtTaskActionSubType;
-import org.sadr.web.main.system.irror.IrrorService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,8 +32,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -51,13 +53,6 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
     }
     ////////////////////
 
-    private IrrorService irrorService;
-
-    @Autowired
-    public void setIrrorService(IrrorService irrorService) {
-        this.irrorService = irrorService;
-    }
-
 
     @PersianName("ثبت")
     @RequestMapping(value = _PANEL_URL + "/create")
@@ -67,7 +62,7 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
             u = new Note();
         }
         model.addAttribute("note", u);
-        return TtTile___.p_note_create.___getDisModel(_PANEL_URL + "/create",TtTaskActionSubType.New_Data, TtTaskActionStatus.Success);
+        return TtTile___.p_note_create.___getDisModel(_PANEL_URL + "/create", TtTaskActionSubType.New_Data, TtTaskActionStatus.Success);
     }
 
     @RequestMapping(value = _PANEL_URL + "/create", method = RequestMethod.POST)
@@ -104,6 +99,7 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
     public ModelAndView pDetails(Model model, @PathVariable("uid") long uid,
                                  HttpSession session,
                                  RedirectAttributes redirectAttributes) {
+
         User sUser = (User) session.getAttribute("sUser");
         Note dbnote;
         dbnote = this.service.findBy(
@@ -226,16 +222,16 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
     @PersianName("لیست")
     @RequestMapping(value = _PANEL_URL + "/list")
     public ModelAndView pList(Model model) {
-//int i=1/0;
 
-        Searchee.getInstance().setAttributeArray(
-                model,
-                "f_title",
-                TtDataType.String,
-                TtRestrictionOperator.Like_ANY,
-                true,
-                Note.TITLE
-        );
+
+        Searchee.init(Note.class, model)
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.Like_ANY,
+                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        Note.TITLE
+                )
+        ;
 
         GB.searchTableColumns(model,
                 Note.class,
@@ -250,20 +246,22 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
 
     @RequestMapping(value = _PANEL_URL + "/list", method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<String> pList(HttpServletRequest request, HttpSession session,
-                                 @RequestParam(value = "ap", required = false) String ajaxParam) {
-        try {
-            GB gb = GB.init(Note.class)
-                    .set(
-                            Note.CREATE_DATE_TIME,
-                            Note.TITLE,
-                            Note.DATE_TIME,
-                            Note.IMPORTANCE
-                    )
-                    .setSearchParams(ajaxParam)
-                    .addRestrictionsAnd(
-                            Restrictions.eq(Note._USER, (User) session.getAttribute("sUser"))
-                    );
+    ResponseEntity<String> pList(@RequestParam(value = "ap", required = false) String ajaxParam,
+                                 @RequestParam(value = "ixp", required = false) String ixportParam,
+                                 HttpServletResponse response, HttpSession session) throws IOException {
+        GB gb = GB.init(Note.class)
+                .set(
+                        Note.CREATE_DATE_TIME,
+                        Note.TITLE,
+                        Note.DATE_TIME,
+                        Note.IMPORTANCE
+                )
+                .setSearchParams(ajaxParam)
+                .addRestrictionsAnd(
+                        Restrictions.eq(Note._USER, (User) session.getAttribute("sUser"))
+                );
+
+        if (ixportParam == null) {
             JB jb = JB.init()
                     .set(
                             Note.CREATE_DATE_TIME,
@@ -272,50 +270,48 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
                             Note.IMPORTANCE
                     );
 
-            String json = this.service.findAllJson(gb, jb);
-            HttpHeaders headers = new HttpHeaders();
+            String jSearch = this.service.findAllJson(gb, jb);
 
-            headers.add("Content-Type", "application/json; charset=utf-8");
-            return new ResponseEntity<>(json, headers, HttpStatus.OK);
-        } catch (Exception e) {
-            irrorService.submit(e, request, TtIrrorPlace.Controller, TtIrrorLevel.Error);
+            return Ison.init(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success)
+                    .setStatus(TtIsonStatus.Ok)
+                    .setPropertySearch(jSearch)
+                    .toResponse();
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        return new ResponseEntity<>("", headers, HttpStatus.OK);
+        gb.setIxportParams(ixportParam);
+        return Ixporter.init(Note.class)
+                .exportToFileInList(this.service.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
+
+
     }
 
     @PersianName("حذف")
     @RequestMapping(value = _PANEL_URL + "/trash/{id}")
-    public ModelAndView pTrash(@PathVariable("id") long id,
-                               final RedirectAttributes redirectAttributes, HttpSession session) {
-
-        Note dbus = this.service.find(
+    public @ResponseBody
+    ResponseEntity<String> pTrash(@PathVariable("id") long id, HttpSession session) {
+        Note dbObj = this.service.find(
                 GB.init(Note.class)
                         .set(Note.TITLE)
                         .setRest(
                                 Restrictions.and(
                                         Restrictions.eq(Note.ID, id),
-                                        Restrictions.eq(Note._USER, (User) session.getAttribute("sUser"))
+                                        Restrictions.eq(Note._USER, session.getAttribute("sUser"))
                                 )
                         )
         );
-        if (dbus == null) {
-            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.note.not.found", JsonBuilder.toJson("noteId", "" + id))));
-            return Referer.redirect(_PANEL_URL + "/list",
-                    TtTaskActionSubType.Delete_From_DB,
-                    TtTaskActionStatus.Failure,
-                    notice2s);
+        if (dbObj == null) {
+            return Ison.init(TtTaskActionSubType.Delete_From_DB, TtTaskActionStatus.Failure)
+                    .setStatus(TtIsonStatus.Nok)
+                    .setMessages(new Notice2("N.note.not.found", JsonBuilder.toJson("noteId", "" + id)))
+                    .toResponse();
         }
-
+        String name = dbObj.getTitle();
         this.service.trash(id);
-        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.trash.success", dbus.getSecretNote(), TtNotice.Success, dbus.getTitle())));
-        return Referer.redirect(
-                _PANEL_URL + "/list",
-                TtTaskActionSubType.Delete_From_DB,
-                TtTaskActionStatus.Success,
-                notice2s);
+
+        return Ison.init(TtTaskActionSubType.Delete_From_DB, TtTaskActionStatus.Success)
+                .setStatus(TtIsonStatus.Ok)
+                .setMessages(new Notice2("N1.all.trash.success", TtNotice.Success, name))
+                .toResponse();
     }
 
     @PersianName("اطلاع رسانی سررسید هشدار به صورت خودکار")
@@ -355,7 +351,6 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
         }
 
         json = "[" + json.substring(1) + "]";
-        OutLog.pl(json);
         return Ison.init()
                 .setStatus(TtIsonStatus.Ok)
                 .setProperty("header", SpringMessager.get("N1.note.you.have.note", list.size()))

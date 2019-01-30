@@ -1,0 +1,167 @@
+﻿[data-name="md-datetimepicker-popovercontent"] {
+    padding: 2px 3px;
+}
+
+[data-name="md-datetimepicker-popovercontent"] a[data-name="go-today"] {
+    color: #333;
+    width: 100%;
+    display: block;
+    text-decoration: none;
+}
+
+[data-name="md-datetimepicker-title"] {
+    direction: rtl;
+    text-align: center;
+    font-family: Tahoma;
+    font-size: 10px;
+}
+
+[data-name="md-persiandatetimepicker"] {
+    min-width: 230px;
+}
+
+[data-name="md-persiandatetimepicker"] button {
+    font-size: 12px;
+    background-color: #f1f1f1;
+    border: 1px solid #d6d6d6;
+}
+
+[data-name="md-persiandatetimepicker"] table.table-striped {
+    margin-bottom: 0;
+    direction: rtl;
+}
+
+[data-name="md-persiandatetimepicker"] table.table td {
+    text-align: center;
+    padding: 1px;
+    font-size: 14px;
+    margin-top: 1px;
+}
+
+[data-name="md-persiandatetimepicker"] table[data-name="md-persiandatetimepicker-timepicker"].table,
+[data-name="md-persiandatetimepicker"] table[data-name="md-persiandatetimepicker-headertable"].table {
+    width: 100%;
+    margin: 0 auto;
+    direction: ltr;
+}
+
+[data-name="md-persiandatetimepicker"] table[data-name="md-persiandatetimepicker-headertable"] .dropdown-menu[aria-labelledby="dropdownMenuPersianYear"] {
+    height: 200px;
+    overflow: auto;
+}
+
+[data-name="md-persiandatetimepicker"] table[data-name="md-persiandatetimepicker-headertable"] .dropdown-menu li {
+    text-align: center;
+}
+
+[data-name="md-persiandatetimepicker"] table[data-name="md-persiandatetimepicker-timepicker"].table td,
+[data-name="md-persiandatetimepicker"] table[data-name="md-persiandatetimepicker-headertable"].table td {
+    text-align: center;
+    vertical-align: middle;
+    border: 0;
+}
+
+[data-name="md-persiandatetimepicker-titlemonth"],
+[data-name="md-persiandatetimepicker-titleyear"] {
+    width: 100%;
+    padding-top: 0;
+    padding-bottom: 0;
+    font-weight: bold;
+}
+
+[aria-labelledby="dropdownMenuPersianmonths"] li > a,
+[aria-labelledby="dropdownMenuPersianyear"] li > a {
+    margin: 0;
+    padding: 5px;
+    text-align: center;
+}
+
+[aria-labelledby="dropdownMenuPersianmonths"] .divider {
+    margin: 1px;
+    padding: 0;
+}
+
+[data-name="md-persiandatetimepicker"] table.table tr[data-name="md-persiandatetimepicker-weekdaysnames"] td {
+    font-size: 10px;
+    font-weight: bold;
+    font-style: italic;
+}
+
+[data-name="disabled-day"] {
+    color: #ccc;
+}
+
+[data-name="day"], [data-name="today"] {
+    cursor: pointer;
+    padding: 2px;
+}
+
+[data-mdpersiandatetimepickerselecteddatetime="{}"] {
+    width: 100%;
+}
+
+[data-name="day"]:not([class^="text"]) {
+    color: #333;
+}
+
+[data-name="day"]:hover {
+    color: #000;
+    background-color: #dff0d8;
+}
+
+[data-name="today"]:hover {
+
+    color: #000;
+    background-color: #dff0d8;
+
+}
+
+[data-name="today"]:focus {
+    color: #fff;
+    background-color: #4CAF50;
+
+}
+
+[data-name="md-persiandatetimepicker-timepicker"] [data-name="clock-hour"],
+[data-name="md-persiandatetimepicker-timepicker"] [data-name="clock-minute"],
+[data-name="md-persiandatetimepicker-timepicker"] [data-name="clock-second"] {
+    font-size: 14px;
+    width: 50px;
+    padding: 2px;
+    direction: ltr;
+    text-align: center;
+    height: auto;
+    display: inline-block;
+}
+
+/* by Sina-Soltani66 */
+.zIndexCorrected {
+    z-index: 100000;
+}
+
+/*---------------------*/
+
+.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+    padding: 8px;
+    vertical-align: top;
+    border-top: 1px solid #ffffff;
+}
+
+.bg-primary {
+    color: #4CAF50;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.bg-info {
+    background-color: #25d628;
+    color: #000;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #fff;
+}
+
+.text-danger {
+    color: #ff0500;
+}

@@ -33,7 +33,7 @@ import java.io.Serializable;
 @Table(name = "Web.System.Log.RemoteLog")
 public class RemoteLog extends GenericDataModel<RemoteLog> implements Serializable {
 //#########++++++#######// StaticFields: Start //
-public static final String SERVER_ID = "serverId";public static final String IMPORTANCE_LEVEL = "importanceLevel";public static final String SENSITIVITY = "sensitivity";public static final String ACTION_TYPE = "actionType";public static final String ACTION_SUB_TYPE = "actionSubType";public static final String ACTION_STATUS = "actionStatus";public static final String USER_ID = "userId";public static final String USER_LEVEL = "userLevel";public static final String USER_GROUP_ID = "userGroupId";public static final String DATE_TIME_G = "dateTimeG";public static final String TASK_NAME = "taskName";public static final String TASK_TITLE = "taskTitle";public static final String IS_TASK_TWO_LEVEL_CONFIRM = "isTaskTwoLevelConfirm";public static final String MESSAGE = "message";public static final String SESSION_ID = "sessionId";public static final String COMPUTER_SIGNATURE = "computerSignature";public static final String AGENT_SIGNATURE = "agentSignature";public static final String PORTER_UUID = "porterUuid";public static final String PORT_NUMBER = "portNumber";public static final String URL = "url";public static final String REQUEST_METHOD = "requestMethod";public static final String HTTP_CODE = "httpCode";public static final String SEND_DATE_TIME_G = "sendDateTimeG";public static final String SEND_STATUS = "sendStatus";public static final String ONLINE_LOGGING_STRATEGY = "onlineLoggingStrategy";public static final String $IS_TASK_TWO_LEVEL_CONFIRM_Y = "isTaskTwoLevelConfirmY";public static final String $SECRET_NOTE = "secretNote";public static final String $ACT_COLUMNS = "actColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $REL_COLUMNS = "relColumns";public static final String $SEND_DATE_TIME = "sendDateTime";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
+public static final String SERVER_ID = "serverId";public static final String IMPORTANCE_LEVEL = "importanceLevel";public static final String SENSITIVITY = "sensitivity";public static final String ACTION_TYPE = "actionType";public static final String ACTION_SUB_TYPE = "actionSubType";public static final String ACTION_STATUS = "actionStatus";public static final String USER_ID = "userId";public static final String USERNAME = "username";public static final String USER_CODE = "userCode";public static final String USER_LEVEL = "userLevel";public static final String USER_GROUP_ID = "userGroupId";public static final String DATE_TIME_G = "dateTimeG";public static final String TASK_NAME = "taskName";public static final String TASK_TITLE = "taskTitle";public static final String IS_TASK_TWO_LEVEL_CONFIRM = "isTaskTwoLevelConfirm";public static final String MESSAGE = "message";public static final String SESSION_ID = "sessionId";public static final String COMPUTER_SIGNATURE = "computerSignature";public static final String AGENT_SIGNATURE = "agentSignature";public static final String PORTER_UUID = "porterUuid";public static final String CLIENT_PORT_NUMBER = "clientPortNumber";public static final String CLIENT_IP_ADDRESS = "clientIpAddress";public static final String CLIENT_NAME = "clientName";public static final String URL = "url";public static final String REQUEST_METHOD = "requestMethod";public static final String HTTP_CODE = "httpCode";public static final String HOST_IP_ADDRESS = "hostIpAddress";public static final String HOST_PORT_NUMBER = "hostPortNumber";public static final String SEND_DATE_TIME_G = "sendDateTimeG";public static final String SEND_STATUS = "sendStatus";public static final String ONLINE_LOGGING_STRATEGY = "onlineLoggingStrategy";public static final String $IS_TASK_TWO_LEVEL_CONFIRM_Y = "isTaskTwoLevelConfirmY";public static final String $SEND_DATE_TIME = "sendDateTime";public static final String $SECRET_NOTE = "secretNote";public static final String $ACT_COLUMNS = "actColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $REL_COLUMNS = "relColumns";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
 //#########******#######// StaticFields: End //
 
     private static final int MESSAGE_LEN = 2048;
@@ -46,15 +46,20 @@ public static final String SERVER_ID = "serverId";public static final String IMP
         this.serverId = log.getServerId();
         this.url = log.getUrl();
         this.httpCode = log.getHttpCode();
-        this.portNumber = log.getPortNumber();
+        this.hostIpAddress = log.getHostIpAddress();
+        this.hostPortNumber = log.getHostPortNumber();
+        this.clientIpAddress = log.getClientIpAddress();
+        this.clientPortNumber = log.getClientPortNumber();
         this.userLevel = log.getUserLevel();
         this.userId = log.getUserId();
+        this.username = log.getUsername();
+        this.userCode = log.getUserCode();
 
 
         this.message = log.getMessage();
-        this.actionType=log.getActionType();
-        this.actionSubType=log.getActionSubType();
-        this.actionStatus=log.getActionStatus();
+        this.actionType = log.getActionType();
+        this.actionSubType = log.getActionSubType();
+        this.actionStatus = log.getActionStatus();
         this.taskName = log.getTaskName();
         this.taskTitle = log.getTaskTitle();
         this.sensitivity = log.getSensitivity();
@@ -102,6 +107,14 @@ public static final String SERVER_ID = "serverId";public static final String IMP
     @PersianName("شناسه کاربری")
     private long userId;
 
+    @Size(max = 200)
+    @PersianName("نام کاربری")
+    private String username;
+
+    @Size(max = 200)
+    @PersianName("کد یکتای کاربری")
+    private String userCode;
+
     @PersianName("سطح دسترسی کاربر")
     private TtUserLevel userLevel;
 
@@ -147,8 +160,16 @@ public static final String SERVER_ID = "serverId";public static final String IMP
     @PersianName("UUID حامل")
     private String porterUuid;
 
-    @PersianName("شماره پورت")
-    private int portNumber;
+    @PersianName("شماره پورت کاربر")
+    private Integer clientPortNumber;
+
+    @Size(max = 100)
+    @PersianName("آدرس Ip کاربر")
+    private String clientIpAddress;
+
+    @Size(max = 255)
+    @PersianName("نام کاربر")
+    private String clientName;
 
     @Size(max = 512)
     @PersianName("آدرس URL")
@@ -160,6 +181,15 @@ public static final String SERVER_ID = "serverId";public static final String IMP
     @Size(max = 100)
     @PersianName("کد HTTP")
     private String httpCode;
+
+    ///====================================  HOST > CURRENT SERVER
+
+    @Size(max = 100)
+    @PersianName("آدرس Ip هاست")
+    private String hostIpAddress;
+
+    @PersianName("شماره پورت هاست")
+    private Integer hostPortNumber;
 
     ///====================================  SEND LOG INFO
 
@@ -256,12 +286,37 @@ public static final String SERVER_ID = "serverId";public static final String IMP
         this.porterUuid = porterUuid;
     }
 
-    public int getPortNumber() {
-        return portNumber;
+    public Integer getClientPortNumber() {
+        return clientPortNumber;
     }
 
-    public void setPortNumber(int portNumber) {
-        this.portNumber = portNumber;
+    public void setClientPortNumber(Integer clientPortNumber) {
+        this.clientPortNumber = clientPortNumber;
+    }
+
+
+    public String getClientIpAddress() {
+        return clientIpAddress;
+    }
+
+    public void setClientIpAddress(String clientIpAddress) {
+        this.clientIpAddress = clientIpAddress;
+    }
+
+    public String getHostIpAddress() {
+        return hostIpAddress;
+    }
+
+    public void setHostIpAddress(String hostIpAddress) {
+        this.hostIpAddress = hostIpAddress;
+    }
+
+    public Integer getHostPortNumber() {
+        return hostPortNumber;
+    }
+
+    public void setHostPortNumber(Integer hostPortNumber) {
+        this.hostPortNumber = hostPortNumber;
     }
 
     public String getUrl() {
@@ -422,5 +477,31 @@ public static final String SERVER_ID = "serverId";public static final String IMP
 
     public void setActionStatus(TtTaskActionStatus actionStatus) {
         this.actionStatus = actionStatus;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+
+
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String userName) {
+        this.username = userName;
+    }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
     }
 }

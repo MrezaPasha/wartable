@@ -6,7 +6,7 @@ import org.hibernate.annotations.TypeDef;
 import org.jasypt.hibernate4.type.EncryptedStringType;
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GenericDataModel;
-import org.sadr._core.utils._type.TtCookierVariable;
+import org.sadr.web.main._core.utils._type.TtCookierVariable;
 import org.sadr.web.main._core.utils.Cookier;
 import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.system._type.TtHttpErrorCode___;
@@ -40,13 +40,13 @@ import java.net.UnknownHostException;
 @Table(name = "Web.System.Irror")
 public class Irror extends GenericDataModel<Irror> implements Serializable {
 //#########++++++#######// StaticFields: Start //
-public static final String MESSAGE = "message";public static final String CAUSE = "cause";public static final String SESSION_ID = "sessionId";public static final String COMPUTER_SIGNATURE = "computerSignature";public static final String AGENT_SIGNATURE = "agentSignature";public static final String PORTER_UUID = "porterUuid";public static final String TASK_NAME = "taskName";public static final String HTTP_ERROR_CODE = "httpErrorCode";public static final String IS_VISITED = "isVisited";public static final String VISIT_COUNT = "visitCount";public static final String STATUS = "status";public static final String LEVEL = "level";public static final String PLACE = "place";public static final String _USER = "user";public static final String $USER_FULL_NAME = "userFullName";public static final String $ACT_COLUMNS = "actColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $REL_COLUMNS = "relColumns";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
+public static final String MESSAGE = "message";public static final String CAUSE = "cause";public static final String SESSION_ID = "sessionId";public static final String COMPUTER_SIGNATURE = "computerSignature";public static final String AGENT_SIGNATURE = "agentSignature";public static final String PORTER_UUID = "porterUuid";public static final String TASK_NAME = "taskName";public static final String HTTP_ERROR_CODE = "httpErrorCode";public static final String IS_VISITED = "isVisited";public static final String VISIT_COUNT = "visitCount";public static final String STATUS = "status";public static final String LEVEL = "level";public static final String PLACE = "place";public static final String _USER = "user";public static final String $ACT_COLUMNS = "actColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $REL_COLUMNS = "relColumns";public static final String $USER_FULL_NAME = "userFullName";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
 //#########******#######// StaticFields: End //
 
     public Irror() {
     }
 
-    public Irror(String message, String cause, String taskName, TtHttpErrorCode___ httpErrorCode, TtIrrorLevel level,TtIrrorPlace place, HttpServletRequest request) throws UnknownHostException {
+    public Irror(String message, String cause, String taskName, TtHttpErrorCode___ httpErrorCode, TtIrrorLevel level, TtIrrorPlace place, HttpServletRequest request) throws UnknownHostException {
         this.message = message;
         this.cause = cause;
         this.taskName = taskName;
@@ -62,7 +62,7 @@ public static final String MESSAGE = "message";public static final String CAUSE 
         this.status = TtHttpErrorStatus.New;
         this.isVisited = false;
         this.level = level;
-        this.place =place;
+        this.place = place;
     }
 
     public Irror(String message, String cause, String taskName, TtHttpErrorCode___ httpErrorCode, TtIrrorLevel level, User user) {
@@ -132,8 +132,8 @@ public static final String MESSAGE = "message";public static final String CAUSE 
     ///#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=  CUSTOM METHODS
 
     @PersianName("کاربر")
-    public String getUserFullName(){
-        return user!=null? user.getFullName():"";
+    public String getUserFullName() {
+        return user != null ? user.getFullName() : "";
     }
     ///#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=  METHODS
 

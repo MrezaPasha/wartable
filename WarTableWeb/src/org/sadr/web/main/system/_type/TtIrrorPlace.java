@@ -11,8 +11,7 @@ public enum TtIrrorPlace {
     JsonAspectSuperAdmin("مجوزدهنده مدیر ارشد (اجکس)"),
     IrrorController("مرکز مدیریت خطا"),
     Controller("کنترلر"),
-    AspectLogManager("مجوز دهنده مدیریت رویداد"),
-    ;
+    AspectLogManager("مجوز دهنده مدیریت رویداد"),;
     private final String title;
 
     private TtIrrorPlace(String k) {

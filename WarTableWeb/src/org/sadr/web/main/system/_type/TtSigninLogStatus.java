@@ -6,8 +6,7 @@ package org.sadr.web.main.system._type;
 public enum TtSigninLogStatus {
 
     Success("ورود موفق"),
-    Failed("ورود ناموفق"),
-   ;
+    Failed("ورود ناموفق"),;
 
     private final String title;
 

@@ -3,7 +3,6 @@ package org.sadr.web.main.admin.user.user;
 import org.sadr.web.main._core.uiBag.UiBagConfig;
 import org.sadr.web.main.admin.user.confirm.UserConfirmConfig;
 import org.sadr.web.main.admin.user.group.UserGroupConfig;
-import org.sadr.web.main.admin.user.uuid.UserUuidConfig;
 import org.sadr.web.main.system.irror.IrrorConfig;
 import org.sadr.web.main.system.log.attempt.UserAttemptConfig;
 import org.sadr.web.main.system.module.ModuleConfig;
@@ -27,7 +26,6 @@ public class UserConfig extends WebMvcConfigurerAdapter {
     public UserServiceImp userServiceImp() {
         UserServiceImp usi = new UserServiceImp();
         usi.setDao(userDaoImp());
-        usi.setUserUuidService(new UserUuidConfig().userUuidServiceImp());
         usi.setUserGroupService(new UserGroupConfig().userGroupServiceImp());
         usi.setTaskService(new TaskConfig().taskServiceImp());
         return usi;

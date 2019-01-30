@@ -8,8 +8,7 @@ public enum TtTaskImportanceLevel {
     Unknown("نامشخص"),
     Normal("عادی"),
     Important("مهم"),
-    Vital("حساس"),
-    ;
+    Vital("حساس"),;
     private final String title;
 
     private TtTaskImportanceLevel(String k) {

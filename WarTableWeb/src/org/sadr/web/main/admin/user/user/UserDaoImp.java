@@ -46,9 +46,9 @@ public class UserDaoImp extends GenericDaoImpl<User> implements UserDao {
     @Override
     public User authenticateE(String username, String password) {
         Criteria criteria = getCurrentSession().createCriteria(User.class)
-            .add(Restrictions.eq("entityState", TtEntityState.Exist))
-            .add(Restrictions.eq("username", username))
-            .add(Restrictions.eq("password", password));
+                .add(Restrictions.eq("entityState", TtEntityState.Exist))
+                .add(Restrictions.eq("username", username))
+                .add(Restrictions.eq("password", password));
 
         List<User> list = criteria.list();
         if (list.isEmpty()) {
@@ -64,8 +64,8 @@ public class UserDaoImp extends GenericDaoImpl<User> implements UserDao {
     @Override
     public boolean authenticateE(String username) {
         Criteria criteria = getCurrentSession().createCriteria(User.class)
-            .add(Restrictions.eq("username", username))
-            .add(Restrictions.eq("entityState", TtEntityState.Exist));
+                .add(Restrictions.eq("username", username))
+                .add(Restrictions.eq("entityState", TtEntityState.Exist));
 
         List<User> list = criteria.list();
         if (list.isEmpty()) {
@@ -78,8 +78,8 @@ public class UserDaoImp extends GenericDaoImpl<User> implements UserDao {
     @Override
     public User findByUsername(String username, String... relatedClass) {
         Criteria criteria = getCurrentSession().createCriteria(User.class)
-            .add(Restrictions.eq("username", username))
-            .add(Restrictions.eq("entityState", TtEntityState.Exist));
+                .add(Restrictions.eq("username", username))
+                .add(Restrictions.eq("entityState", TtEntityState.Exist));
 
         return (User) attachRelation(criteria, relatedClass).uniqueResult();
     }

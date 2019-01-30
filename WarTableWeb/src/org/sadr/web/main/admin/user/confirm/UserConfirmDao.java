@@ -4,7 +4,6 @@ import org.sadr._core.meta.generic.GenericDao;
 import org.sadr.web.main.admin.user.user.User;
 
 /**
- *
  * @author masoud
  */
 public interface UserConfirmDao extends GenericDao<UserConfirm> {

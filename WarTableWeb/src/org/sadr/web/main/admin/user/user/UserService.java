@@ -23,19 +23,7 @@ public interface UserService extends GenericService<User> {
 
     public User findByUsername(String username, String... relatedClass);
 
-    public User autoLogin(HttpServletRequest request);
-
-    public User autoLogin(HttpServletRequest request, User user);
-
-    public User autoLogin(HttpServletRequest request, int userId);
-
     public void logout(HttpServletRequest request, HttpServletResponse response, HttpSession session);
-
-    public void logoutAll(HttpServletRequest request, HttpServletResponse response, HttpSession session);
-
-    public void logoutAll(User user);
-
-    public ModelAndView goToSignin(HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes);
 
     public boolean isAccessLimitPassed(User user);
 }

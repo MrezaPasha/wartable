@@ -1,13 +1,12 @@
 package org.sadr.web.main._core.uiBag;
 
-import org.sadr.web.config.Config;
+import org.sadr.web.config.WebConfig;
 import org.springframework.context.annotation.Bean;
 
 /**
- *
  * @author masoud
  */
-public class UiBagConfig extends Config {
+public class UiBagConfig extends WebConfig {
 
     @Bean
     public UiBagDaoImp uiBagDaoImp() {

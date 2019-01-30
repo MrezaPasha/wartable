@@ -1,13 +1,12 @@
 package org.sadr.web.main.admin.user.confirm;
 
-import org.sadr.web.config.Config;
+import org.sadr.web.config.WebConfig;
 import org.springframework.context.annotation.Bean;
 
 /**
- *
  * @author masoud
  */
-public class UserConfirmConfig extends Config {
+public class UserConfirmConfig extends WebConfig {
 
     @Bean
     public UserConfirmDaoImp userConfirmDaoImp() {

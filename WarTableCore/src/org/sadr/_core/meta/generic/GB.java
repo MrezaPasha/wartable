@@ -39,7 +39,7 @@ public class GB {
         }
         String s = items[0];
         for (int i = 1; i < items.length - 1; i++) {
-            s += "_" + items[i];
+            s += "__" + items[i];
         }
         if (items.length > 1) {
             return s + "." + items[items.length - 1];
@@ -61,7 +61,7 @@ public class GB {
         }
         String s = items[0];
         for (int i = 1; i < items.length - 1; i++) {
-            s += "_" + items[i];
+            s += "__" + items[i];
         }
         String rs = "";
 
@@ -87,23 +87,28 @@ public class GB {
         return new String[]{cName, rePath(repaName)};
     }
 
+
     public static void searchTableColumns(Model model, Class clazz, String[]... columns) {
         HashMap<String, String[]> map = new LinkedHashMap<>();
         if (columns != null) {
             String clazzName = clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1);
-//            OutLog.pl(clazzName);
-            for (int i = 0; i < columns.length; i++) {
-                if (columns[i][0].equals("id") ||
-                    columns[i][0].equals("createDateTime") ||
-                    columns[i][0].equals("modifyDateTime")) {
-                    map.put(columns[i][0], new String[]{columns[i][1], SpringMessager.get("model." + columns[i][0])});
-                } else {
-//                    columns[i][2] = SpringMessager.get(clazzName + "." + columns[i][0]);
-                    map.put(columns[i][0], new String[]{columns[i][1], SpringMessager.get(clazzName + "." + columns[i][0])});
-                }
+            for (int j = 0; j < columns.length; j++) {
+
+                map.put(columns[j][0],
+                    new String[]{
+                        "{" +
+                            "\"index\":" + j +
+                            ",\"path\":\"" + columns[j][1] +
+                            "\",\"title\":\"" + SpringMessager.get(clazzName + "." + columns[j][0]) +
+                            "\",\"editable\":false" +
+                            "}"
+                        , SpringMessager.get(clazzName + "." + columns[j][0])
+                    });
+
             }
         }
-        model.addAttribute("cols", map);
+
+        model.addAttribute("cols", map).addAttribute("searchId", clazz.hashCode());
     }
 
     //-------------
@@ -233,6 +238,13 @@ public class GB {
         return this;
     }
 
+    public GB setIxportParams(String ixportParams) {
+        IxporterParams ixporterParams = gson.fromJson(ixportParams, IxporterParams.class);
+        paging.setIndex(ixporterParams.getPageIndex());
+        paging.setSize(ixporterParams.getPageSize());
+        return this;
+    }
+
     public int getColumnsCountInDepth() {
         int cnt = 0;
         if (gbs != null) {
@@ -259,7 +271,7 @@ public class GB {
 
     public String getPathUL() {
 
-        return parent != null && parent.getPathUL() != null ? parent.getPathUL() + "_" + name : name;
+        return parent != null && parent.getPathUL() != null ? parent.getPathUL() + "__" + name : name;
     }
 
     public Class getClazz() {

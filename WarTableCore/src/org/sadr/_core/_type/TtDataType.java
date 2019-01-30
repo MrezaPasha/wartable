@@ -205,7 +205,7 @@ public enum TtDataType {
                         ss = path;
                     } else {
                         ss = path.substring(ix + 1);
-                        String[] sd = path.substring(0, ix).split("_");
+                        String[] sd = path.substring(0, ix).split("__");
                         for (String s : sd) {
                             try {
                                 oclazz = oclazz.getDeclaredField(s).getType();

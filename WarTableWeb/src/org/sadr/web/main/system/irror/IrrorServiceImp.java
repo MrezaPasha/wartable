@@ -53,7 +53,7 @@ public class IrrorServiceImp extends GenericServiceImpl<Irror, IrrorDao> impleme
     }
 
     @Override
-    public Irror submit(Exception e, HttpServletRequest request, TtIrrorPlace place,TtIrrorLevel level) {
+    public Irror submit(Exception e, HttpServletRequest request, TtIrrorPlace place, TtIrrorLevel level) {
         try {
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));

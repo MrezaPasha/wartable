@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/WarTableCore/WarTableCore.iml" filepath="$PROJECT_DIR$/WarTableCore/WarTableCore.iml" />
-      <module fileurl="file://$PROJECT_DIR$/WarTableDataShare/WarTableDataShare.iml" filepath="$PROJECT_DIR$/WarTableDataShare/WarTableDataShare.iml" />
-      <module fileurl="file://$PROJECT_DIR$/WarTableWeb/WarTableWeb.iml" filepath="$PROJECT_DIR$/WarTableWeb/WarTableWeb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/_proji_sadr_x.iml" filepath="$PROJECT_DIR$/.idea/_proji_sadr_x.iml" />
     </modules>
   </component>
 </project>

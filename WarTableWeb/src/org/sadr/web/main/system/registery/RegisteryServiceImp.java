@@ -22,9 +22,9 @@ public class RegisteryServiceImp extends GenericServiceImpl<Registery, Registery
             return null;
         }
         Registery reg = findBy(
-            Restrictions.and(
-                Restrictions.eq(Registery.KEY, trt.getKey()),
-                Restrictions.eq(Registery.VALUE_TYPE, TtRegisteryValueType.PureJson)));
+                Restrictions.and(
+                        Restrictions.eq(Registery.KEY, trt.getKey()),
+                        Restrictions.eq(Registery.VALUE_TYPE, TtRegisteryValueType.PureJson)));
         if (reg == null) {
             reg = new Registery();
             reg.setKey(trt.getKey());
@@ -41,9 +41,9 @@ public class RegisteryServiceImp extends GenericServiceImpl<Registery, Registery
             return null;
         }
         Registery reg = findBy(
-            Restrictions.and(
-                Restrictions.eq(Registery.KEY, registeryKey),
-                Restrictions.eq(Registery.VALUE_TYPE, TtRegisteryValueType.PureJson)));
+                Restrictions.and(
+                        Restrictions.eq(Registery.KEY, registeryKey),
+                        Restrictions.eq(Registery.VALUE_TYPE, TtRegisteryValueType.PureJson)));
         if (reg == null) {
             reg = new Registery();
             reg.setKey(registeryKey);

@@ -2,7 +2,6 @@ package org.sadr.web.main.system.log.remote;
 
 import org.hibernate.criterion.Restrictions;
 import org.sadr._core._type.TtDataType;
-import org.sadr._core._type.TtGbColumnFetch;
 import org.sadr._core._type.TtRestrictionOperator;
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GB;
@@ -12,18 +11,23 @@ import org.sadr._core.utils.JsonBuilder;
 import org.sadr._core.utils.Searchee;
 import org.sadr._core.utils.SpringMessager;
 import org.sadr._core.utils.Validator;
+import org.sadr._core.utils._type.TtSearcheeStrategy;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.meta.annotation.LogManagerTask;
 import org.sadr.web.main._core.meta.annotation.MenuIdentity;
-import org.sadr.web.main._core.utils.Ixporter;
+import org.sadr.web.main._core.tools._type.TtIxportRowIndex;
+import org.sadr.web.main._core.tools._type.TtIxportSubStrategy;
+import org.sadr.web.main._core.tools._type.TtIxportTtStrategy;
+import org.sadr.web.main._core.tools._type.TtIxporterDownloadMode;
+import org.sadr.web.main._core.tools.ixporter.Ixporter;
+import org.sadr.web.main._core.utils.Ison;
 import org.sadr.web.main._core.utils.Notice2;
 import org.sadr.web.main._core.utils.Referer;
-import org.sadr.web.main._core.utils._type.TtIxportRowIndex;
-import org.sadr.web.main._core.utils._type.TtIxportSubStrategy;
-import org.sadr.web.main._core.utils._type.TtIxportTtStrategy;
+import org.sadr.web.main._core.utils._type.TtIsonStatus;
 import org.sadr.web.main._core.utils._type.TtNotice;
-import org.sadr.web.main.system._type.*;
-import org.sadr.web.main.system.irror.IrrorService;
+import org.sadr.web.main.system._type.TtTaskActionStatus;
+import org.sadr.web.main.system._type.TtTaskActionSubType;
+import org.sadr.web.main.system._type.TtTaskOnlineLoggingStrategy;
 import org.sadr.web.main.system.module.Module;
 import org.sadr.web.main.system.module.ModuleService;
 import org.sadr.web.main.system.task.Task;
@@ -31,8 +35,6 @@ import org.sadr.web.main.system.task.TaskService;
 import org.sadr.web.main.system.task.TaskViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomCollectionEditor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -43,6 +45,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +64,6 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
     ////////////////////
 
 
-    private IrrorService irrorService;
     private ModuleService moduleService;
     private TaskService taskService;
 
@@ -73,11 +75,6 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
     @Autowired
     public void setModuleService(ModuleService moduleService) {
         this.moduleService = moduleService;
-    }
-
-    @Autowired
-    public void setIrrorService(IrrorService irrorService) {
-        this.irrorService = irrorService;
     }
 
     public RemoteLogController() {
@@ -103,28 +100,27 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
     public ModelAndView pList(Model model
     ) {
 
-        Searchee.getInstance().setAttributeArray(
-                model,
-                "f_userId",
-                TtDataType.Long,
-                TtRestrictionOperator.Equal,
-                false,
-                RemoteLog.USER_ID);
-        Searchee.getInstance().setAttributeArray(
-                model,
-                "f_fromDate",
-                TtDataType.String,
-                TtRestrictionOperator.GreaterEqual,
-                false,
-                RemoteLog.CREATE_DATE_TIME);
 
-        Searchee.getInstance().setAttributeArray(
-                model,
-                "f_toDate",
-                TtDataType.String,
-                TtRestrictionOperator.LessEqual,
-                false,
-                RemoteLog.CREATE_DATE_TIME);
+        Searchee.init(RemoteLog.class, model)
+                .setAttribute(
+                        TtDataType.Long,
+                        TtRestrictionOperator.Equal,
+                        TtSearcheeStrategy.Normal,
+                        RemoteLog.USER_ID)
+
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.GreaterEqual,
+                        TtSearcheeStrategy.Normal,
+                        RemoteLog.CREATE_DATE_TIME)
+
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.LessEqual,
+                        TtSearcheeStrategy.Normal,
+                        RemoteLog.CREATE_DATE_TIME)
+        ;
+
 
         GB.searchTableColumns(model,
                 RemoteLog.class,
@@ -138,7 +134,7 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
                 GB.col(RemoteLog.IMPORTANCE_LEVEL),
                 GB.col(RemoteLog.URL),
                 GB.col(RemoteLog.REQUEST_METHOD),
-                GB.col(RemoteLog.PORT_NUMBER)
+                GB.col(RemoteLog.HOST_PORT_NUMBER)
         );
         return TtTile___.p_sys_log_remote_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
     }
@@ -148,31 +144,31 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
     public @ResponseBody
     ResponseEntity<String> pList(
             @RequestParam(value = "ap", required = false) String ajaxParam,
-            @RequestParam(value = "submit", required = false) String submit,
-            HttpServletRequest request,
-            HttpServletResponse response) {
-        try {
-            GB gb = GB.init(RemoteLog.class)
-                    .set(
-                            RemoteLog.CREATE_DATE_TIME,
-                            RemoteLog.TASK_TITLE,
-                            RemoteLog.SENSITIVITY,
-                            RemoteLog.PORT_NUMBER,
-                            RemoteLog.URL,
-                            RemoteLog.REQUEST_METHOD,
-                            RemoteLog.IMPORTANCE_LEVEL,
-                            RemoteLog.USER_ID,
-                            RemoteLog.USER_GROUP_ID,
-                            RemoteLog.USER_LEVEL
-                    )
-                    .setSearchParams(ajaxParam);
+            @RequestParam(value = "ixp", required = false) String ixportParam,
+            HttpServletResponse response) throws IOException {
+        GB gb = GB.init(RemoteLog.class)
+                .set(
+                        RemoteLog.CREATE_DATE_TIME,
+                        RemoteLog.TASK_TITLE,
+                        RemoteLog.SENSITIVITY,
+                        RemoteLog.HOST_PORT_NUMBER,
+                        RemoteLog.URL,
+                        RemoteLog.REQUEST_METHOD,
+                        RemoteLog.IMPORTANCE_LEVEL,
+                        RemoteLog.USER_ID,
+                        RemoteLog.USER_GROUP_ID,
+                        RemoteLog.USER_LEVEL
+                )
+                .setSearchParams(ajaxParam);
+
+        if (ixportParam == null) {
 
             JB jb = JB.init()
                     .set(
                             RemoteLog.CREATE_DATE_TIME,
                             RemoteLog.TASK_TITLE,
                             RemoteLog.SENSITIVITY,
-                            RemoteLog.PORT_NUMBER,
+                            RemoteLog.HOST_PORT_NUMBER,
                             RemoteLog.URL,
                             RemoteLog.REQUEST_METHOD,
                             RemoteLog.IMPORTANCE_LEVEL,
@@ -180,32 +176,19 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
                             RemoteLog.USER_GROUP_ID,
                             RemoteLog.USER_LEVEL
                     );
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Type", "application/json; charset=utf-8");
-            String json = this.service.findAllJson(gb, jb);
 
-            if (submit != null && submit.equals("export")) {
-                gb = GB.init(RemoteLog.class)
-                        .set(TtGbColumnFetch.All
-                        )
-                        .setSearchParams(ajaxParam);
-                gb.getPaging().setSize(-1);
-                gb.getPaging().setIndex(1);
-                List<RemoteLog> all = this.service.findAll(gb);
+            String jSearch = this.service.findAllJson(gb, jb);
 
-                new Ixporter(RemoteLog.class)
-                        .exportToFile(all, response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On);
-            }
-
-            return new ResponseEntity<>(json, headers, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            irrorService.submit(e, request, TtIrrorPlace.Controller, TtIrrorLevel.Warn);
+            return Ison.init(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success)
+                    .setStatus(TtIsonStatus.Ok)
+                    .setPropertySearch(jSearch)
+                    .toResponse();
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        return new ResponseEntity<>("", headers, HttpStatus.OK);
+        gb.setIxportParams(ixportParam);
+        return Ixporter.init(RemoteLog.class)
+                .exportToFileInList(this.service.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
+
     }
 
 
@@ -213,9 +196,9 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
     @MenuIdentity(TtTile___.p_sys_log_remote_details)
     @PersianName("نمایش جزئیات رویدادها")
     @RequestMapping(value = _PANEL_URL + "/details/{id}")
-    public ModelAndView pShow(Model model,
-                              @PathVariable("id") long id,
-                              RedirectAttributes redirectAttributes
+    public ModelAndView pDetails(Model model,
+                                 @PathVariable("id") long id,
+                                 RedirectAttributes redirectAttributes
     ) {
         RemoteLog i = this.service.findById(id);
         if (i == null) {
@@ -343,64 +326,4 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
 
 
     ///------------------------------ online logging
-    @LogManagerTask
-    @RequestMapping(value = _PANEL_URL + "/task/online/logging", method = RequestMethod.POST)
-    public ModelAndView pActiveOnlineLogging(@ModelAttribute TaskViewModel taskViewModel,
-                                             BindingResult taskViewModelBindingResult,
-                                             final RedirectAttributes redirectAttributes
-    ) {
-
-        Module module = this.moduleService.findById(taskViewModel.getModuleId());
-        if (module == null) {
-            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.module.not.found", taskViewModel.getSecretNote(), TtNotice.Warning)));
-            return Referer.redirect(_PANEL_URL + "/module/list", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s);
-
-        }
-
-        if (taskViewModel.getTasks() != null && !taskViewModel.getTasks().isEmpty()) {
-            List<Long> ids = new ArrayList<>();
-            for (Task t : taskViewModel.getTasks()) {
-                if (t != null) {
-                    if (t.getIsOnlineLogging() != true) {
-                        t.setIsOnlineLogging(true);
-                        this.taskService.update(t);
-                    }
-                    ids.add(t.getId());
-                }
-            }
-            List<Task> naTasks = this.taskService.findAllBy(
-                    Restrictions.and(
-                            Restrictions.eq(Task._MODULE, module),
-                            Restrictions.eq(Task.IS_ONLINE_LOGGING, true),
-                            Restrictions.eq(Task.IS_SUPER_ADMIN, false),
-                            Restrictions.not(
-                                    Restrictions.in(Task.ID, ids)
-                            )
-                    ));
-            if (naTasks != null && !naTasks.isEmpty()) {
-                for (Task t : naTasks) {
-                    t.setIsOnlineLogging(false);
-                    this.taskService.update(t);
-                }
-            }
-        } else {
-            List<Task> tasks = this.taskService.findAllBy(
-                    Restrictions.and(
-                            Restrictions.eq(Task._MODULE, module),
-                            Restrictions.eq(Task.IS_ONLINE_LOGGING, true),
-                            Restrictions.eq(Task.IS_SUPER_ADMIN, false)
-
-                    ));
-            if (tasks != null && !tasks.isEmpty()) {
-                for (Task t : tasks) {
-                    t.setIsOnlineLogging(false);
-                    this.taskService.update(t);
-                }
-            }
-        }
-
-        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.log.task.online.logging.success", module.getSecretNote(), TtNotice.Success)));
-        return Referer.redirect(_PANEL_URL + "/task/online/logging/" + taskViewModel.getModuleId(), TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success, notice2s);
-    }
-
 }

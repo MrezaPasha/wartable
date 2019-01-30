@@ -158,6 +158,15 @@ public class OutLog {
             + "  ----->  " + msg);
     }
 
+    public static String getErrorPosition() {
+        String finalError = "***--------------------------------------<[ "
+            + Environment.getInstance().getProjectName() + " ::: "
+            + Thread.currentThread().getStackTrace()[2].getClassName() + " :: "
+            + Thread.currentThread().getStackTrace()[2].getMethodName() + " : "
+            + Thread.currentThread().getStackTrace()[2].getLineNumber()
+            + " ]>-\n";
+        return finalError;
+    }
 
     // shorthand: olp
     public static void p(String msg) {

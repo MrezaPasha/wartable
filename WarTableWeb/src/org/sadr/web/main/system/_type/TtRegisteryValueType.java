@@ -7,5 +7,6 @@ public enum TtRegisteryValueType {
 
     Normal,
     Json,
-    PureJson;
+    PureJson,
+    Byte
 }

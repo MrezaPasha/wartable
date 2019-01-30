@@ -8,6 +8,7 @@ import org.sadr._core.utils.SpringMessager;
 public enum TtPropertorInBackupSection {
     AutoBackup("N.propertor.backup.auto.backup", TtPropertorInBackupTab.Backup),
     AutoRestore("N.propertor.backup.auto.restore", TtPropertorInBackupTab.Restore),
+    Upload("N.propertor.backup.upload", TtPropertorInBackupTab.Upload),
     ;
 
     private final String spMessage;

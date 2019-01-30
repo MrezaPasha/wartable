@@ -7,8 +7,7 @@ public enum TtTaskOnlineLoggingStrategy {
 
     Immediately("فوری"),
     WithDelay("ارسال با تاخیر"),
-    Scheduling("بر اساس زمان بندی"),
-    ;
+    Scheduling("بر اساس زمان بندی"),;
     private final String title;
 
     private TtTaskOnlineLoggingStrategy(String k) {

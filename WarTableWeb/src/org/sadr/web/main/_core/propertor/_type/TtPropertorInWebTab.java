@@ -6,6 +6,8 @@ package org.sadr.web.main._core.propertor._type;
 public enum TtPropertorInWebTab {
     Generic("عمومی"),
     User("کاربری"),
+    LoadThreshold("آستانه بار"),
+    Service("مدیریت سرویس"),
     ;
 
     private final String title;

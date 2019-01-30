@@ -1,0 +1,40 @@
+/****DO-NoT-REMOVE-IT*#- ==============  START  ============== -#*/
+/*-------------------------------- */
+/*Fonts STANDARD
+---------------------------------- */
+@font-face {
+    font-family: IRANSans;
+    font-style: normal;
+    font-weight: bold;
+    src: url('../fonts/yekan/Yekan.eot');
+    src: url('../fonts/yekan/Yekan.eot?#iefix') format('embedded-opentype'), /* IE6-8 */ url('../fonts/yekan/Yekan.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/ url('../fonts/yekan/Yekan.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: IRANSans;
+    font-style: normal;
+    font-weight: normal;
+    src: url('../fonts/yekan/Yekan.eot');
+    src: url('../fonts/yekan/Yekan.eot?#iefix') format('embedded-opentype'), /* IE6-8 */ url('../fonts/yekan/Yekan.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/ url('../fonts/yekan/Yekan.ttf') format('truetype');
+}
+
+/*---------------------------------- */
+/*Fonts  FA
+---------------------------------- */
+@font-face {
+    font-family: IRANSansFa;
+    font-style: normal;
+    font-weight: bold;
+    src: url('../fonts/yekan/Yekan.eot');
+    src: url('../fonts/yekan/Yekan.eot?#iefix') format('embedded-opentype'), /* IE6-8 */ url('../fonts/yekan/Yekan.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/ url('../fonts/yekan/Yekan.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: IRANSansFa;
+    font-style: normal;
+    font-weight: normal;
+    src: url('../fonts/yekan/Yekan.eot');
+    src: url('../fonts/yekan/Yekan.eot?#iefix') format('embedded-opentype'), /* FF39+,Chrome36+, Opera24+*/ url('../fonts/yekan/Yekan.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/ url('../fonts/yekan/Yekan.ttf') format('truetype');
+}
+
+/****DO-NoT-REMOVE-IT*#- ==============  END  ============== -#*/

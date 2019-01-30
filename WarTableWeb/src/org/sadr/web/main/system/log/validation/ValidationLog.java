@@ -13,7 +13,6 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
- *
  * @author masoud
  */
 @PersianName("رویدادنگاری اعتبارسنجی")
@@ -43,7 +42,7 @@ public static final String URL = "url";public static final String TRY_COUNT = "t
         return "{\"validationLogId\":" + getId() + "}";
     }
 
-    public void addTryCount(){
+    public void addTryCount() {
         tryCount++;
     }
     ///#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=  METHODS

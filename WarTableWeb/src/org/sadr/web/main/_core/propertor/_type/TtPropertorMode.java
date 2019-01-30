@@ -5,5 +5,5 @@ package org.sadr.web.main._core.propertor._type;
  */
 public enum TtPropertorMode {
 
-    File,Db;
+    File, Db;
 }

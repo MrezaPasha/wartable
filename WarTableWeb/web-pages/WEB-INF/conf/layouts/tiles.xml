@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+    <!-- Front -->
+    <definition name="FrontTemplate" template="/WEB-INF/view/_layouts/front/_template.jsp">
+        <put-attribute name="title" value=""></put-attribute>
+        <put-attribute name="topMenuId" value=""></put-attribute>
+        <put-attribute name="header" value="/WEB-INF/view/_layouts/front/header.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/view/_layouts/front/footer.jsp"/>
+    </definition>
+    <definition name="PanelTemplate" template="/WEB-INF/view/_layouts/panel/_template.jsp">
+        <put-attribute name="title" value=""></put-attribute>
+        <put-attribute name="rightMenuId" value=""></put-attribute>
+        <put-attribute name="header" value="/WEB-INF/view/_layouts/panel/header.jsp"/>
+        <put-attribute name="rightMenu" value="/WEB-INF/view/_layouts/panel/right-menu.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/view/_layouts/panel/footer.jsp"/>
+    </definition>
+</tiles-definitions>

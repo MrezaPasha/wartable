@@ -7,10 +7,9 @@ import org.sadr._core.utils.SpringMessager;
  */
 public enum TtPropertorInLogSection {
     ServerSpec("N.propertor.log.system.serverSpec", TtPropertorInLogTab.System),
+    //    ServerUserLevelLogging("N.propertor.log.system.userLevel", TtPropertorInLogTab.System),
 //    ServerUserLevelLogging("N.propertor.log.system.userLevel", TtPropertorInLogTab.System),
-//    ServerUserLevelLogging("N.propertor.log.system.userLevel", TtPropertorInLogTab.System),
-    ConnectionInfo("N.propertor.log.connection.info", TtPropertorInLogTab.Connection),
-    ;
+    ConnectionInfo("N.propertor.log.connection.info", TtPropertorInLogTab.Connection),;
 
     private final String spMessage;
     private final TtPropertorInLogTab tab;

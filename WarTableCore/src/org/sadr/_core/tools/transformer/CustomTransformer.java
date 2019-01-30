@@ -160,8 +160,8 @@ public class CustomTransformer<T extends Serializable> extends AliasedTupleSubse
                     ali = alis[i];
 
                     ix = ali.lastIndexOf(".");
-                    aliKey = ix == -1 ? rootObjName : rootObjName + "_" + ali.substring(0, ix);
-                    String[] aliParts = aliKey.split("_");
+                    aliKey = ix == -1 ? rootObjName : rootObjName + "__" + ali.substring(0, ix);
+                    String[] aliParts = aliKey.split("__");
 
 
                     aliasDepth = aliParts.length - 1;

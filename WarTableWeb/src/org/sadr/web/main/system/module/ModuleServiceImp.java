@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,6 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
     public boolean clean() {
         try {
             ///=======================================
-            Thread.sleep(3000);
 
             List<Task> dupTasks = this.taskDao.findAllBy(
                     Restrictions.and(
@@ -70,9 +70,16 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
                         )
                 );
                 if (by != null) {
+                    by.setUserGroups(null);
+                    by.setUsers(null);
+                    taskDao.update(by);
+                    Thread.sleep(300);
                     this.delete(by.getIdi());
                 }
             }
+
+            OutLog.pl("=============== FLUSHING 1D");
+            dao.getCurrentSession().flush();
 
             List<Task> delTasks = this.taskDao.findAllBy(Restrictions.eq(Task.IS_REFRESHED, false), Task._USERS, Task._USER_GROUPS);
             if (delTasks.size() == 0) {
@@ -84,6 +91,10 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
                 delTask.setUsers(null);
                 taskDao.update(delTask);
             }
+
+            OutLog.pl("=============== FLUSHING 2D");
+            dao.getCurrentSession().flush();
+
             OutLog.pl("Sleep...");
             Thread.sleep(3000);
             OutLog.pl("Continue...");
@@ -95,6 +106,9 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
             OutLog.pl("Sleep...");
             Thread.sleep(3000);
             OutLog.pl("Continue...");
+
+            OutLog.pl("=============== FLUSHING 3D");
+            dao.getCurrentSession().flush();
 
             List<Module> delModules = this.findAllBy(Restrictions.eq(Module.IS_REFRESHED, false));
 //            for (Module delModule : delModules) {
@@ -115,8 +129,12 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
 
         refreshModelAndTask();
 
+        OutLog.pl("=============== FLUSHING 1");
+        dao.getCurrentSession().flush();
+
         try {
-            List<String> msgList = new ArrayList<>();
+            Thread.sleep(1000);
+
             Class controllerBean;
             String controllerName, modelName;
             Module module;
@@ -127,19 +145,9 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
                         controllerBean = beanFactory.getBean(bean).getClass();
                         int ix = controllerBean.getCanonicalName().indexOf("$");
 
-                        // به احتمال زیاد به خاطر سیم کشی اتوماتیک کنترلرها در پیکربندیها
-                        // هنگام فراخوانی کنترلر از bean به جای کلاس انها شی آنها برگردانده می شود
-                        // اگر شی باشد با علامت $ قابل تشخیص است
-                        // چون ما به کلاس نیاز داریم اگر شی برگردانده شود آن را به کلاس تبدیل می کنیم.
                         if (ix > 0) {
                             controllerBean = controllerBean.getSuperclass();
                         }
-                        // ماژولهایی که نمی خواهیم در فرآیند دسترسی ها نشان داده شوند
-//                        if (controllerBean.isAnnotationPresent(ProtectedModule.class)) {
-//                            continue;
-//                        }
-
-                        // برای یافتن کنترلرهایی که مدل ندارند
                         if (!controllerBean.isAnnotationPresent(StandaloneController.class)) {
                             isHasModel = false;
                             for (Class<?> mc : modelClasses) {
@@ -184,14 +192,11 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
                         Method[] methods = controllerBean.getMethods();
                         List<Method> postTasks = new ArrayList<>();
 
-                        boolean isExist;
                         for (Method method : methods) {
                             if (!method.isAnnotationPresent(RequestMapping.class)) {
                                 continue;
                             }
-//                            if (method.isAnnotationPresent(SuperAdminTask.class)) {
-//                                continue;
-//                            }
+
                             try {
                                 if (method.getAnnotation(RequestMapping.class).method()[0] == RequestMethod.POST) {
                                     postTasks.add(method);
@@ -209,19 +214,12 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
                                     , Task._MODULE
                             );
 
-                            task = fillTask(task, method, controllerBean, modelName, module, TtRequestMethod.Get);
+                            fillTask(task, method, controllerBean, modelName, module, TtRequestMethod.Get);
 
-                            isExist = false;
-                            for (String msg : msgList) {
-                                if (msg.equals(task.getMessageCode())) {
-                                    isExist = true;
-                                    break;
-                                }
-                            }
-                            if (!isExist) {
-                                msgList.add(task.getMessageCode());
-                            }
                         }
+
+                        OutLog.pl("=============== FLUSHING 2");
+                        dao.getCurrentSession().flush();
 
                         for (Method postTask : postTasks) {
                             if (taskDao.isExist(Restrictions.and(
@@ -237,19 +235,19 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
                             );
                             fillTask(task, postTask, controllerBean, modelName, module, TtRequestMethod.Post);
 
+                            OutLog.pl("=============== FLUSHING 3");
+                            dao.getCurrentSession().flush();
                         }
                     } catch (IllegalArgumentException | SecurityException ex) {
                         Logger.getLogger(ModuleController.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
-            for (String msg : msgList) {
-                System.out.println(msg);
-            }
 
 
-            ///=======================================
-            Thread.sleep(3000);
+            ///=======================================  Delete
+            OutLog.pl("=============== FLUSHING 4");
+            dao.getCurrentSession().flush();
 
             List<Task> dupTasks = this.taskDao.findAllBy(
                     Restrictions.and(
@@ -262,14 +260,21 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
                         Restrictions.and(
                                 Restrictions.eq(Task.SIGNATURE, dt.getSignature()),
                                 Restrictions.eq(Task.METHOD, TtRequestMethod.Post)
-                        )
+                        ),
+                        Task._USERS, Task._USER_GROUPS
                 );
                 if (by != null) {
+                    by.setUserGroups(null);
+                    by.setUsers(null);
+                    taskDao.update(by);
+                    Thread.sleep(300);
                     this.delete(by.getIdi());
                 }
             }
 
             ///=======================================
+            OutLog.pl("=============== FLUSHING 5");
+            dao.getCurrentSession().flush();
 
             List<Task> delTasks = this.taskDao.findAllBy(
                     Restrictions.eq(Task.IS_REFRESHED, false),
@@ -282,16 +287,23 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
 
                 taskDao.update(delTask);
             }
+
+            OutLog.pl("=============== FLUSHING 6");
+            dao.getCurrentSession().flush();
             OutLog.pl("Sleep...");
-            Thread.sleep(3000);
+            Thread.sleep(1000);
             OutLog.pl("Continue...");
+
+
 //            for (Task delTask : delTasks) {
 //                taskDao.delete(delTask);
 //            }
             taskDao.deleteAllBy(0163, delTasks);
 
+            OutLog.pl("=============== FLUSHING 7");
+            dao.getCurrentSession().flush();
             OutLog.pl("Sleep...");
-            Thread.sleep(3000);
+            Thread.sleep(1000);
             OutLog.pl("Continue...");
 
             List<Module> delModules = this.findAllBy(Restrictions.eq(Module.IS_REFRESHED, false));
@@ -330,7 +342,7 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
         }
     }
 
-    private Task fillTask(Task task, Method method, Class controllerBean, String modelName, Module module, TtRequestMethod requestMethod) {
+    private void fillTask(Task task, Method method, Class controllerBean, String modelName, Module module, TtRequestMethod requestMethod) {
         String menuId = null;
 
         OutLog.pl("  ---  " + method.getName());
@@ -359,6 +371,7 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
         if (task.getIsActiveLogging() == null) {
             task.setIsActiveLogging(false);
         }
+
         task.setIsAjax(method.isAnnotationPresent(ResponseBody.class));
         task.setIsLogManager(method.isAnnotationPresent(LogManagerTask.class));
         task.setIsRefreshed(true);
@@ -377,10 +390,25 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
             task.setUrl(method.getAnnotation(RequestMapping.class).value()[0]);
         } catch (Exception e) {
         }
+        if (task.getIsPanelTask()) {
+            try {
+                Field panel_url = controllerBean.getDeclaredField("_PANEL_URL");
+                panel_url.setAccessible(true);
+                task.setParentUrl((String) panel_url.get(controllerBean.newInstance()));
+            } catch (NoSuchFieldException | IllegalAccessException | InstantiationException e) {
+                task.setParentUrl(null);
+            }
+        } else {
+            try {
+                Field front_url = controllerBean.getDeclaredField("_FRONT_URL");
+                front_url.setAccessible(true);
+                task.setParentUrl((String) front_url.get(controllerBean.newInstance()));
+            } catch (NoSuchFieldException | IllegalAccessException | InstantiationException e) {
+                task.setParentUrl(null);
+            }
+        }
         ///menuId
-        OutLog.p();
         if (method.isAnnotationPresent(MenuIdentity.class)) {
-            OutLog.p();
             menuId = method.getAnnotation(MenuIdentity.class).value().toString();
             task.setMenuIdentity(menuId);
         } else {
@@ -389,7 +417,6 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
                 clz = Class.forName("org.sadr.web.main._project.meta.annotation.ProjectMenuIdentity");
                 if (method.isAnnotationPresent(clz)) {
                     Method mt;
-                    OutLog.pl(clz.getName());
                     mt = clz.getMethod("value");
                     Object ttPrjTile = mt.invoke(method.getAnnotation(clz));
                     clz = Class.forName("org.sadr.web.main._project._type.TtProjectTile___");
@@ -433,7 +460,6 @@ public class ModuleServiceImp extends GenericServiceImpl<Module, ModuleDao> impl
         } else {
             taskDao.update(task);
         }
-        return task;
     }
 
 }

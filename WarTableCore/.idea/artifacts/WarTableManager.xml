@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="exploded-war" name="WarTableManager">
-    <output-path>$PROJECT_DIR$/../_out/artifacts/WarTableManager</output-path>
-    <root id="root">
-      <element id="module-output" name="WarTableManager" />
-    </root>
-  </artifact>
-</component>

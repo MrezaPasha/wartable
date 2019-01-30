@@ -7,8 +7,7 @@ public enum TtTaskActionStatus {
 
     Success("موفق - Success"),
     Failure("ناموفق - Failure"),
-    Error("خطا - Error"),
-    ;
+    Error("خطا - Error"),;
     private final String title;
 
     private TtTaskActionStatus(String k) {

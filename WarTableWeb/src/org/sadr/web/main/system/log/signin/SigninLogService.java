@@ -8,10 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.UnknownHostException;
 
 /**
- *
  * @author masoud
  */
 public interface SigninLogService extends GenericService<SigninLog> {
 
-    public void persistSigninLog(HttpServletRequest request, String uuid, User user,TtSigninLogStatus status) throws UnknownHostException;
+    public void persistSigninLog(HttpServletRequest request, String uuid, User user, TtSigninLogStatus status) throws UnknownHostException;
 }

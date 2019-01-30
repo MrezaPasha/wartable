@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/WarTableCore.iml" filepath="$PROJECT_DIR$/WarTableCore.iml" />
       <module fileurl="file://$PROJECT_DIR$/../WarTableDataShare/WarTableDataShare.iml" filepath="$PROJECT_DIR$/../WarTableDataShare/WarTableDataShare.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../WarTableManager/WarTableManager.iml" filepath="$PROJECT_DIR$/../WarTableManager/WarTableManager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../WarTableService/WarTableService.iml" filepath="$PROJECT_DIR$/../WarTableService/WarTableService.iml" />
       <module fileurl="file://$PROJECT_DIR$/../WarTableWeb/WarTableWeb.iml" filepath="$PROJECT_DIR$/../WarTableWeb/WarTableWeb.iml" />
     </modules>
   </component>

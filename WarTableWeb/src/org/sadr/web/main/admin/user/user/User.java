@@ -14,8 +14,6 @@ import org.sadr.web.main.admin._type.TtUserIpRangeType;
 import org.sadr.web.main.admin._type.TtUserLevel;
 import org.sadr.web.main.admin._type.TtUserStatus;
 import org.sadr.web.main.admin.user.group.UserGroup;
-import org.sadr.web.main.admin.user.porter.UserPorter;
-import org.sadr.web.main.admin.user.uuid.UserUuid;
 import org.sadr.web.main.archive.file.file.File;
 import org.sadr.web.main.system.task.Task;
 
@@ -42,7 +40,7 @@ import java.util.Set;
 @Table(name = "Web.Admin.User")
 public class User extends GenericDataModel<User> implements Serializable {
 //#########++++++#######// StaticFields: Start //
-public static final String USERNAME = "username";public static final String USER_CODE = "userCode";public static final String PASSWORD = "password";public static final String IS_NEED_TO_CHANGE_PASSWORD = "isNeedToChangePassword";public static final String PASSWORD_HISTORY = "passwordHistory";public static final String PASSWORD_DATE_TIME = "passwordDateTime";public static final String LAST_SIGNIN_DATE_TIME = "lastSigninDateTime";public static final String COMMENT = "comment";public static final String IP_RANGE_TYPE = "ipRangeType";public static final String IP_ADDRESS = "ipAddress";public static final String IP_ADDRESS_FIRST_SIGNIN = "ipAddressFirstSignin";public static final String IP_ADDRESS_START = "ipAddressStart";public static final String IP_ADDRESS_END = "ipAddressEnd";public static final String GENDER = "gender";public static final String FIRST_NAME = "firstName";public static final String LAST_NAME = "lastName";public static final String ACCESS_LIMIT_YEARLY_START = "accessLimitYearlyStart";public static final String ACCESS_LIMIT_YEARLY_END = "accessLimitYearlyEnd";public static final String ACCESS_LIMIT_MONTHLY_START = "accessLimitMonthlyStart";public static final String ACCESS_LIMIT_MONTHLY_END = "accessLimitMonthlyEnd";public static final String ACCESS_LIMIT_DAILY_START = "accessLimitDailyStart";public static final String ACCESS_LIMIT_DAILY_END = "accessLimitDailyEnd";public static final String ACCESS_LIMIT_TIMELY_START = "accessLimitTimelyStart";public static final String ACCESS_LIMIT_TIMELY_END = "accessLimitTimelyEnd";public static final String _LOGO = "logo";public static final String STATUS = "status";public static final String LEVEL = "level";public static final String IS_BLOCKED = "isBlocked";public static final String IS_SUPER_ADMIN = "isSuperAdmin";public static final String IS_LOG_MANAGER = "isLogManager";public static final String PORTER_UUID = "porterUuid";public static final String _USER_UUIDS = "userUuids";public static final String _USER_PORTERS = "userPorters";public static final String _TASKS = "tasks";public static final String _USER_GROUPS = "userGroups";public static final String $IS_ACTIVE = "isActive";public static final String $IS_MASTER = "isMaster";public static final String $FULL_NAME = "fullName";public static final String $IS_ADMIN = "isAdmin";public static final String $IS_CLIENT = "isClient";public static final String $IS_NOT_ADMIN = "isNotAdmin";public static final String $IS_NOT_MASTER = "isNotMaster";public static final String $IS_NOT_CLIENT = "isNotClient";public static final String $FULL_NAME_ID = "fullNameId";public static final String $IS_BLOCKED_Y = "isBlockedY";public static final String $SECRET_NOTE = "secretNote";public static final String $ACT_COLUMNS = "actColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $REL_COLUMNS = "relColumns";public static final String $EXPORT_TITLE = "exportTitle";public static final String $AUTHORIZED_MENU = "authorizedMenu";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
+public static final String USERNAME = "username";public static final String USER_CODE = "userCode";public static final String PASSWORD = "password";public static final String IS_NEED_TO_CHANGE_PASSWORD = "isNeedToChangePassword";public static final String PASSWORD_HISTORY = "passwordHistory";public static final String PASSWORD_DATE_TIME = "passwordDateTime";public static final String LAST_SIGNIN_DATE_TIME = "lastSigninDateTime";public static final String COMMENT = "comment";public static final String IP_RANGE_TYPE = "ipRangeType";public static final String IP_ADDRESS = "ipAddress";public static final String IP_ADDRESS_FIRST_SIGNIN = "ipAddressFirstSignin";public static final String IP_ADDRESS_START = "ipAddressStart";public static final String IP_ADDRESS_END = "ipAddressEnd";public static final String GENDER = "gender";public static final String FIRST_NAME = "firstName";public static final String LAST_NAME = "lastName";public static final String ACCESS_LIMIT_YEARLY_START = "accessLimitYearlyStart";public static final String ACCESS_LIMIT_YEARLY_END = "accessLimitYearlyEnd";public static final String ACCESS_LIMIT_MONTHLY_START = "accessLimitMonthlyStart";public static final String ACCESS_LIMIT_MONTHLY_END = "accessLimitMonthlyEnd";public static final String ACCESS_LIMIT_DAILY_START = "accessLimitDailyStart";public static final String ACCESS_LIMIT_DAILY_END = "accessLimitDailyEnd";public static final String ACCESS_LIMIT_TIMELY_START = "accessLimitTimelyStart";public static final String ACCESS_LIMIT_TIMELY_END = "accessLimitTimelyEnd";public static final String _LOGO = "logo";public static final String STATUS = "status";public static final String LEVEL = "level";public static final String IS_BLOCKED = "isBlocked";public static final String IS_SUPER_ADMIN = "isSuperAdmin";public static final String IS_LOG_MANAGER = "isLogManager";public static final String PORTER_UUID = "porterUuid";public static final String _USER_UUIDS = "userUuids";public static final String _TASKS = "tasks";public static final String _USER_GROUPS = "userGroups";public static final String $FULL_NAME = "fullName";public static final String $AUTHORIZED_MENU = "authorizedMenu";public static final String $IS_ACTIVE = "isActive";public static final String $SECRET_NOTE = "secretNote";public static final String $ACT_COLUMNS = "actColumns";public static final String $IS_MASTER = "isMaster";public static final String $VIR_COLUMNS = "virColumns";public static final String $REL_COLUMNS = "relColumns";public static final String $EXPORT_TITLE = "exportTitle";public static final String $IS_ADMIN = "isAdmin";public static final String $IS_CLIENT = "isClient";public static final String $IS_BLOCKED_Y = "isBlockedY";public static final String $FULL_NAME_ID = "fullNameId";public static final String $IS_NOT_MASTER = "isNotMaster";public static final String $IS_NOT_CLIENT = "isNotClient";public static final String $IS_NOT_ADMIN = "isNotAdmin";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
 //#########******#######// StaticFields: End //
 
     ///////////////////////
@@ -199,12 +197,6 @@ public static final String USERNAME = "username";public static final String USER
     @Size(max = 1000)
     @PersianName("UUIDهای حامل")
     private String porterUuid;
-    @OneToMany(mappedBy = "user")
-    @PersianName("UUIDهای کاربر")
-    private Set<UserUuid> userUuids;
-    @OneToMany(mappedBy = "user")
-    @PersianName("حامل های کاربر")
-    private Set<UserPorter> userPorters;
     ///##############################  SYSTEM
     @OrderBy(Task.MENU_IDENTITY)
     @ManyToMany
@@ -463,22 +455,6 @@ public static final String USERNAME = "username";public static final String USER
 
     public void setPorterUuid(String porterUuid) {
         this.porterUuid = porterUuid;
-    }
-
-    public Set<UserUuid> getUserUuids() {
-        return userUuids;
-    }
-
-    public void setUserUuids(Set<UserUuid> userUuids) {
-        this.userUuids = userUuids;
-    }
-
-    public Set<UserPorter> getUserPorters() {
-        return userPorters;
-    }
-
-    public void setUserPorters(Set<UserPorter> userPorters) {
-        this.userPorters = userPorters;
     }
 
     public Set<Task> getTasks() {

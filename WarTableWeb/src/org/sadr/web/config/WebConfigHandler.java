@@ -15,12 +15,8 @@ import org.sadr.web.main.admin.user.confirm.UserConfirm;
 import org.sadr.web.main.admin.user.confirm.UserConfirmConfig;
 import org.sadr.web.main.admin.user.group.UserGroup;
 import org.sadr.web.main.admin.user.group.UserGroupConfig;
-import org.sadr.web.main.admin.user.porter.UserPorter;
-import org.sadr.web.main.admin.user.porter.UserPorterConfig;
 import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.admin.user.user.UserConfig;
-import org.sadr.web.main.admin.user.uuid.UserUuid;
-import org.sadr.web.main.admin.user.uuid.UserUuidConfig;
 import org.sadr.web.main.archive.directory.Directory;
 import org.sadr.web.main.archive.directory.DirectoryConfig;
 import org.sadr.web.main.archive.file.file.File;
@@ -159,10 +155,8 @@ public class WebConfigHandler {
         addModelClassRest(Irror.class);
         //
         addModelClassRest(User.class);
-        addModelClassRest(UserUuid.class);
         addModelClassRest(UserGroup.class);
         addModelClassRest(UserAttempt.class);
-        addModelClassRest(UserPorter.class);
         addModelClassRest(UserConfirm.class);
         //
         addModelClassRest(Log.class);
@@ -253,10 +247,8 @@ public class WebConfigHandler {
         //
 
         addConfigClass(UserConfig.class);
-        addConfigClass(UserUuidConfig.class);
         addConfigClass(UserGroupConfig.class);
         addConfigClass(UserAttemptConfig.class);
-        addConfigClass(UserPorterConfig.class);
         addConfigClass(UserConfirmConfig.class);
         addConfigClass(LogConfig.class);
         addConfigClass(SigninLogConfig.class);

@@ -5,8 +5,6 @@
  */
 package org.sadr._core.utils;
 
-import org.sadr._core.utils._type.TtJsonBuilderActivityHistoryType;
-
 /**
  * @author dev1
  */

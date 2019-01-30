@@ -7,8 +7,9 @@ package org.sadr.web.main._core.tools.filter;
 
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.utils.OutLog;
-import org.sadr._core.utils._type.TtCookierVariable;
+import org.sadr.web.main._core.utils._type.TtCookierVariable;
 import org.sadr.web.config.WebConfigHandler;
+import org.sadr.web.main._core.tools.listener.SessionListener;
 import org.sadr.web.main._core.utils.Cookier;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,7 +27,9 @@ import java.util.UUID;
 public class FilterHandler implements Filter {
 
     @Override
-    public void init(FilterConfig fc) throws ServletException {
+    public void init(FilterConfig fc) {
+        SessionListener.invalidateAll();
+
         OutLog.sl("FILTER HANDLER INITIATED... ");
         // loading init method
         WebConfigHandler.loadPropertors();
@@ -64,6 +67,7 @@ public class FilterHandler implements Filter {
 
     @Override
     public void destroy() {
+        SessionListener.invalidateAll();
         OutLog.pl("FILTER HANDLER DESTROYED. ");
     }
 }

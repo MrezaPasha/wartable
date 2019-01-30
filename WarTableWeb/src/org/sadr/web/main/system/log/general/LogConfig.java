@@ -1,6 +1,5 @@
 package org.sadr.web.main.system.log.general;
 
-import org.sadr.web.main.system.irror.IrrorConfig;
 import org.sadr.web.main.system.log.remote.RemoteLogConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -28,7 +27,6 @@ public class LogConfig extends WebMvcConfigurerAdapter {
     public LogController logController() {
         LogController uc = new LogController();
         uc.setService(logServiceImp());
-        uc.setIrrorService(new IrrorConfig().irrorServiceImp());
         return uc;
     }
 }

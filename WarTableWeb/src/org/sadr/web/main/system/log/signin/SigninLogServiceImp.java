@@ -1,6 +1,7 @@
 package org.sadr.web.main.system.log.signin;
 
 import org.sadr._core.meta.generic.GenericServiceImpl;
+import org.sadr._core.utils.OutLog;
 import org.sadr._core.utils.ParsCalendar;
 import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.system._type.TtSigninLogStatus;
@@ -25,8 +26,8 @@ public class SigninLogServiceImp extends GenericServiceImpl<SigninLog, SigninLog
 
         signinLog.setUser(user);
         signinLog.setAgentSignature(request.getHeader("User-Agent"));
-        signinLog.setComputerSignature(InetAddress.getLocalHost().getHostAddress());
-        signinLog.setIpAddress(InetAddress.getLocalHost().getHostAddress());
+        signinLog.setComputerSignature(request.getRemoteAddr());
+        signinLog.setIpAddress(request.getRemoteAddr());
         signinLog.setDomainName(request.getServerName());
         signinLog.setLastDateTime(ParsCalendar.getInstance().getShortDateTime());
         signinLog.setLastDateTimeG(new Date().getTime());

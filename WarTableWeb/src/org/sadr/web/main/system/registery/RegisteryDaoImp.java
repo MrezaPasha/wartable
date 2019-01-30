@@ -18,8 +18,8 @@ public class RegisteryDaoImp extends GenericDaoImpl<Registery> implements Regist
     public Registery findByKey(String key) {
         try {
             Criteria crt = getCurrentSession().createCriteria(Registery.class)
-                .add(Restrictions.eq("entityState", TtEntityState.Exist))
-                .add(Restrictions.eq("key", key));
+                    .add(Restrictions.eq("entityState", TtEntityState.Exist))
+                    .add(Restrictions.eq("key", key));
             return (Registery) crt.uniqueResult();
         } catch (Exception e) {
             return null;
@@ -30,9 +30,9 @@ public class RegisteryDaoImp extends GenericDaoImpl<Registery> implements Regist
     public Registery findByKeyAndType(String key, String type) {
         try {
             Criteria crt = getCurrentSession().createCriteria(Registery.class)
-                .add(Restrictions.eq("entityState", TtEntityState.Exist))
-                .add(Restrictions.eq("key", key))
-                .add(Restrictions.eq("type", type));
+                    .add(Restrictions.eq("entityState", TtEntityState.Exist))
+                    .add(Restrictions.eq("key", key))
+                    .add(Restrictions.eq("type", type));
             return (Registery) crt.uniqueResult();
         } catch (Exception e) {
             return null;

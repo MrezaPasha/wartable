@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="_lib-share">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../_lib-share" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../_lib-share" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/../_lib-share" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../_lib-share" recursive="false" type="SOURCES" />
+  </library>
+</component>

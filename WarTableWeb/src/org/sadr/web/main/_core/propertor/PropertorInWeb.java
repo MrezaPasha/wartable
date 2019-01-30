@@ -36,7 +36,9 @@ public class PropertorInWeb extends PropertorAgent {
     protected void initDbMode() {
         try {
             if (registeryService == null) {
-                registeryService = WebConfigHandler.getWebApplicationContext().getBean(RegisteryService.class);
+                registeryService = WebConfigHandler
+                        .getWebApplicationContext()
+                        .getBean(RegisteryService.class);
             }
 
         } catch (Exception e) {

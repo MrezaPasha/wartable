@@ -40,6 +40,13 @@ public enum TtPropertorInWebList {
     UserPasswordCountNumber("N.propertor.user.password.count.number", 1, TtPropertorType.Integer, TtPropertorInWebSection.UserPasswordPolicy, false), ///
     UserPasswordAtLeastSpecific("N.propertor.user.password.at.least.specific", false, TtPropertorType.OnOff, TtPropertorInWebSection.UserPasswordPolicy, false), ///
     UserPasswordCountSpecific("N.propertor.user.password.count.specific", 1, TtPropertorType.Integer, TtPropertorInWebSection.UserPasswordPolicy, false), ///
+    ///==================== load threshold
+    LoadThresholdMaxConcurrentUser("N.propertor.load.user.max.concurrent.user", 100, TtPropertorType.Integer, TtPropertorInWebSection.LoadConcurrentUser, false), ///
+    LoadThresholdMaxUploadSize("N.propertor.load.upload.max.size", 10, TtPropertorType.Integer, TtPropertorInWebSection.LoadUpload, false), ///
+    ///==================== service
+    ServiceUploadPath("N.propertor.service.upload.path", "/upload", TtPropertorType.String, TtPropertorInWebSection.ServiceUpload, false), ///
+    ServiceUserDefaultModelId("N.propertor.service.user.default.model.id", 1, TtPropertorType.Integer, TtPropertorInWebSection.ServiceUser, false), ///
+
 
 
     ;

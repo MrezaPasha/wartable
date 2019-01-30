@@ -54,14 +54,13 @@ public class CoreController {
     /////////////////////////////////////////////////////// PANEL
     @TaskAccessLevel(TtTaskAccessLevel.Free4Users)
     @PersianName("داشبورد")
-    @RequestMapping(value = "/panel", method = RequestMethod.GET)
+    @RequestMapping(value = _PANEL_URL, method = RequestMethod.GET)
     public ModelAndView pPanelDashboard(Model model, HttpSession session) {
         User suser = (User) session.getAttribute("sUser");
         if (suser == null) {
             return TtHttpErrorCode___.Unauthorized_401.___getFrontDisModel();
         }
         model.addAttribute("slList", CacheStatic.getSigninLog(suser.getId()));
-
         model.addAttribute("nlist", this.noteService.findAllBy(
                 Restrictions.and(
                         Restrictions.eq(Note._USER, (User) session.getAttribute("sUser")),
@@ -80,8 +79,7 @@ public class CoreController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView fIndex(HttpSession session) {
         if (session.getAttribute("sUser") == null) {
-            return new ModelAndView("redirect:/signin");
-//            return Referer.redirect("/signin");
+            return Referer.redirect("/signin");
         } else if (((User) session.getAttribute("sUser")).getLevel() == TtUserLevel.Client) {
             return TtTile___.f_index.___getDisModel();
         }
