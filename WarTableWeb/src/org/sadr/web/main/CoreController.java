@@ -60,6 +60,8 @@ public class CoreController {
         if (suser == null) {
             return TtHttpErrorCode___.Unauthorized_401.___getFrontDisModel();
         }
+//        int i = 1 / 0;
+
         model.addAttribute("slList", CacheStatic.getSigninLog(suser.getId()));
         model.addAttribute("nlist", this.noteService.findAllBy(
                 Restrictions.and(

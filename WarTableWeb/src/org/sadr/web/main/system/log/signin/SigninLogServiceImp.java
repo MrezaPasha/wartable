@@ -1,7 +1,6 @@
 package org.sadr.web.main.system.log.signin;
 
 import org.sadr._core.meta.generic.GenericServiceImpl;
-import org.sadr._core.utils.OutLog;
 import org.sadr._core.utils.ParsCalendar;
 import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.system._type.TtSigninLogStatus;

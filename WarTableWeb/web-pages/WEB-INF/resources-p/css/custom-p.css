@@ -1,4 +1,31 @@
 /*--------------------------------
+    Three Object Loader
+----------------------------------*/
+.three-container {
+    width: 100%;
+    height: 100%;
+}
+
+.three-container.three-service-user {
+    width: 100%;
+    height: 60%;
+}
+
+.three-container.three-service-object {
+    width: 100%;
+    height: 50%;
+}
+
+.three-container > canvas {
+    width: 100%;
+    height: 100%;
+}
+
+.tab-content.tab-content-object {
+    height: 100%;
+}
+
+/*--------------------------------
     Note Sync
 ----------------------------------*/
 .note-sync-table {

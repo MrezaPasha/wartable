@@ -150,6 +150,16 @@ public class SessionListener implements HttpSessionListener {
         return ids;
     }
 
+    public static int getCurrentUserCount() {
+        int c = 0;
+        for (Map.Entry<String, Object[]> entrySet : sessions.entrySet()) {
+            if ((entrySet.getValue()[1]) != null) {
+                c++;
+            }
+        }
+        return c;
+    }
+
 
 
 }

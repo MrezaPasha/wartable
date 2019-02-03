@@ -1272,6 +1272,7 @@ var CustomJs = function () {
                 tp: "",
                 en: true,
                 sg: true,
+                st: 0,
                 zp: false,
                 ps: -1,
                 pi: 1
@@ -1440,8 +1441,9 @@ var CustomJs = function () {
                 _isearch.ixp.tp = submitValues;
                 _isearch.ixp.en = $("input[i-search-submit-opt-encrypt]").prop("checked");
                 _isearch.ixp.sg = $("input[i-search-submit-opt-sign]").prop("checked");
+                _isearch.ixp.st = $("select[i-search-submit-opt-security] option:selected").val();
             }
-
+            console.log(_isearch.ixp);
             _isearch.xhr = $.ajax({
                 url: (submitUrl != undefined ? submitUrl : _isearch.options.url),
                 Type: 'json',

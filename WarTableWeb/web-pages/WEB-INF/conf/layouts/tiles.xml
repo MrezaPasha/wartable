@@ -3,7 +3,6 @@
 <!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 
 <tiles-definitions>
-    <!-- Front -->
     <definition name="FrontTemplate" template="/WEB-INF/view/_layouts/front/_template.jsp">
         <put-attribute name="title" value=""></put-attribute>
         <put-attribute name="topMenuId" value=""></put-attribute>

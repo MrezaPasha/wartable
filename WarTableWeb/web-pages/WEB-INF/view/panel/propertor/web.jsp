@@ -29,6 +29,11 @@
                         </a>
                     </li>
                     <li class="li-right">
+                        <a href="#panel_tab3_irror" data-toggle="tab">
+                            مدیریت خطا
+                        </a>
+                    </li>
+                    <li class="li-right">
                         <a href="#panel_tab3_service" data-toggle="tab">
                             سرویس
                         </a>
@@ -51,6 +56,10 @@
                     </div>
                     <div class="tab-pane" id="panel_tab3_load">
                         <c:set var="olist" value="${llist}" scope="request"/>
+                        <jsp:include page="propertor-tabs.jsp"/>
+                    </div>
+                    <div class="tab-pane" id="panel_tab3_irror">
+                        <c:set var="olist" value="${ilist}" scope="request"/>
                         <jsp:include page="propertor-tabs.jsp"/>
                     </div>
                     <div class="tab-pane" id="panel_tab3_service">

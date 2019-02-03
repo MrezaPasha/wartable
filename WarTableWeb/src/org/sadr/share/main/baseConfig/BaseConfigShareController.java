@@ -128,7 +128,7 @@ public class BaseConfigShareController extends GenericControllerImpl<BaseConfig,
     @RequestMapping(value = _PANEL_URL + "/list")
     public ModelAndView pList(Model model) {
 
-        Searchee.init(Grade.class, model)
+        Searchee.init(BaseConfig.class, model)
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,

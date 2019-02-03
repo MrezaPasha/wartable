@@ -5,7 +5,7 @@ import org.sadr.share.main.orgPosition.OrgPositionShareConfig;
 import org.sadr.share.main.roomServiceUser.Room_ServiceUserShareConfig;
 import org.sadr.share.main.sessions.SessionsShareConfig;
 import org.sadr.web.config.WebConfig;
-import org.sadr.web.main.system.irror.IrrorConfig;
+import org.sadr.web.main.system.irror.irror.IrrorConfig;
 import org.springframework.context.annotation.Bean;
 
 ;

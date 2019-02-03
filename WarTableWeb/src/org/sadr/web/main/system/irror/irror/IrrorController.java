@@ -1,4 +1,4 @@
-package org.sadr.web.main.system.irror;
+package org.sadr.web.main.system.irror.irror;
 
 import org.sadr._core._type.TtDataType;
 import org.sadr._core._type.TtRestrictionOperator;
@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * @author masoud

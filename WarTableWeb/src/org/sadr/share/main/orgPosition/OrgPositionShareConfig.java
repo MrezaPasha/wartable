@@ -1,7 +1,7 @@
 package org.sadr.share.main.orgPosition;
 
 import org.sadr.web.config.WebConfig;
-import org.sadr.web.main.system.irror.IrrorConfig;
+import org.sadr.web.main.system.irror.irror.IrrorConfig;
 import org.springframework.context.annotation.Bean;
 
 /**

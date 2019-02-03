@@ -102,6 +102,12 @@ public class MapShareController extends GenericControllerImpl<Map, MapShareServi
                 Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.map.upload.format.invalid", TtNotice.Danger)));
                 return Referer.redirectObject(request, redirectAttributes, fObj);
             }
+
+            if (attachment.getSize() > 1024 * 1024 * PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize)) {
+                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.map.upload.max.size.exceed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
+                return Referer.redirectObject(request, redirectAttributes, fObj);
+            }
+
             File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath));
             //
             fObj.setFileName(upload.getOrginalName());
@@ -179,6 +185,12 @@ public class MapShareController extends GenericControllerImpl<Map, MapShareServi
                     Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.map.upload.format.invalid", TtNotice.Danger)));
                     return Referer.redirectObject(request, redirectAttributes, fObj);
                 }
+
+                if (attachment.getSize() > 1024 * 1024 * PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize)) {
+                    Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.map.upload.max.size.exceed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
+                    return Referer.redirectObject(request, redirectAttributes, fObj);
+                }
+
                 File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath));
                 //
                 dbObj.setFileName(upload.getOrginalName());

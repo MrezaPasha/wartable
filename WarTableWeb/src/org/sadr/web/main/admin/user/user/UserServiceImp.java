@@ -91,7 +91,6 @@ public class UserServiceImp extends GenericServiceImpl<User, UserDao> implements
         return user;
     }
 
-
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
         User suser = (User) session.getAttribute("sUser");

@@ -6,7 +6,7 @@
 package org.sadr.web.main.admin.user.group;
 
 import org.sadr.web.main.admin.user.user.UserConfig;
-import org.sadr.web.main.system.irror.IrrorConfig;
+import org.sadr.web.main.system.irror.irror.IrrorConfig;
 import org.sadr.web.main.system.module.ModuleConfig;
 import org.sadr.web.main.system.task.TaskConfig;
 import org.springframework.context.annotation.Bean;

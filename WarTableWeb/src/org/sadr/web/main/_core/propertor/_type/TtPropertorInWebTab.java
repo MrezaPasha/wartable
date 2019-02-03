@@ -7,6 +7,7 @@ public enum TtPropertorInWebTab {
     Generic("عمومی"),
     User("کاربری"),
     LoadThreshold("آستانه بار"),
+    Irror("مدیریت خطا"),
     Service("مدیریت سرویس"),
     ;
 

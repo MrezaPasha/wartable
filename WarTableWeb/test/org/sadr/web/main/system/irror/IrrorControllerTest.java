@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.sadr.config.AbstractContextControllerTests;
 import org.sadr.utils.MockObjectInstances;
 import org.sadr.web.main._core._type.TtTile___;
+import org.sadr.web.main.system.irror.irror.Irror;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 

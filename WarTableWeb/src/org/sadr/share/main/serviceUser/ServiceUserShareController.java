@@ -35,7 +35,7 @@ import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.archive.file.file.File;
 import org.sadr.web.main.system._type.TtTaskActionStatus;
 import org.sadr.web.main.system._type.TtTaskActionSubType;
-import org.sadr.web.main.system.irror.IrrorService;
+import org.sadr.web.main.system.irror.irror.IrrorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -49,7 +49,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * @author masoud
@@ -145,6 +144,12 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                 Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.serviceUser.upload.format.invalid", TtNotice.Danger)));
                 return Referer.redirectObject(request, redirectAttributes, fObj);
             }
+
+            if (attachment.getSize() > 1024 * 1024 * PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize)) {
+                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.serviceUser.upload.max.size.exceed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
+                return Referer.redirectObject(request, redirectAttributes, fObj);
+            }
+
             File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath));
             //
 //            fObj.setFileName(upload.getOrginalName());
@@ -251,6 +256,11 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                 if (!attachment.getOriginalFilename().endsWith(".model")
                         && !attachment.getOriginalFilename().endsWith(".fbx")) {
                     Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.serviceUser.upload.format.invalid", TtNotice.Danger)));
+                    return Referer.redirectObject(request, redirectAttributes, fObj);
+                }
+
+                if (attachment.getSize() > 1024 * 1024 * PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize)) {
+                    Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.serviceUser.upload.max.size.exceed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
                     return Referer.redirectObject(request, redirectAttributes, fObj);
                 }
                 File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath));

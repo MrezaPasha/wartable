@@ -31,6 +31,9 @@
                     <c:when test="${myvar.propertor.type=='StringBig'}">
                         <textarea name="${myvar.propertor.key}" data-id="${myvar.propertor.id}" data-type="${myvar.propertor.type}">${myvar.value}</textarea>
                     </c:when>
+                    <c:when test="${myvar.propertor.type=='Password'}">
+                        <input type="password" name="${myvar.propertor.key}" value="${myvar.value}" data-id="${myvar.propertor.id}" data-type="${myvar.propertor.type}"/>
+                    </c:when>
                     <c:when test="${myvar.propertor.type=='TtVariable'}">
                         <select id="select2_${myvar.propertor.id}" name="${myvar.propertor.key}" data-id="${myvar.propertor.id}" data-type="${myvar.propertor.type}">
                             <c:forEach var="op" items="${myvar.propertor.ttValues}">

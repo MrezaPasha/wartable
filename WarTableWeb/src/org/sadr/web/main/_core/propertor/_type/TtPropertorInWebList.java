@@ -44,10 +44,35 @@ public enum TtPropertorInWebList {
     LoadThresholdMaxConcurrentUser("N.propertor.load.user.max.concurrent.user", 100, TtPropertorType.Integer, TtPropertorInWebSection.LoadConcurrentUser, false), ///
     LoadThresholdMaxUploadSize("N.propertor.load.upload.max.size", 10, TtPropertorType.Integer, TtPropertorInWebSection.LoadUpload, false), ///
     ///==================== service
+    IrrorAlertPublicOn("N.propertor.irror.public.on", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertPublic, false), ///
+    //
+    IrrorAlertEmailOn("N.propertor.irror.email.on", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertEmail, false), ///
+    IrrorAlertEmailTrace("N.propertor.irror.email.trace", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertEmail, false), ///
+    IrrorAlertEmailDebug("N.propertor.irror.email.debug", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertEmail, false), ///
+    IrrorAlertEmailInfo("N.propertor.irror.email.info", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertEmail, false), ///
+    IrrorAlertEmailWarn("N.propertor.irror.email.warn", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertEmail, false), ///
+    IrrorAlertEmailError("N.propertor.irror.email.error", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertEmail, false), ///
+    IrrorAlertEmailFatal("N.propertor.irror.email.fatal", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertEmail, false), ///
+    //
+    IrrorAlertNotifyOn("N.propertor.irror.notify.on", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertNotify, false), ///
+    IrrorAlertNotifyTrace("N.propertor.irror.notify.trace", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertNotify, false), ///
+    IrrorAlertNotifyDebug("N.propertor.irror.notify.debug", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertNotify, false), ///
+    IrrorAlertNotifyInfo("N.propertor.irror.notify.info", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertNotify, false), ///
+    IrrorAlertNotifyWarn("N.propertor.irror.notify.warn", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertNotify, false), ///
+    IrrorAlertNotifyError("N.propertor.irror.notify.error", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertNotify, false), ///
+    IrrorAlertNotifyFatal("N.propertor.irror.notify.fatal", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertNotify, false), ///
+    //
+    IrrorAlertEmailBoxAddress("N.propertor.irror.email.box.address", "support@sadr.com", TtPropertorType.String, TtPropertorInWebSection.IrrorAlertEmailBox, false), ///
+    IrrorAlertEmailBoxPassword("N.propertor.irror.email.box.password", "password", TtPropertorType.Password, TtPropertorInWebSection.IrrorAlertEmailBox, false), ///
+    IrrorAlertEmailBoxHost("N.propertor.irror.email.box.host", "host", TtPropertorType.String, TtPropertorInWebSection.IrrorAlertEmailBox, false), ///
+    IrrorAlertEmailBoxPort("N.propertor.irror.email.box.port", 25, TtPropertorType.Integer, TtPropertorInWebSection.IrrorAlertEmailBox, false), ///
+    IrrorAlertEmailBoxTlsOn("N.propertor.irror.email.box.tls.on", false, TtPropertorType.OnOff, TtPropertorInWebSection.IrrorAlertEmailBox, false), ///
+    //
+//    IrrorAlertEmailReceiverAddresses("N.propertor.irror.email.receiver.addresses", "reciever01@sadr.com,reciever02@sadr.com", TtPropertorType.String, TtPropertorInWebSection.IrrorAlertEmailReceiver, false), ///
+
+    ///==================== service
     ServiceUploadPath("N.propertor.service.upload.path", "/upload", TtPropertorType.String, TtPropertorInWebSection.ServiceUpload, false), ///
     ServiceUserDefaultModelId("N.propertor.service.user.default.model.id", 1, TtPropertorType.Integer, TtPropertorInWebSection.ServiceUser, false), ///
-
-
 
     ;
 

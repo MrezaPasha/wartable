@@ -17,6 +17,8 @@
             ${note.message}
     </div>
 </c:forEach>
+
+
 <c:if test="${signinNotice!=null}">
     <div class="modal fade" id="signinModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <jsp:include page="signin-notice-modal.jsp"/>
@@ -27,6 +29,17 @@
                 backdrop: 'static',
                 keyboard: false
             });
+
+        });
+    </script>
+</c:if>
+<c:if test="${inlist!=null}">
+    <div class="modal fade" id="irrorNotify" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <jsp:include page="irror-notify-modal.jsp"/>
+    </div>
+    <script type="text/javascript">
+        $(window).on('load', function () {
+            $('#irrorNotify').modal();
 
         });
     </script>

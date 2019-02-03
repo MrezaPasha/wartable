@@ -99,6 +99,7 @@
                             </form:label>
                             <form:input path="${varName}" cssClass="form-control string-required string-max-50"/>
                         </div>
+
                     </div>
                     <div class="col-sm-4">
                         <div class="form-group">
@@ -128,13 +129,13 @@
                                 <span class="symbol required"></span>
                             </form:label>
                             <form:errors cssClass="form-validation-error" path="${varName}"/>
-                            <form:select disabled="${dis}" path="${varName}" data-visible-src="dv0" data-visible-value="Master" cssClass="form-control search-select dropdown-required">
+                            <form:select disabled="${dis}" path="${varName}" data-visible-src="dv0" data-visible-value="Master,Administrator" cssClass="form-control search-select dropdown-required">
                                 <option value=""></option>
                                 <form:options itemLabel="title"/>
                             </form:select>
                         </div>
                         <c:if test="${!dis}">
-                            <div data-visible-dst="dv0" data-visible-align="true" class="form-group">
+                            <div data-visible-dst="dv0" data-visible-align-1="true" class="form-group">
                                 <c:set var="varName" value="user.userGroups"/>
                                 <form:label path="${varName}" cssClass="control-label">
                                     <spring:message code="${varName}"/>
@@ -146,6 +147,14 @@
                                 </form:select>
                             </div>
                         </c:if>
+                        <div data-visible-dst="dv0" data-visible-align-2="true" class="form-group">
+                            <c:set var="varName" value="user.email"/>
+                            <form:label path="${varName}" cssClass="control-label">
+                                <spring:message code="${varName}"/>
+                                <form:errors cssClass="form-validation-error" path="${varName}"/>
+                            </form:label>
+                            <form:input path="${varName}" cssClass="form-control email-format string-max-100"/>
+                        </div>
                     </div>
                     <div class="col-sm-4">
                         <div class="form-group-password">

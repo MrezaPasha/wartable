@@ -27,8 +27,10 @@ import org.sadr.web.main.system.backup.Backup;
 import org.sadr.web.main.system.backup.BackupConfig;
 import org.sadr.web.main.system.field.Field;
 import org.sadr.web.main.system.field.FieldConfig;
-import org.sadr.web.main.system.irror.Irror;
-import org.sadr.web.main.system.irror.IrrorConfig;
+import org.sadr.web.main.system.irror.irror.Irror;
+import org.sadr.web.main.system.irror.irror.IrrorConfig;
+import org.sadr.web.main.system.irror.notify.IrrorNotify;
+import org.sadr.web.main.system.irror.notify.IrrorNotifyConfig;
 import org.sadr.web.main.system.log.attempt.UserAttempt;
 import org.sadr.web.main.system.log.attempt.UserAttemptConfig;
 import org.sadr.web.main.system.log.general.Log;
@@ -153,6 +155,7 @@ public class WebConfigHandler {
         addModelClassRest(Field.class);
         addModelClassRest(Registery.class);
         addModelClassRest(Irror.class);
+        addModelClassRest(IrrorNotify.class);
         //
         addModelClassRest(User.class);
         addModelClassRest(UserGroup.class);
@@ -244,6 +247,7 @@ public class WebConfigHandler {
         addConfigClass(FieldConfig.class);
         addConfigClass(RegisteryConfig.class);
         addConfigClass(IrrorConfig.class);
+        addConfigClass(IrrorNotifyConfig.class);
         //
 
         addConfigClass(UserConfig.class);

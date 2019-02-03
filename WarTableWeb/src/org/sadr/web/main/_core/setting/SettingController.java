@@ -93,6 +93,7 @@ public class SettingController {
 
         initAdminUser();
         initLogManagerUser();
+        initEncryptionKey();
     }
 
     private void initAdminUser() {
@@ -151,77 +152,7 @@ public class SettingController {
 
     }
 
-    ///=////////////////////////////////////////////////////////////// SETTING
-    @PersianName("پیشخوان تنظیمات")
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public ModelAndView pSetting(final RedirectAttributes redirectAttributes) {
-        return TtTile___.p_setting_index.___getDisModel();
-    }
-
-    ///=////////////////////////////////////////////////////////////// INITIALIZERS
-    private List<String[]> getInitMethods(Method[] ms) {
-        RequestMapping an;
-        PersianName pn;
-        List<String[]> ls = new ArrayList<>();
-        for (Method m : ms) {
-            if (m.isAnnotationPresent(RequestMapping.class)) {
-                an = m.getAnnotation(RequestMapping.class);
-                if ((an.method().length == 0 || an.method()[0] == null || an.method()[0] == RequestMethod.GET)
-                        && an.value() != null && an.value().length > 0 && !an.value()[0].isEmpty()
-                        && an.value()[0].contains("/init")) {
-                    if (m.isAnnotationPresent(PersianName.class)) {
-                        pn = m.getAnnotation(PersianName.class);
-                        ls.add(new String[]{pn.value(), an.value()[0]});
-                    }
-                }
-            }
-        }
-        ls.sort(Comparator.comparing(o -> (o[0])));
-        return ls;
-    }
-
-    @SuperAdminTask
-    @PersianName("پیشخوان راه انداز")
-    @RequestMapping(value = "/init", method = RequestMethod.GET)
-    public ModelAndView pInit(Model model, final RedirectAttributes redirectAttributes) {
-        model.addAttribute("list", getInitMethods(SettingController.class.getMethods()));
-        return TtTile___.p_setting_init.___getDisModel();
-    }
-
-    @SuperAdminTask
-    @PersianName("راه اندازی اولیه")
-    @RequestMapping(value = "/init/prime", method = RequestMethod.GET)
-    public ModelAndView pInitPrime(final RedirectAttributes redirectAttributes) {
-        initCorePrime(true);
-        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.init.success", TtNotice.Success)));
-        return new ModelAndView("redirect:/panel/setting/init");
-    }
-
-    @SuperAdminTask
-    @PersianName("پاکسازی اولیه")
-    @RequestMapping(value = "/init/clean", method = RequestMethod.GET)
-    public ModelAndView pInitClean(final RedirectAttributes redirectAttributes) {
-        if (moduleService.clean()) {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.init.clean.success", TtNotice.Success)));
-        } else {
-            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.init.clean.failed", TtNotice.Danger)));
-        }
-        return new ModelAndView("redirect:/panel/setting/init");
-    }
-
-    private String getHexString(byte[] b) {
-        String result = "";
-        for (int i = 0; i < b.length; i++) {
-            result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
-        }
-        return result;
-    }
-
-    @SuperAdminTask
-    @PersianName("ایجاد کلیدهای رمزنگاری")
-    @RequestMapping(value = "/init/crypt/keys", method = RequestMethod.GET)
-    public ModelAndView pInitEncryptionKey(final RedirectAttributes redirectAttributes) {
-
+    private void initEncryptionKey() {
         Registery byKey = registeryService.findByKey(TtRegisteryKey.IxportCryptKey);
         if (byKey == null) {
             byKey = new Registery();
@@ -309,6 +240,81 @@ public class SettingController {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+
+    }
+
+    ///=////////////////////////////////////////////////////////////// SETTING
+    @PersianName("پیشخوان تنظیمات")
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ModelAndView pSetting(final RedirectAttributes redirectAttributes) {
+        return TtTile___.p_setting_index.___getDisModel();
+    }
+
+    ///=////////////////////////////////////////////////////////////// INITIALIZERS
+    private List<String[]> getInitMethods(Method[] ms) {
+        RequestMapping an;
+        PersianName pn;
+        List<String[]> ls = new ArrayList<>();
+        for (Method m : ms) {
+            if (m.isAnnotationPresent(RequestMapping.class)) {
+                an = m.getAnnotation(RequestMapping.class);
+                if ((an.method().length == 0 || an.method()[0] == null || an.method()[0] == RequestMethod.GET)
+                        && an.value() != null && an.value().length > 0 && !an.value()[0].isEmpty()
+                        && an.value()[0].contains("/init")) {
+                    if (m.isAnnotationPresent(PersianName.class)) {
+                        pn = m.getAnnotation(PersianName.class);
+                        ls.add(new String[]{pn.value(), an.value()[0]});
+                    }
+                }
+            }
+        }
+        ls.sort(Comparator.comparing(o -> (o[0])));
+        return ls;
+    }
+
+    @SuperAdminTask
+    @PersianName("پیشخوان راه انداز")
+    @RequestMapping(value = "/init", method = RequestMethod.GET)
+    public ModelAndView pInit(Model model, final RedirectAttributes redirectAttributes) {
+        model.addAttribute("list", getInitMethods(SettingController.class.getMethods()));
+        return TtTile___.p_setting_init.___getDisModel();
+    }
+
+    @SuperAdminTask
+    @PersianName("راه اندازی اولیه")
+    @RequestMapping(value = "/init/prime", method = RequestMethod.GET)
+    public ModelAndView pInitPrime(final RedirectAttributes redirectAttributes) {
+        initCorePrime(true);
+        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.init.success", TtNotice.Success)));
+        return new ModelAndView("redirect:/panel/setting/init");
+    }
+
+    @SuperAdminTask
+    @PersianName("پاکسازی اولیه")
+    @RequestMapping(value = "/init/clean", method = RequestMethod.GET)
+    public ModelAndView pInitClean(final RedirectAttributes redirectAttributes) {
+        if (moduleService.clean()) {
+            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.init.clean.success", TtNotice.Success)));
+        } else {
+            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.init.clean.failed", TtNotice.Danger)));
+        }
+        return new ModelAndView("redirect:/panel/setting/init");
+    }
+
+    private String getHexString(byte[] b) {
+        String result = "";
+        for (int i = 0; i < b.length; i++) {
+            result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
+        }
+        return result;
+    }
+
+    @SuperAdminTask
+    @PersianName("ایجاد کلیدهای رمزنگاری")
+    @RequestMapping(value = "/init/crypt/keys", method = RequestMethod.GET)
+    public ModelAndView pInitEncryptionKey(final RedirectAttributes redirectAttributes) {
+
+        initEncryptionKey();
 
         Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.init.crypt.success", TtNotice.Success)));
         return new ModelAndView("redirect:/panel/setting/init");

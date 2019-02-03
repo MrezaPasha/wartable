@@ -18,7 +18,7 @@ import org.sadr.web.main.system._type.TtIrrorLevel;
 import org.sadr.web.main.system._type.TtIrrorPlace;
 import org.sadr.web.main.system._type.TtTaskActionStatus;
 import org.sadr.web.main.system._type.TtTaskActionSubType;
-import org.sadr.web.main.system.irror.IrrorService;
+import org.sadr.web.main.system.irror.irror.IrrorService;
 import org.sadr.web.main.system.module.Module;
 import org.sadr.web.main.system.module.ModuleService;
 import org.sadr.web.main.system.task.Task;

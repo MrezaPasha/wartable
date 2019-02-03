@@ -51,6 +51,7 @@ public class PropertorController {
         List<PropertorBag> ulist = new ArrayList<>();
         List<PropertorBag> llist = new ArrayList<>();
         List<PropertorBag> slist = new ArrayList<>();
+        List<PropertorBag> ilist = new ArrayList<>();
 
         String pn = "";
         for (TtPropertorInWebList value : TtPropertorInWebList.values()) {
@@ -67,6 +68,9 @@ public class PropertorController {
                 case Service:
                     slist.add(new PropertorBag(value, PropertorInWeb.getInstance().getProperty(value), !value.getSection().toString().equals(pn)));
                     break;
+                case Irror:
+                    ilist.add(new PropertorBag(value, PropertorInWeb.getInstance().getProperty(value), !value.getSection().toString().equals(pn)));
+                    break;
             }
             pn = value.getSection().toString();
         }
@@ -74,6 +78,7 @@ public class PropertorController {
         model.addAttribute("ulist", ulist);
         model.addAttribute("llist", llist);
         model.addAttribute("slist", slist);
+        model.addAttribute("ilist", ilist);
 
         return TtTile___.p_propertor_web.___getDisModel();
     }
@@ -107,6 +112,7 @@ public class PropertorController {
             case "Variable":
             case "Integer":
             case "String":
+            case "Password":
             case "StringBig":
                 res = PropertorInWeb.getInstance().setProperty(TtPropertorInWebList.getByOrdinal(id), value);
                 break;
@@ -188,6 +194,7 @@ public class PropertorController {
             case "Variable":
             case "Integer":
             case "String":
+            case "Password":
             case "StringBig":
                 res = PropertorInLog.getInstance().setProperty(TtPropertorInLogList.getByOrdinal(id), value);
                 break;
@@ -271,6 +278,7 @@ public class PropertorController {
             case "Variable":
             case "Integer":
             case "String":
+            case "Password":
             case "StringBig":
                 res = PropertorInBackup.getInstance().setProperty(TtPropertorInBackupList.getByOrdinal(id), value);
                 break;

@@ -43,7 +43,10 @@ import org.sadr.web.main.admin.user.confirm.UserConfirmService;
 import org.sadr.web.main.admin.user.group.UserGroup;
 import org.sadr.web.main.admin.user.group.UserGroupService;
 import org.sadr.web.main.system._type.*;
-import org.sadr.web.main.system.irror.IrrorService;
+import org.sadr.web.main.system.irror.irror.Irror;
+import org.sadr.web.main.system.irror.irror.IrrorService;
+import org.sadr.web.main.system.irror.notify.IrrorNotify;
+import org.sadr.web.main.system.irror.notify.IrrorNotifyService;
 import org.sadr.web.main.system.log.attempt.UserAttempt;
 import org.sadr.web.main.system.log.attempt.UserAttemptService;
 import org.sadr.web.main.system.log.signin.SigninLog;
@@ -95,6 +98,12 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     private UserConfirmService userConfirmService;
     private IrrorService irrorService;
     private UiBagService uiBagService;
+    private IrrorNotifyService irrorNotifyService;
+
+    @Autowired
+    public void setIrrorNotifyService(IrrorNotifyService irrorNotifyService) {
+        this.irrorNotifyService = irrorNotifyService;
+    }
 
     @Autowired
     public void setUiBagService(UiBagService uiBagService) {
@@ -253,6 +262,11 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.accessLimitTimely.first.is.bigger", fuser.getSecretNote(), TtNotice.Warning)));
             return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
         }
+        /////////////////////
+        if (!Validator.email(fuser.getEmail(), false)) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.email.invalid", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
 
         fuser.setPassword(CodeGenerator.password(TtPasswordType.Mix, 20));
         fuser.setIsNeedToChangePassword(true);
@@ -380,6 +394,12 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
         }
 
+        ////////////////////
+        if (!Validator.email(fuser.getEmail(), false)) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.email.invalid", fuser.getSecretNote(), TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
+        }
+
 
         dbuser = this.service.findById(fuser.getId());
         if (dbuser == null) {
@@ -427,6 +447,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         dbuser.setAccessLimitTimelyStart(fuser.getAccessLimitTimelyStart());
         dbuser.setAccessLimitYearlyEnd(fuser.getAccessLimitYearlyEnd());
         dbuser.setAccessLimitYearlyStart(fuser.getAccessLimitYearlyStart());
+        dbuser.setEmail(fuser.getEmail());
         this.service.update(dbuser);
 
         Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.edit.success", fuser.getSecretNote(), TtNotice.Success, dbuser.getFullName())));
@@ -1175,8 +1196,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
     }
 
     @RequestMapping(value = _PANEL_URL + "/access", method = RequestMethod.POST)
-    public ModelAndView pAccess(Model model,
-                                HttpServletRequest request,
+    public ModelAndView pAccess(HttpServletRequest request,
                                 @ModelAttribute("moduleId") String sid,
                                 @ModelAttribute("user") User u,
                                 BindingResult userBindingResult,
@@ -1249,15 +1269,6 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                 return TtTile___.p_user_reSignin.___getDisModel();
             case UuidNotValid:
             case NeedRecaptcha:
-//                SimpleCaptcha captcha = SimpleCaptcha.load(request, "exampleCaptcha");
-//                boolean isHuman = captcha.validate(captchaCode);
-//                if (!isHuman) {
-//                    //----------------------------
-//                    Notice2.initModelAttr(model, Notice2.addNotices(new Notice2("N.user.are.you.robot", TtNotice.Warning)));
-//                    return TtTile___.p_user_reSignin.___getDisModel("/panel/user/reSignin")
-//                            .addObject("taskSignature", taskSignature)
-//                            .addObject("reSignUrl", reSignUrl);
-//                }
                 break;
         }
         //-----------------------------------------------------------------------------
@@ -1466,21 +1477,27 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             //------------------------------------------------------------------------
 
             Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.pass.wrong", JsonBuilder.toJson("pswd", password, "username", username), TtNotice.Warning)));
-            return Referer.redirect("/signin", TtTaskActionSubType.Success_Login, TtTaskActionStatus.Success, notice2s);
+            return Referer.redirect("/signin", TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure, notice2s);
         }
 
         if (SessionListener.isUserInSession(user.getIdi())) {
             if (isForceLogin != null) {
                 SessionListener.invalidate(user.getId());
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.previous.signed.out.try.again", user.getSecretNote(), TtNotice.Info)));
-                return Referer.redirect("/signin");
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.previous.signed.out.try.again", user.getSecretNote(), TtNotice.Info)));
+                return Referer.redirect("/signin", TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure, notice2s);
             } else {
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.you.are.signedIn.in.other.browser", user.getSecretNote(), TtNotice.Warning)));
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.you.are.signedIn.in.other.browser", user.getSecretNote(), TtNotice.Warning)));
                 redirectAttributes.addFlashAttribute("username", username);
                 redirectAttributes.addFlashAttribute("password", password);
                 redirectAttributes.addFlashAttribute("isForceToLogin", true);
-                return Referer.redirect("/signin");
+                return Referer.redirect("/signin", TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Success, notice2s);
             }
+        }
+
+        if (SessionListener.getCurrentUserCount() >= PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxConcurrentUser)) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.max.concurrent.user.exceed", user.getSecretNote(), TtNotice.Info)));
+            return Referer.redirect("/signin", TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure, notice2s);
+
         }
 
         //======================  Login
@@ -1594,6 +1611,24 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         } catch (Exception e) {
             irrorService.submit(e, request, TtIrrorPlace.Controller, TtIrrorLevel.Warn);
         }
+
+        //=================================================== show irror notify list for admin users
+        if (user.getIsAdmin()) {
+            List<IrrorNotify> irrorNotifyList = this.irrorNotifyService.findAllBy(
+                    Restrictions.and(
+                            Restrictions.eq(IrrorNotify.STATUS, TtIrrorNotifyStatus.New),
+                            Restrictions.eq(IrrorNotify._USER, user)
+                    ),
+                    IrrorNotify._USER, IrrorNotify._IRROR
+            );
+            for (IrrorNotify notify : irrorNotifyList) {
+                notify.setStatus(TtIrrorNotifyStatus.Visited);
+                irrorNotifyService.update(notify);
+            }
+            redirectAttributes.addFlashAttribute("inlist", irrorNotifyList.isEmpty() ? null : irrorNotifyList);
+        }
+
+
 
         //------------------------------
 

@@ -10009,7 +10009,7 @@
             newDate = (maxDate && newDate > maxDate ? maxDate : newDate);
             return newDate;
         },
-        /* Notify change of month/year. */
+        /* notify change of month/year. */
         _notifyChange: function (inst) {
             var onChange = this._get(inst, 'onChangeMonthYear');
             if (onChange)

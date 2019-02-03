@@ -1,4 +1,4 @@
-package org.sadr.web.main.system.irror;
+package org.sadr.web.main.system.irror.irror;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.sadr._core.meta.generic.GenericService;
