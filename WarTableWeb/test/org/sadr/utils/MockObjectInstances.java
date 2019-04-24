@@ -21,6 +21,7 @@ import org.sadr.share.main.grade.Grade;
 import org.sadr.share.main.grade.GradeShareService;
 import org.sadr.share.main.item.object.Object;
 import org.sadr.share.main.item.object.ObjectShareService;
+import org.sadr.share.main.item.object._types.TtObjectArea;
 import org.sadr.share.main.layer.Layer;
 import org.sadr.share.main.layer.LayerShareService;
 import org.sadr.share.main.layer._type.TtLayerStatus;
@@ -39,6 +40,8 @@ import org.sadr.share.main.meeting._types.TtMeetingDeleted;
 import org.sadr.share.main.meeting._types.TtMeetingStatus;
 import org.sadr.share.main.orgPosition.OrgPosition;
 import org.sadr.share.main.orgPosition.OrgPositionShareService;
+import org.sadr.share.main.personModel.PersonModel;
+import org.sadr.share.main.personModel.PersonModelShareService;
 import org.sadr.share.main.room.Room;
 import org.sadr.share.main.room.RoomShareService;
 import org.sadr.share.main.room._types.TtRoomAccessSetting;
@@ -47,6 +50,8 @@ import org.sadr.share.main.serviceUser.ServiceUser;
 import org.sadr.share.main.serviceUser.ServiceUserShareService;
 import org.sadr.share.main.sessions.Sessions;
 import org.sadr.share.main.sessions.SessionsShareService;
+import org.sadr.share.main.startupNotice.startupNotice.StartupNotice;
+import org.sadr.share.main.startupNotice.startupNotice.StartupNoticeShareService;
 import org.sadr.web.config.WebConfigHandler;
 import org.sadr.web.main._core.uiBag.UiBag;
 import org.sadr.web.main._core.uiBag.UiBagService;
@@ -276,7 +281,7 @@ public class MockObjectInstances {
         obj.setCategory("category_" + rand);
 
         obj.setUploaderUser(null);
-        obj.setArea(null);
+        obj.setArea(TtObjectArea.All);
         return obj;
     }
 
@@ -504,6 +509,41 @@ public class MockObjectInstances {
         }
         return null;
     }
+//============================ PersonModel
+
+    public PersonModel getPersonModel(boolean isRandom) {
+        PersonModel obj = new PersonModel();
+
+        int rand = 0;
+        if (isRandom) {
+            rand =  CodeGenerator.code(5);
+        }
+
+        obj.setName("name_" + rand);
+        obj.setSize(111 + rand);
+        obj.setScale(111 + rand);
+        obj.setFileName("fileName_" + rand);
+        obj.setFileId(rand);
+        obj.setUploadDateTime(ParsCalendar.getInstance().getShortDateTime());
+
+        obj.setAssignUSers(null);
+        obj.setUploaderUser(null);
+        return obj;
+    }
+    public PersonModel getRealPersonModel() {
+        PersonModelShareService service = WebConfigHandler.getWebApplicationContext().getBean(PersonModelShareService.class);
+        List<PersonModel> list = service.findAll(1);
+        if (list != null && !list.isEmpty()) {
+            return list.get(0);
+        }else {
+            service.save(getPersonModel(true));
+            list = service.findAll(1);
+            if (list != null && !list.isEmpty()) {
+                return list.get(0);
+            }
+        }
+        return null;
+    }
 
 //============================ Room
 
@@ -573,7 +613,7 @@ public class MockObjectInstances {
         obj.setGroupPolicy(null);
         obj.setBanned(TtServiceUserState.BannedUser);
         obj.setLastRoom(getRealRoom());
-        obj.setUserModel(null);
+        obj.setUserModel(getRealPersonModel());
         obj.setTextChats(null);
         obj.setOrgPosition(getRealOrgPosition());
         obj.setGrade(getRealGrade());
@@ -582,7 +622,7 @@ public class MockObjectInstances {
 
     public ServiceUser getRealServiceUser() {
         ServiceUserShareService service = WebConfigHandler.getWebApplicationContext().getBean(ServiceUserShareService.class);
-        List<ServiceUser> list = service.findAll(1, ServiceUser._GRADE, ServiceUser._ORG_POSITION);
+        List<ServiceUser> list = service.findAll(1, ServiceUser._GRADE, ServiceUser._ORG_POSITION,ServiceUser._USER_MODEL);
         if (list != null && !list.isEmpty()) {
             ServiceUser obj = list.get(0);
             boolean isO = false;
@@ -1093,6 +1133,38 @@ public class MockObjectInstances {
             return list.get(0);
         } else {
             service.save(getUiBag(true));
+            list = service.findAll(1);
+            if (list != null && !list.isEmpty()) {
+                return list.get(0);
+            }
+        }
+        return null;
+    }
+//============================ StartupNotice
+
+    public StartupNotice getStartupNotice(boolean isRandom) {
+        StartupNotice obj = new StartupNotice();
+
+        int rand = 0;
+        if (isRandom) {
+            rand =  CodeGenerator.code(5);
+        }
+
+        obj.setTitle("title_" + rand);
+        obj.setMessageBody("messageBody_" + rand);
+        obj.setSendDateTime(ParsCalendar.getInstance().getShortDateTime());
+
+        obj.setReceiverTemps(null);
+        obj.setReceivers(null);
+        return obj;
+    }
+    public StartupNotice getRealStartupNotice() {
+        StartupNoticeShareService service = WebConfigHandler.getWebApplicationContext().getBean(StartupNoticeShareService.class);
+        List<StartupNotice> list = service.findAll(1);
+        if (list != null && !list.isEmpty()) {
+            return list.get(0);
+        }else {
+            service.save(getStartupNotice(true));
             list = service.findAll(1);
             if (list != null && !list.isEmpty()) {
                 return list.get(0);

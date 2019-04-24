@@ -12,13 +12,13 @@
         <element id="directory" name="lib">
           <element id="library" level="project" name="javax.servlet:jstl:1.2" />
           <element id="library" level="application" name="lib_tomcat" />
-          <element id="library" level="project" name="libs" />
           <element id="library" level="application_server_libraries" name="Tomcat 9.0.2-Sadr" />
-          <element id="library" level="project" name="_libs-captcha" />
+          <element id="library" level="project" name="tomcat-juli" />
           <element id="library" level="project" name="_lib-share" />
           <element id="library" level="project" name="_lib_test" />
-          <element id="library" level="project" name="tomcat-juli" />
-          <element id="library" level="project" name="lib" />
+          <element id="library" level="project" name="_libs" />
+          <element id="library" level="project" name="_libs-captcha" />
+          <element id="library" level="application" name="lib" />
         </element>
       </element>
     </root>

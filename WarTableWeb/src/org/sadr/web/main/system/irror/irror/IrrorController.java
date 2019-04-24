@@ -104,7 +104,7 @@ public class IrrorController extends GenericControllerImpl<Irror, IrrorService> 
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.Like_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         Searchee.field(Irror._USER),
                         Searchee.field(User.USERNAME, User.class)
                 )
@@ -112,7 +112,7 @@ public class IrrorController extends GenericControllerImpl<Irror, IrrorService> 
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.Like_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         Irror._USER,
                         Searchee.field(User.FIRST_NAME, User.class)
                 )
@@ -120,7 +120,7 @@ public class IrrorController extends GenericControllerImpl<Irror, IrrorService> 
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.Like_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         Irror._USER,
                         Searchee.field(User.LAST_NAME, User.class)
                 );
@@ -129,7 +129,7 @@ public class IrrorController extends GenericControllerImpl<Irror, IrrorService> 
                 Irror.class,
                 GB.col(Irror.ID),
                 GB.col(Irror.CREATE_DATE_TIME),
-                GB.col(Irror.$USER_FULL_NAME, GB.path(Irror._USER, User.FIRST_NAME)),
+                GB.col(Irror.$USER_FULL_NAME, GB.path(Irror.SESSION_ID)),
                 GB.col(Irror.HTTP_ERROR_CODE),
                 GB.col(Irror.CAUSE),
                 GB.col(Irror.LEVEL),

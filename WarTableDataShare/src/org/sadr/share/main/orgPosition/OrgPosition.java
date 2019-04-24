@@ -55,7 +55,7 @@ public class OrgPosition extends GenericDataModel<OrgPosition> {
 
     @PersianName("نام جایگاه سازمانی")
     @Column(nullable = false)
-    @Size(max = 100)
+    @Size(min = 2, max = 100)
     private String value;
 
     // METHODS

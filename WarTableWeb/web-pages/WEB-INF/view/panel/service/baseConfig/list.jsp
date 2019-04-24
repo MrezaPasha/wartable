@@ -62,8 +62,8 @@
                                     <td class="center">
                                         <div class="r-button">
                                             <a href="${_url}/edit/@{id}"
-                                               class="btn btn-sm btn-l-edit tooltips " data-placement="top"
-                                               data-original-title="<spring:message code="all.edit"/> ">
+                                               class="btn btn-sm btn-l-edit" data-placement="top"
+                                               title="<spring:message code="all.edit"/> ">
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                         </div>

@@ -55,12 +55,12 @@
                                             <td class="center">
                                                 <div class="visible-md visible-lg hidden-sm hidden-xs  r-button">
                                                     <a href="${_url}/details/${user.id}/${myvar.id}"
-                                                       class="btn btn-sm btn-l-details tooltips " data-placement="top"
+                                                       class="btn btn-sm btn-l-details" data-placement="top"
                                                        data-original-title="جزئیات">
                                                         <i class="clip-flickr"></i>
                                                     </a>
                                                     <a href="${_url}/unconfirm/${user.id}/${myvar.id}"
-                                                       class="btn btn-sm btn-l-Ptrash tooltips " data-placement="top"
+                                                       class="btn btn-sm btn-l-Ptrash" data-placement="top"
                                                        data-original-title="لغو تاییدیه">
                                                         <i class="clip-cancel-circle"></i>
                                                     </a>

@@ -42,11 +42,7 @@ public class FileController extends GenericControllerImpl<File, FileService> {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-//        if (f.getAccessLevel() != TtTaskAccessLevel.Free4Gusts) {
-//            OutLog.pl("forbid");
-//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-//            return;
-//        }
+
         OutLog.pl(f.getAbsolutePathName());
         String apn = f.getAbsolutePathName();
         Path fpath = Paths.get(apn);

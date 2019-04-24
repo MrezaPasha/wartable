@@ -51,14 +51,6 @@ public class OrgPositionShareController extends GenericControllerImpl<OrgPositio
     public OrgPositionShareController() {
     }
 
-
-    private IrrorService irrorService;
-
-    @Autowired
-    public void setIrrorService(IrrorService irrorService) {
-        this.irrorService = irrorService;
-    }
-
     @PersianName("ثبت")
     @RequestMapping(_PANEL_URL + "/create")
     public ModelAndView pCreate(Model model) {
@@ -91,7 +83,7 @@ public class OrgPositionShareController extends GenericControllerImpl<OrgPositio
         this.service.save(fObj);
 
         Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.orgPosition.register.success", TtNotice.Success)));
-        return Referer.redirect(_PANEL_URL + "/edit/" + fObj.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
+        return Referer.redirect(_PANEL_URL + "/create", TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
     }
 
     //=========================== edit
@@ -188,14 +180,14 @@ public class OrgPositionShareController extends GenericControllerImpl<OrgPositio
                 .setAttribute(
                         TtDataType.Integer,
                         TtRestrictionOperator.Equal,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         OrgPosition.CODE
                 )
 
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         OrgPosition.VALUE
                 );
 

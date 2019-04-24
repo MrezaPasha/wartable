@@ -14,11 +14,13 @@ public enum TtTile___ {
     a_archive_file_cred(TtSystemTileLayout.Panel, null),
     a_user_cred(TtSystemTileLayout.Panel, null),
     a_note_cred(TtSystemTileLayout.Panel, null),
+    a_service_startupNotice_cred(TtSystemTileLayout.Panel, null),
+
     ///============== A Share
     a_service_baseConfig_cred(TtSystemTileLayout.Panel, null),
     a_service_baseErrors_cred(TtSystemTileLayout.Panel, null),
     a_service_grade_cred(TtSystemTileLayout.Panel, null),
-    a_service_layer_cred(TtSystemTileLayout.Panel, null),
+//    a_service_layer_cred(TtSystemTileLayout.Panel, null),
     a_service_map_cred(TtSystemTileLayout.Panel, null),
     a_service_map_room_cred(TtSystemTileLayout.Panel, null),
     a_service_meeting_cred(TtSystemTileLayout.Panel, null),
@@ -30,6 +32,7 @@ public enum TtTile___ {
     a_service_room_ServiceUser_cred(TtSystemTileLayout.Panel, null),
     a_service_room_ServiceUser_credR(TtSystemTileLayout.Panel, null),
     a_service_serviceUser_cred(TtSystemTileLayout.Panel, null),
+    a_service_personModel_cred(TtSystemTileLayout.Panel, null),
 
 
     ///============== F
@@ -133,18 +136,23 @@ public enum TtTile___ {
     p_service_grade_create(TtSystemTileLayout.Panel, a_service_grade_cred),
     p_service_grade_edit(TtSystemTileLayout.Panel, a_service_grade_cred),
     p_service_grade_list(TtSystemTileLayout.Panel, null),
-    p_service_layer_create(TtSystemTileLayout.Panel, a_service_layer_cred),
-    p_service_layer_edit(TtSystemTileLayout.Panel, a_service_layer_cred),
-    p_service_layer_list(TtSystemTileLayout.Panel, null),
+//    p_service_layer_create(TtSystemTileLayout.Panel, a_service_layer_cred),
+//    p_service_layer_edit(TtSystemTileLayout.Panel, a_service_layer_cred),
+//    p_service_layer_list(TtSystemTileLayout.Panel, null),
     p_service_map_create(TtSystemTileLayout.Panel, a_service_map_cred),
     p_service_map_edit(TtSystemTileLayout.Panel, a_service_map_cred),
     p_service_map_list(TtSystemTileLayout.Panel, null),
     p_service_map_room_create(TtSystemTileLayout.Panel, a_service_map_room_cred),
     p_service_map_room_edit(TtSystemTileLayout.Panel, a_service_map_room_cred),
     p_service_map_room_list(TtSystemTileLayout.Panel, null),
+    p_service_map_layer_list(TtSystemTileLayout.Panel, null),
     p_service_meeting_edit(TtSystemTileLayout.Panel, a_service_meeting_cred),
     p_service_meeting_details(TtSystemTileLayout.Panel, null),
     p_service_meeting_list(TtSystemTileLayout.Panel, null),
+    p_service_meeting_talk_list(TtSystemTileLayout.Panel, null),
+    p_service_meeting_talk_details(TtSystemTileLayout.Panel, null),
+    p_service_meeting_setting_list(TtSystemTileLayout.Panel, null),
+    p_service_meeting_setting_details(TtSystemTileLayout.Panel, null),
     p_service_object_create(TtSystemTileLayout.Panel, a_service_object_cred),
     p_service_object_edit(TtSystemTileLayout.Panel, a_service_object_cred),
     p_service_object_list(TtSystemTileLayout.Panel, null),
@@ -152,12 +160,18 @@ public enum TtTile___ {
     p_service_orgPosition_create(TtSystemTileLayout.Panel, a_service_orgPosition_cred),
     p_service_orgPosition_edit(TtSystemTileLayout.Panel, a_service_orgPosition_cred),
     p_service_orgPosition_list(TtSystemTileLayout.Panel, null),
+    p_service_personModel_create(TtSystemTileLayout.Panel, a_service_personModel_cred),
+    p_service_personModel_edit(TtSystemTileLayout.Panel, a_service_personModel_cred),
+    p_service_personModel_list(TtSystemTileLayout.Panel, null),
+
     p_service_room_create(TtSystemTileLayout.Panel, a_service_room_cred),
     p_service_room_edit(TtSystemTileLayout.Panel, a_service_room_cred),
     p_service_room_list(TtSystemTileLayout.Panel, null),
     p_service_room_map_create(TtSystemTileLayout.Panel, a_service_room_map_cred),
     p_service_room_map_edit(TtSystemTileLayout.Panel, a_service_room_map_cred),
     p_service_room_map_list(TtSystemTileLayout.Panel, null),
+    p_service_room_chat_list(TtSystemTileLayout.Panel, null),
+    p_service_room_chat_details(TtSystemTileLayout.Panel, null),
     p_service_room_user_create(TtSystemTileLayout.Panel, a_service_room_user_cred),
     p_service_room_user_edit(TtSystemTileLayout.Panel, a_service_room_user_cred),
     p_service_room_user_details(TtSystemTileLayout.Panel, null),
@@ -173,8 +187,14 @@ public enum TtTile___ {
     p_service_serviceUser_list(TtSystemTileLayout.Panel, null),
     p_service_serviceUser_changeUserPass(TtSystemTileLayout.Panel, null),
     p_service_serviceUser_listOnline(TtSystemTileLayout.Panel, null),
-    p_service_serviceUser_room(TtSystemTileLayout.Panel, null),;
+    p_service_serviceUser_room(TtSystemTileLayout.Panel, null),
+    p_service_startupNotice_edit(TtSystemTileLayout.Panel, a_service_startupNotice_cred),
+    p_service_startupNotice_create(TtSystemTileLayout.Panel, a_service_startupNotice_cred),
+    p_service_startupNotice_details(TtSystemTileLayout.Panel, null),
+    p_service_startupNotice_list(TtSystemTileLayout.Panel, null),
+    p_service_startupNotice_item_list(TtSystemTileLayout.Panel, null),
 
+    ;
     private final TtTile___ alternative;// alternative codes link the page of a TtTile to another file. sharing jsp files
     private final TtSystemTileLayout template;
 

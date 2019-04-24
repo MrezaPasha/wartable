@@ -4,6 +4,8 @@ import org.sadr.share.main.Room_Map.Room_MapShareConfig;
 import org.sadr.share.main.map.MapShareConfig;
 import org.sadr.share.main.roomServiceUser.Room_ServiceUserShareConfig;
 import org.sadr.share.main.serviceUser.ServiceUserShareConfig;
+import org.sadr.share.main.textChat.TextChatConfig;
+import org.sadr.share.main.textChat.TextChatShareConfig;
 import org.sadr.web.config.WebConfig;
 import org.springframework.context.annotation.Bean;
 
@@ -33,6 +35,7 @@ public class RoomShareConfig extends WebConfig {
         uc.setRoom_mapShareService(new Room_MapShareConfig().room_MapShareServiceImp());
         uc.setMapShareService(new MapShareConfig().mapShareServiceImp());
         uc.setServiceUserShareService(new ServiceUserShareConfig().serviceUserShareServiceImp());
+        uc.setTextChatShareService(new TextChatShareConfig().textChatShareServiceImp());
         return uc;
     }
 }

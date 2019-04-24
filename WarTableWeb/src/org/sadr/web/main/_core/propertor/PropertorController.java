@@ -251,7 +251,7 @@ public class PropertorController {
 
     @PersianName("پشتیبان گیری: بازنشانی تنظیمات اولیه")
     @RequestMapping("/backup/reset")
-    public ModelAndView pPropertorInBackupReset(final RedirectAttributes redirectAttributes) throws Exception {
+    public ModelAndView pPropertorInBackupReset(final RedirectAttributes redirectAttributes) {
         PropertorInBackup.getInstance().load();
         PropertorInBackup.getInstance().resetProperties();
         PropertorInBackup.getInstance().store();

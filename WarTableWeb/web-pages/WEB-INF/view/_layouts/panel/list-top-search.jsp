@@ -29,12 +29,12 @@
                 </div>
                 <div class="select">
                     <label>
-                        <spring:message code="ixport.securityTag" />
-                    <select i-search-submit-opt-security>
-                        <c:forEach var="tg" items="${securityTags}">
-                            <option value="${tg.ordinal}">${tg.title}</option>
-                        </c:forEach>
-                    </select>
+                        <spring:message code="ixport.securityTag"/>
+                        <select i-search-submit-opt-security>
+                            <c:forEach var="tg" items="${securityTags}">
+                                <option value="${tg.ordinal}">${tg.title}</option>
+                            </c:forEach>
+                        </select>
 
                     </label>
                 </div>
@@ -52,20 +52,40 @@
 <div class="row search-lix">
     <c:forEach items="${searchInputs}" var="myvar">
         <div class="col-xxs-12 col-xs-3 col-md-2">
-            <input type="text" class="form-control" placeholder="${myvar[1]}"
-                   i-search-field-id="${myvar[0]}"
-                   i-search-field-param=${myvar[2]}
-                           i-search-field-submitOnChange
+            <input
+            <c:choose>
+            <c:when test="${myvar[4]=='true'}">
+                    type="hidden"
+            </c:when>
+            <c:when test="${myvar[3]=='l' or myvar[3]=='d' or myvar[3]=='i' or myvar[3]=='f'}">
+                    type="number"
+            </c:when>
+            <c:otherwise>
+                    type="text"
+            </c:otherwise>
+            </c:choose>
+                    class="form-control
+                <c:if test="${myvar[3]=='sdt'}">persian-datetime-format persian-datetime-required</c:if>
+                <c:if test="${myvar[3]=='sd'}">persian-date-format persian-date-required</c:if>
+                <c:if test="">number-format</c:if> "
+                    placeholder="${myvar[1]}"
+                    i-search-field-id="${myvar[0]}"
+                    i-search-field-param=${myvar[2]}
+                            i-search-field-submitOnChange
+                    autocomplete="off"
+                    data-initial-value="false"
+                <c:if test="${myvar[6]=='true'}" >i-search-field-defaultQuery</c:if>
+                    value="${myvar[5]}"
             >
         </div>
     </c:forEach>
 
     <div i-search-submit class="col-xxs-12 col-xs-12 col-md-6">
         <div class="btn-group">
-            <button i-search-submit-btn class="btn btn-animated btn-animated-right">
-                <spring:message code="all.search"/>
-                <i class="clip-search"></i>
-            </button>
+            <%--<button i-search-submit-btn class="btn btn-animated btn-animated-right">--%>
+            <%--<spring:message code="all.search"/>--%>
+            <%--<i class="clip-search"></i>--%>
+            <%--</button>--%>
             <div class="btn-group">
                 <a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">
                     <spring:message code="ixport.export"/> <span class="caret"></span>

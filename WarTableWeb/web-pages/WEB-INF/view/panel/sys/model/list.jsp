@@ -56,13 +56,13 @@
                                 <td class="dir-ltr iransans-standard">${myvar.className}</td>
                                 <td class="right" style="width: 168px;">
                                     <div class="visible-md visible-lg hidden-sm hidden-xs ">
-                                        <a target="_blank" href="${cp}/panel/model/fields/${myvar.id}" class="btn btn-sm btn-l-state tooltips" data-placement="top" data-original-title="فیلدها">
+                                        <a target="_blank" href="${cp}/panel/model/fields/${myvar.id}" class="btn btn-sm btn-l-state" data-placement="top" data-original-title="فیلدها">
                                             <i class="clip-forrst pad-2"></i>
                                         </a>
-                                        <a href="${_url}/adapt/${myvar.id}" class="btn btn-sm btn-l-edit tooltips" data-placement="top" data-original-title="تطبیق اطلاعات">
+                                        <a href="${_url}/adapt/${myvar.id}" class="btn btn-sm btn-l-edit" data-placement="top" data-original-title="تطبیق اطلاعات">
                                             <i class="clip-vynil pad-2"></i>
                                         </a>
-                                        <a href="${cp}/panel/model/rebuild/${myvar.id}" class="btn btn-sm btn-l-complete tooltips" data-placement="top" data-original-title="بازسازی اطلاعات">
+                                        <a href="${cp}/panel/model/rebuild/${myvar.id}" class="btn btn-sm btn-l-complete" data-placement="top" data-original-title="بازسازی اطلاعات">
                                             <i class="clip-cogs pad-2"></i>
                                         </a>
                                     </div>

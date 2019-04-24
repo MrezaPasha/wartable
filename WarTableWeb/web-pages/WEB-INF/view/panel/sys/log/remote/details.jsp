@@ -16,7 +16,7 @@
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <table class="table table-hover iransans-standard" id="sample-table-1" style="font-size: 0.8em">
+                    <table class="table table-hover" id="sample-table-1" style="font-size: 0.8em">
                         <tbody>
                         <tr class="details-separator">
                             <th class="border-top-0"><spring:message code="model.id"/></th>

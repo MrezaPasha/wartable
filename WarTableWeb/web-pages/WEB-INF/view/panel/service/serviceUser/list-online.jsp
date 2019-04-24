@@ -61,7 +61,7 @@
                                     </c:forEach>
                                     <td class="center">
                                         <div class="r-button">
-                                            <a href="${_url}/room/@{serviceUser.id}" class="btn btn-sm btn-info tooltips" data-placement="top" data-original-title="<spring:message code="room_ServiceUser.room"/>">
+                                            <a href="${_url}/room/exit/@{serviceUser.id}" class="btn btn-sm btn-warning tooltips" data-placement="top" data-original-title="<spring:message code="room_ServiceUser.room"/>">
                                                 <i class="clip-redo"></i>
                                             </a>
                                             <a href="${_url}/expire/@{id}" class="btn btn-sm btn-danger tooltips" data-placement="top" data-original-title="<spring:message code="user.expire.session"/>">

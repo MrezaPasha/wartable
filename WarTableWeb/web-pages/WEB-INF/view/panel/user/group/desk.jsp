@@ -65,20 +65,6 @@
             <i class="fa fa-external-link-square"></i>
             <spring:message code="users.list"/>
             <div class="panel-tools">
-                <button data-toggle="dropdown" class="btn btn-xs btn-link dropdown-toggle export panel-excel" title="صدور">
-                    <i class="fa fa-external-link"></i>
-                </button>
-                <ul class="dropdown-menu dropdown-light pull-right export">
-                    <li>
-                        <a href="${cp}/Excel">
-                            <i class="clip-file-excel"></i> اکسل
-                        </a>
-                    </li>
-
-                </ul>
-                <a class="btn btn-xs btn-link panel-print" href="javascript:window.print()" class="tooltips" title="پرینت">
-                    <i class="fa fa-print light"></i>
-                </a>
                 <a class="btn btn-xs btn-link panel-collapse collapses" href="javascript:void(0)"></a>
             </div>
         </div>
@@ -170,7 +156,7 @@
 
 <script type="text/javascript" src="${cp}/resources/js/form-validation.js"></script>
 <script type="text/javascript" src="${cp}/resources/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
-<script type="text/javascript" src="${cp}/resources-p/plugins/bootbox/bootbox.js"></script>
+<%--<script type="text/javascript" src="${cp}/resources-p/plugins/bootbox/bootbox.js"></script>--%>
 <script>
     jQuery(document).ready(function () {
         CustomJs.initTable();

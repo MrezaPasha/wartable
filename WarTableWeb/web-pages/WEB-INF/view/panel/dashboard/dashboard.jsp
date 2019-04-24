@@ -58,7 +58,7 @@
 
             <c:if test="${not empty nlist}">
                 <div class="col-sm-6 col-sm-offset-1 note-sync-container">
-                    <h1>یاداشت های نخوانده</h1>
+                    <h1><spring:message code="note.not.read" /></h1>
                     <table>
                         <thead>
                         <th><spring:message code="note.title"/></th>
@@ -72,7 +72,7 @@
                                 <td>${myvar.title}</td>
                                 <td>${myvar.dateTime}</td>
                                 <td>${myvar.importance.title}</td>
-                                <td><a href="${_url}/details/${myvar.id}"><spring:message code="all.details"/></a></td>
+                                <td><a href="${cp}/panel/note/details/${myvar.id}"><spring:message code="all.details"/></a></td>
                             </tr>
                         </c:forEach>
                         </tbody>

@@ -180,7 +180,7 @@ public class ParsCalendar {
                 persCal.set(Calendar.DAY_OF_MONTH, persCal.get(Calendar.DAY_OF_MONTH) + afterNow);
                 break;
             case Month:
-                persCal.set(Calendar.YEAR, persCal.get(Calendar.MONTH) + afterNow);
+                persCal.set(Calendar.MONTH, persCal.get(Calendar.MONTH) + afterNow);
                 break;
             case Year:
                 persCal.set(Calendar.YEAR, persCal.get(Calendar.YEAR) + afterNow);

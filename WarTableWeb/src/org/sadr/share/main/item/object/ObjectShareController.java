@@ -1,5 +1,6 @@
 package org.sadr.share.main.item.object;
 
+import org.hibernate.criterion.Restrictions;
 import org.sadr._core._type.TtDataType;
 import org.sadr._core._type.TtRestrictionOperator;
 import org.sadr._core.meta.annotation.PersianName;
@@ -10,6 +11,7 @@ import org.sadr._core.utils.JsonBuilder;
 import org.sadr._core.utils.ParsCalendar;
 import org.sadr._core.utils.Searchee;
 import org.sadr._core.utils._type.TtSearcheeStrategy;
+import org.sadr.share.main._utils.ShareUtils;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.propertor.PropertorInWeb;
 import org.sadr.web.main._core.propertor._type.TtPropertorInWebList;
@@ -22,9 +24,9 @@ import org.sadr.web.main._core.utils.Referer;
 import org.sadr.web.main._core.utils._type.TtIsonStatus;
 import org.sadr.web.main._core.utils._type.TtNotice;
 import org.sadr.web.main.archive.file.file.File;
+import org.sadr.web.main.archive.file.file.FileService;
 import org.sadr.web.main.system._type.TtTaskActionStatus;
 import org.sadr.web.main.system._type.TtTaskActionSubType;
-import org.sadr.web.main.system.irror.irror.IrrorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -53,11 +55,12 @@ public class ObjectShareController extends GenericControllerImpl<Object, ObjectS
     public ObjectShareController() {
     }
 
-    private IrrorService irrorService;
+
+    private FileService fileService;
 
     @Autowired
-    public void setIrrorService(IrrorService irrorService) {
-        this.irrorService = irrorService;
+    public void setFileService(FileService fileService) {
+        this.fileService = fileService;
     }
 
     //=========================== create
@@ -78,12 +81,20 @@ public class ObjectShareController extends GenericControllerImpl<Object, ObjectS
                                 HttpServletRequest request,
                                 @RequestParam(value = "attachment", required = false) MultipartFile attachment,
                                 final RedirectAttributes redirectAttributes) {
-        if (objBindingResult.hasErrors()) {
-            return Referer.redirectBindingError(TtTaskActionSubType.New_Data, TtTaskActionStatus.Error, request, redirectAttributes, objBindingResult, fObj);
-        }
+//        if (objBindingResult.hasErrors()) {
+//            return Referer.redirectBindingError(TtTaskActionSubType.New_Data, TtTaskActionStatus.Error, request, redirectAttributes, objBindingResult, fObj);
+//        }
+
+//        if (this.service.isExist(
+//                Restrictions.eq(Object.NAME, fObj.getName()))) {
+//            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.object.name.exist", TtNotice.Warning)));
+//            return Referer.redirectObjects(TtTaskActionSubType.New_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
+//        }
 
         if (attachment != null && attachment.getSize() > 0) {
             if (!attachment.getOriginalFilename().endsWith(".model")) {
+//            if (!attachment.getOriginalFilename().endsWith(".obj")
+//            && !attachment.getOriginalFilename().endsWith(".fbx")) {
                 Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.object.upload.format.invalid", TtNotice.Danger)));
                 return Referer.redirectObject(request, redirectAttributes, fObj);
             }
@@ -92,18 +103,53 @@ public class ObjectShareController extends GenericControllerImpl<Object, ObjectS
                 Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.model.upload.max.size.exceed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
                 return Referer.redirectObject(request, redirectAttributes, fObj);
             }
+            if (attachment.getSize() > 1024 * 1024 * PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize)) {
+                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.model.upload.max.size.exceed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
+                return Referer.redirectObject(request, redirectAttributes, fObj);
+            }
 
-            File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath));
-            //
-            fObj.setFileName(upload.getOrginalName());
+            File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadMapPath));
+
+            if (upload == null) {
+                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.model.upload.failed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
+                return Referer.redirectObject(request, redirectAttributes, fObj);
+            }
+
+            Object object = ShareUtils.uploadObject(upload.getOrginalName(), fObj.getArea(), null);
+
+
+            if (this.service.isExist(Restrictions.eq(Object.NAME, object.getName()))) {
+                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.model.name.is.exist", TtNotice.Danger, object.getName())));
+                return Referer.redirectObject(request, redirectAttributes, fObj);
+            }
+
+            if (this.service.isExist(Restrictions.eq(Object.FILE_NAME, object.getFileName()))) {
+                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.model.fileName.is.exits", TtNotice.Danger, object.getFileName())));
+                return Referer.redirectObject(request, redirectAttributes, fObj);
+            }
+
+            object.setFileName(upload.getDirectoryRelativePath() + upload.getOrginalName());
+
+            object.setFileId(upload.getId());
+
+            object.setUploadDateTime(ParsCalendar.getInstance().getShortDateTime());
+            this.service.save(object);
+
+            String modelPath = object.getModelPath();
+            if (modelPath.lastIndexOf("/") != -1) {
+                upload.setDirectoryAbsolutePath(modelPath.substring(0, modelPath.lastIndexOf("/")));
+                upload.setOrginalName(modelPath.substring(modelPath.lastIndexOf("/") + 1));
+                this.fileService.update(upload);
+            }
+
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.object.register.success", TtNotice.Success)));
+            return Referer.redirect(_PANEL_URL + "/create", TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
+
+        } else {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.object.file.null", TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.New_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
         }
 
-        fObj.setUploadDateTime(ParsCalendar.getInstance().getShortDateTime());
-        this.service.save(fObj);
-
-
-        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.object.register.success", TtNotice.Success)));
-        return Referer.redirect(_PANEL_URL + "/edit/" + fObj.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
     }
 
     //=========================== edit
@@ -128,8 +174,8 @@ public class ObjectShareController extends GenericControllerImpl<Object, ObjectS
 
         model.addAttribute(dbObj);
         model.addAttribute("objectPath",
-                dbObj.getFileName() == null || dbObj.getFileName().isEmpty() ? null :
-                        PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath) + "/object/" + dbObj.getFileName()
+                dbObj.getModelPath() == null || dbObj.getFileName().isEmpty() ? null :
+                        "/panel/file/dl/" + dbObj.getFileId()
         );
         return TtTile___.p_service_object_edit.___getDisModel(_PANEL_URL + "/edit", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
     }
@@ -142,16 +188,16 @@ public class ObjectShareController extends GenericControllerImpl<Object, ObjectS
             HttpServletRequest request,
             @RequestParam(value = "attachment", required = false) MultipartFile attachment,
             RedirectAttributes redirectAttributes) {
-
-        if (suBindingResult.hasErrors()) {
-            return Referer.redirectBindingError(
-                    TtTaskActionSubType.Edit_Data,
-                    TtTaskActionStatus.Error,
-                    request,
-                    redirectAttributes,
-                    suBindingResult,
-                    fObj);
-        }
+//
+//        if (suBindingResult.hasErrors()) {
+//            return Referer.redirectBindingError(
+//                    TtTaskActionSubType.Edit_Data,
+//                    TtTaskActionStatus.Error,
+//                    request,
+//                    redirectAttributes,
+//                    suBindingResult,
+//                    fObj);
+//        }
 
         Object dbObj;
 
@@ -169,30 +215,38 @@ public class ObjectShareController extends GenericControllerImpl<Object, ObjectS
                     fObj);
         }
 
+//        if (this.service.isDuplicateWith(
+//                Restrictions.eq(Object.NAME, fObj.getName()), dbObj.getId())) {
+//            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.object.name.exist", TtNotice.Warning)));
+//            return Referer.redirectObjects(TtTaskActionSubType.New_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
+//        }
 
-        if (attachment != null) {
-            if (attachment.getSize() > 0) {
-                if (!attachment.getOriginalFilename().endsWith(".model")) {
-                    Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.object.upload.format.invalid", TtNotice.Danger)));
-                    return Referer.redirectObject(request, redirectAttributes, fObj);
-                }
+//        if (attachment != null) {
+//            if (attachment.getSize() > 0) {
+//                //            if (!attachment.getOriginalFilename().endsWith(".model")) {
+//                if (!attachment.getOriginalFilename().endsWith(".obj")
+//                        && !attachment.getOriginalFilename().endsWith(".fbx")) {
+//                    Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.object.upload.format.invalid", TtNotice.Danger)));
+//                    return Referer.redirectObject(request, redirectAttributes, fObj);
+//                }
+//
+//                if (attachment.getSize() > 1024 * 1024 * PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize)) {
+//                    Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.model.upload.max.size.exceed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
+//                    return Referer.redirectObject(request, redirectAttributes, fObj);
+//                }
+//
+//                File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadMapPath));
+//
+//                dbObj.setFileName(upload.getDirectoryRelativePath() + upload.getOrginalName());
+//                dbObj.setFileId(upload.getId());
+//            }
+//        } else {
+//            dbObj.setFileName(null);
+//        }
 
-                if (attachment.getSize() > 1024 * 1024 * PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize)) {
-                    Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.model.upload.max.size.exceed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
-                    return Referer.redirectObject(request, redirectAttributes, fObj);
-                }
-
-                File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath));
-                //
-                dbObj.setFileName(upload.getOrginalName());
-            }
-        } else {
-            dbObj.setFileName(null);
-        }
-
-        dbObj.setName(fObj.getName());
-        dbObj.setDescription(fObj.getDescription());
-        dbObj.setCategory(fObj.getCategory());
+//        dbObj.setName(fObj.getName());
+//        dbObj.setDescription(fObj.getDescription());
+//        dbObj.setCategory(fObj.getCategory());
         dbObj.setArea(fObj.getArea());
 
         this.service.update(dbObj);
@@ -215,13 +269,15 @@ public class ObjectShareController extends GenericControllerImpl<Object, ObjectS
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         Object.NAME
                 );
 
         GB.searchTableColumns(model,
                 Object.class,
                 GB.col(Object.ID),
+                GB.col(Object.CREATE_DATE_TIME),
+                GB.col(Object.MODIFY_DATE_TIME),
                 GB.col(Object.UPLOAD_DATE_TIME),
                 GB.col(Object.NAME),
                 GB.col(Object.AREA),
@@ -240,10 +296,15 @@ public class ObjectShareController extends GenericControllerImpl<Object, ObjectS
         GB gb = GB.init(Object.class)
                 .set(
                         Object.NAME,
+                        Object.CREATE_DATE_TIME,
+                        Object.MODIFY_DATE_TIME,
                         Object.AREA,
                         Object.CATEGORY,
                         Object.UPLOAD_DATE_TIME,
-                        Object.SIZE
+                        Object.SIZE,
+                        Object.DESCRIPTION,
+                        Object.FILE_NAME,
+                        Object.PRIVACY
 
                 )
                 .setSearchParams(ajaxParam);
@@ -253,6 +314,8 @@ public class ObjectShareController extends GenericControllerImpl<Object, ObjectS
             JB jb = JB.init()
                     .set(
                             Object.NAME,
+                            Object.CREATE_DATE_TIME,
+                            Object.MODIFY_DATE_TIME,
                             Object.AREA,
                             Object.CATEGORY,
                             Object.UPLOAD_DATE_TIME,
@@ -268,7 +331,7 @@ public class ObjectShareController extends GenericControllerImpl<Object, ObjectS
         }
         gb.setIxportParams(ixportParam);
         return Ixporter.init(Object.class)
-                .exportToFileInList(this.service.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
+                .exportToFileInList(this.service.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IncludeSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
     }
 
     //=========================== preview
@@ -291,7 +354,7 @@ public class ObjectShareController extends GenericControllerImpl<Object, ObjectS
 
         model.addAttribute("objectPath",
                 dbObj.getFileName() == null || dbObj.getFileName().isEmpty() ? null :
-                        PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath) + "/object/" + dbObj.getFileName()
+                        "/panel/file/dl/" + dbObj.getFileId()
         );
         model.addAttribute(dbObj);
 

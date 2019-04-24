@@ -273,7 +273,8 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         this.service.save(fuser);
 
         Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.register.success", fuser.getSecretNote(), TtNotice.Success)));
-        return Referer.redirect(_PANEL_URL + "/edit/" + fuser.getIdi(), TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Success, notice2s);
+        return Referer.redirect(_PANEL_URL + "/create", TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Success, notice2s);
+//        return Referer.redirect(_PANEL_URL + "/edit/" + fuser.getIdi(), TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Success, notice2s);
     }
 
     //=========================== edit
@@ -492,7 +493,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         }
 
         User dbuser;
-        dbuser = this.service.findById(fuser.getId());
+        dbuser = this.service.findById(fuser.getId(),User._TASKS,User._USER_GROUPS);
         if (dbuser == null) {
             Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found")));
             return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
@@ -709,19 +710,19 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.Like_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         User.USERNAME)
 
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.Like_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         User.FIRST_NAME)
 
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.Like_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         User.LAST_NAME);
 
         GB.searchTableColumns(model,
@@ -802,21 +803,21 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.Like_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         User.USERNAME
                 )
 
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.Like_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         User.FIRST_NAME
                 )
 
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.Like_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         User.LAST_NAME
                 );
 
@@ -926,19 +927,19 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.Like_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         User.USERNAME)
 
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.Like_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         User.FIRST_NAME)
 
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.Like_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         User.LAST_NAME);
 
         GB.searchTableColumns(model,
@@ -1424,7 +1425,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
 
 
         uatt = this.userAttemptService.findBy(Restrictions.and(
-                Restrictions.eq(UserAttempt.COMPUTER_SIGNATURE, InetAddress.getLocalHost().getHostAddress()),
+                Restrictions.eq(UserAttempt.COMPUTER_SIGNATURE, request.getRemoteAddr()),
                 Restrictions.isNull(UserAttempt._USER),
                 Restrictions.eq(UserAttempt.ATTEMPT_TYPE, TtUserAttemptType.Signin)));
 
@@ -1524,14 +1525,14 @@ public class UserController extends GenericControllerImpl<User, UserService> {
             switch (user.getIpRangeType()) {
                 case FirstSignin:
                     if (user.getIpAddressFirstSignin() != null
-                            && !user.getIpAddressFirstSignin().equals(InetAddress.getLocalHost().getHostAddress())) {
+                            && !user.getIpAddressFirstSignin().equals(request.getRemoteAddr())) {
                         Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.ip.is.not.allowed", user.getSecretNote(), TtNotice.Danger)));
                         SessionListener.invalidate(user.getId());
                         return Referer.redirect("/signin", TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure, notice2s);
                     }
                     break;
                 case One:
-                    if (user.getIpAddress() != InetAddress.getLocalHost().getHostAddress()) {
+                    if (user.getIpAddress() != request.getRemoteAddr()) {
                         Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.ip.is.not.allowed", user.getSecretNote(), TtNotice.Danger)));
                         SessionListener.invalidate(user.getId());
                         return Referer.redirect("/signin", TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure, notice2s);
@@ -1540,7 +1541,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                 case All:
                     break;
                 case Range:
-                    String ipp = InetAddress.getLocalHost().getHostAddress();
+                    String ipp = request.getRemoteAddr();
                     if (ipp != null
                             && user.getIpAddressEnd() != null
                             && user.getIpAddressStart() != null) {
@@ -1597,7 +1598,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         //=================================================== set first ip address
 
         if (user.getIpRangeType() == TtUserIpRangeType.FirstSignin && user.getIpAddressFirstSignin() == null) {
-            user.setIpAddressFirstSignin(InetAddress.getLocalHost().getHostAddress());
+            user.setIpAddressFirstSignin(request.getRemoteAddr());
         }
         //------------------------------------------------------------------------
 

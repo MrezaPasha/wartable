@@ -6,7 +6,8 @@ package org.sadr.web.main.system._type;
 public enum TtRegisteryType {
 
     Ixport("ixport", "خروجی گزارش"),
-    Backup("backup", "پشتیبانی"),;
+    Backup("backup", "پشتیبانی"),
+    ;
 
     private final String key;
     private final String title;

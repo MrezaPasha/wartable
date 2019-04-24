@@ -68,13 +68,13 @@ public class LogController extends GenericControllerImpl<Log, LogService> {
                 )
 
                 .setAttribute(
-                        TtDataType.String,
+                        TtDataType.DateTime,
                         TtRestrictionOperator.GreaterEqual,
                         TtSearcheeStrategy.Normal,
                         Log.CREATE_DATE_TIME)
 
                 .setAttribute(
-                        TtDataType.String,
+                        TtDataType.DateTime,
                         TtRestrictionOperator.LessEqual,
                         TtSearcheeStrategy.Normal,
                         Log.CREATE_DATE_TIME)

@@ -50,7 +50,7 @@
                             <span class="title"></span>
                         </a>
                     </li>
-                    <li class="tooltips" data-original-title="<spring:message  code="users.list"/>" data-placement="bottom">
+                    <li class="tooltips" title="<spring:message  code="users.list"/>" data-placement="bottom">
                         <a href="${_url}/list" class="btn btn-default btn-block btn-act">
                             <i class="clip-list light"></i>
                             <span class="title"></span>
@@ -103,7 +103,7 @@
                                         </c:forEach>
                                     </td>
                                     <td class="btn-tools">
-                                        <a href="${_url}/access/${user.id}/${myvar.id}" class="btn btn-sm btn-l-edit tooltips " data-placement="top" data-original-title="<spring:message code="user.access.submit"/> ">
+                                        <a href="${_url}/access/${user.id}/${myvar.id}" class="btn btn-sm btn-l-edit" data-placement="top" title="<spring:message code="user.access.submit"/> ">
                                             <i class="fa fa-edit"></i>
                                         </a>
                                     </td>

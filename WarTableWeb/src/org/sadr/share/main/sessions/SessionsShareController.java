@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author masoud
  */
 @RestController
-@PersianName("***")
+@PersianName("مدیریت نشست ها")
 public class SessionsShareController extends GenericControllerImpl<Sessions, SessionsShareService> {
 
     ////////////////////

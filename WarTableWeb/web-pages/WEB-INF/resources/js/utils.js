@@ -202,7 +202,7 @@
             number: "<input class='bootbox-input bootbox-input-number form-control' autocomplete=off type='number' />",
             password: "<input class='bootbox-input bootbox-input-password form-control' autocomplete='off' type='password' />"
         }
-    }, o = {locale: "en", backdrop: "static", animate: !0, className: null, closeButton: !0, show: !0, container: "body"}, p = {};
+    }, o = {locale: "fa", backdrop: "static", animate: !0, className: null, closeButton: !0, show: !0, container: "body"}, p = {};
     p.alert = function () {
         var a;
         if (a = k("alert", ["ok"], ["message", "callback"], arguments), a.callback && !b.isFunction(a.callback))
@@ -332,7 +332,7 @@
         da: {OK: "OK", CANCEL: "Annuller", CONFIRM: "Accepter"},
         de: {OK: "OK", CANCEL: "Abbrechen", CONFIRM: "Akzeptieren"},
         el: {OK: "Εντάξει", CANCEL: "Ακύρωση", CONFIRM: "Επιβεβαίωση"},
-        en: {OK: "OK", CANCEL: "Cancel", CONFIRM: "OK"},
+        en: {OK: "OK", CANCEL: "Cancel", CONFIRM: "Confirm"},
         es: {OK: "OK", CANCEL: "Cancelar", CONFIRM: "Aceptar"},
         et: {OK: "OK", CANCEL: "Katkesta", CONFIRM: "OK"},
         fa: {OK: "قبول", CANCEL: "لغو", CONFIRM: "تایید"},

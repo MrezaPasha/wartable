@@ -312,7 +312,7 @@ Searchee.init(, model)
 .setAttribute(
                 TtDataType.String,
                 TtRestrictionOperator.ILike_ANY,
-TtSearcheeStrategy.IgnoreWhiteSpaces,
+TtSearcheeStrategy.Normal,
                 Room_ServiceUser._SERVICE_USER,
                 ServiceUser.USERNAME
         )

@@ -26,14 +26,21 @@
         </div>
         <div class="tab-content three-container"
              i-three-mode="2"
-             i-three-name="male"
+             i-three-name="${object.fileName}"
              i-three-object="${objectPath}"
+
         >
         </div>
     </div>
 </div>
-
 <script type="text/javascript" src="${cp}/resources-p/plugins/3d/three.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/OBJLoader.js"></script>
+
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/TrackballControls.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/MTLLoader.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/dat.gui.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/LoaderSupport.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/OBJLoader2.js"></script>
 
 <script type="text/javascript" src="${cp}/resources-p/plugins/3d/inflate.min.js"></script>
 <script type="text/javascript" src="${cp}/resources-p/plugins/3d/FBXLoader.js"></script>

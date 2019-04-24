@@ -45,15 +45,9 @@
             </div>
             <div class="well well-act">
                 <ul class="disabled-li margin-bottom xs-center-ul">
-                    <li class="tooltips" data-original-title="<spring:message code="users.userGroup"/>" data-placement="bottom">
+                    <li class="tooltips" title="<spring:message code="users.userGroup"/>" data-placement="bottom">
                         <a href="${_url}/desk" class="btn btn-default btn-block btn-act">
                             <i class="clip-tree"></i>
-                            <span class="title"></span>
-                        </a>
-                    </li>
-                    <li class="tooltips" data-original-title=" <spring:message code="all.reload"/>" data-placement="bottom">
-                        <a href="${_url}/list/${userGroup.id}" class="btn btn-default btn-block btn-act">
-                            <i class=" clip-refresh light"></i>
                             <span class="title"></span>
                         </a>
                     </li>
@@ -90,7 +84,7 @@
                                         </c:forEach>
                                     </td>
                                     <td>
-                                        <a href="${_url}/access/${userGroup.id}/${myvar.id}" class="btn btn-sm btn-l-edit tooltips " data-placement="top" data-original-title="<spring:message code="user.access.submit"/> ">
+                                        <a href="${_url}/access/${userGroup.id}/${myvar.id}" class="btn btn-sm btn-l-edit" data-placement="top" title="<spring:message code="user.access.submit"/> ">
                                             <i class="fa fa-edit"></i>
                                         </a>
                                     </td>

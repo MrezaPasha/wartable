@@ -213,7 +213,7 @@ public class ServiceUserShareControllerTest extends AbstractContextControllerTes
                 )
                 .andDo(print())
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrlPattern(_PANEL_URL + "/edit/*"))
+                .andExpect(redirectedUrl(_PANEL_URL + "/create"))
                 .andExpect(flash().attributeExists("notice"))
         ;
 
@@ -437,7 +437,7 @@ public class ServiceUserShareControllerTest extends AbstractContextControllerTes
                 )
                 .andDo(print())
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrlPattern(_PANEL_URL + "/edit/*"))
+                .andExpect(redirectedUrl(_PANEL_URL + "/create"))
                 .andExpect(flash().attributeExists("notice"))
                 .andReturn();
 
@@ -475,5 +475,15 @@ public class ServiceUserShareControllerTest extends AbstractContextControllerTes
 
     }
     //............................. pActiveRoomTest_accessTo  #
+
+
+ //#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=# pExitFromOnlineRoomTest  #
+    //============================= pExitFromOnlineRoomTest_accessTo  #
+@Test
+    public void pExitFromOnlineRoomTest_accessTo() throws Exception {
+        //--- EMPTY_TEST 
+
+    }
+   //............................. pExitFromOnlineRoomTest_accessTo  #
 
 }

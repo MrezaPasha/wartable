@@ -205,6 +205,7 @@ var CustomPanelJs = function () {
         }
     };
     var run3DxLoader = function () {
+        debugger;
         var parentContainer = $("[i-three-object]");
         parentContainer.attr("id", "idX1212x")
         var _mode = parentContainer.attr("i-three-mode");
@@ -212,7 +213,8 @@ var CustomPanelJs = function () {
         var _textureSrc = parentContainer.attr("i-three-texture");
         var _materialSrc = parentContainer.attr("i-three-material");
         var _modelName = parentContainer.attr("i-three-name");
-        var isFbx = _objectSrc.indexOf(".fbx") != -1;
+        var isFbx = _modelName.indexOf(".fbx") != -1;
+
         parentContainer.removeAttr("i-three-object")
             .removeAttr("i-three-texture")
             .removeAttr("i-three-material")

@@ -25,7 +25,7 @@ public class Searchee {
         this.
             model.
             addAttribute("securityTags",
-            TtSecurityTag.values());
+                TtSecurityTag.values());
     }
 
     Class<?> clazz;
@@ -69,6 +69,10 @@ public class Searchee {
     }
 
     public Searchee setAttribute(TtDataType dataType, TtRestrictionOperator operator, TtSearcheeStrategy strategy, String... fields) {
+        return setAttribute(dataType, operator, strategy, null, fields);
+    }
+
+    public Searchee setAttribute(TtDataType dataType, TtRestrictionOperator operator, TtSearcheeStrategy strategy, Object value, String... fields) {
         List<String[]> map;
         if (model.containsAttribute("searchInputs")) {
             map = (List<String[]>) model.asMap().get("searchInputs");
@@ -115,6 +119,10 @@ public class Searchee {
                     dataType.getBrifKey() + "\",\"" +
                     operator.getToken() + "\"," +
                     (strategy == TtSearcheeStrategy.IgnoreWhiteSpaces) + "]",
+                dataType.getBrifKey(),
+                "" + (strategy == TtSearcheeStrategy.HiddenAutoFill),  // boolean for hidden field
+                value != null ? value.toString() : "",  // default value of field
+                "" + (strategy == TtSearcheeStrategy.HiddenAutoFill)  // set this field to search query on loading of form
             }
 
         );

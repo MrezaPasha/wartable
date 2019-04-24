@@ -100,7 +100,7 @@ public class UserControllerTest extends AbstractContextControllerTests {
                 )
                 .andDo(print())
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrlPattern(_PANEL_URL + "/edit/*"))
+                .andExpect(redirectedUrl(_PANEL_URL + "/create"))
                 .andExpect(flash().attributeExists("notice"))
         ;
 
@@ -220,7 +220,7 @@ public class UserControllerTest extends AbstractContextControllerTests {
                 )
                 .andDo(print())
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrlPattern(_PANEL_URL + "/edit/*"))
+//                .andExpect(redirectedUrlPattern(_PANEL_URL + "/edit/*"))
                 .andExpect(flash().attributeExists("notice"))
         ;
 
@@ -571,7 +571,7 @@ public class UserControllerTest extends AbstractContextControllerTests {
                 )
                 .andDo(print())
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrlPattern(_PANEL_URL + "/edit/*"))
+                .andExpect(redirectedUrl(_PANEL_URL + "/create"))
                 .andExpect(flash().attributeExists("notice"))
                 .andReturn();
 

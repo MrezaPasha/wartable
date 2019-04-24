@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class IrrorControllerTest extends AbstractContextControllerTests {
 
  ////////////////////
- private final String _PANEL_URL = "/panel/irror";
+ private final String _PANEL_URL = "/panel/e";
 
 
  //#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=# pListTest  #

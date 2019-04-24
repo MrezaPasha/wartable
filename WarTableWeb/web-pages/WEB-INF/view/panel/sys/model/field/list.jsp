@@ -81,7 +81,7 @@
                                 <td>${myvar.dbSize}</td>
                                 <td class="center">
                                     <div class="visible-md visible-lg hidden-sm hidden-xs r-button">
-                                        <a href="${_url}/details/${myvar.id}" class="btn btn-sm btn-l-details tooltips " data-placement="top" data-original-title="جزئیات">
+                                        <a href="${_url}/details/${myvar.id}" class="btn btn-sm btn-l-details" data-placement="top" data-original-title="جزئیات">
                                             <i class="clip-flickr"></i>
                                         </a>
                                     </div>

@@ -1,6 +1,7 @@
 package org.sadr.share.main.item.object;
 
 import org.sadr.web.config.WebConfig;
+import org.sadr.web.main.archive.file.file.FileConfig;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -25,6 +26,7 @@ public class ObjectShareConfig extends WebConfig {
     public ObjectShareController objectShareController() {
         ObjectShareController uc = new ObjectShareController();
         uc.setService(objectShareServiceImp());
+        uc.setFileService(new FileConfig().fileServiceImp());
         return uc;
     }
 }

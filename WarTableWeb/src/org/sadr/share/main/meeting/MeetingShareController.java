@@ -1,5 +1,6 @@
 package org.sadr.share.main.meeting;
 
+import org.hibernate.criterion.Restrictions;
 import org.sadr._core._type.TtDataType;
 import org.sadr._core._type.TtRestrictionOperator;
 import org.sadr._core.meta.annotation.PersianName;
@@ -7,11 +8,21 @@ import org.sadr._core.meta.generic.GB;
 import org.sadr._core.meta.generic.GenericControllerImpl;
 import org.sadr._core.meta.generic.JB;
 import org.sadr._core.utils.JsonBuilder;
+import org.sadr._core.utils.OutLog;
+import org.sadr._core.utils.RePa;
 import org.sadr._core.utils.Searchee;
 import org.sadr._core.utils._type.TtSearcheeStrategy;
+import org.sadr.share.main.Room_Map.Room_Map;
+import org.sadr.share.main.meetingSetting.MeetingSetting;
+import org.sadr.share.main.meetingSetting.MeetingSettingService;
+import org.sadr.share.main.meetingSetting.MeetingSettingShareService;
+import org.sadr.share.main.privateTalk.PrivateTalk;
+import org.sadr.share.main.privateTalk.PrivateTalkShareService;
 import org.sadr.share.main.room.Room;
 import org.sadr.share.main.room.RoomShareService;
+import org.sadr.share.main.roomServiceUser.Room_ServiceUser;
 import org.sadr.web.main._core._type.TtTile___;
+import org.sadr.web.main._core.meta.annotation.TaskAccessLevel;
 import org.sadr.web.main._core.tools._type.TtIxportRowIndex;
 import org.sadr.web.main._core.tools._type.TtIxportSubStrategy;
 import org.sadr.web.main._core.tools._type.TtIxportTtStrategy;
@@ -35,13 +46,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author masoud
  */
 @RestController
-@PersianName("***")
+@PersianName("مدیریت جلسات")
 public class MeetingShareController extends GenericControllerImpl<Meeting, MeetingShareService> {
 
     ////////////////////
@@ -52,6 +67,18 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
     }
 
     private RoomShareService roomShareService;
+    private PrivateTalkShareService privateTalkShareService;
+    private MeetingSettingShareService meetingSettingShareService;
+
+    @Autowired
+    public void setMeetingSettingShareService(MeetingSettingShareService meetingSettingShareService) {
+        this.meetingSettingShareService = meetingSettingShareService;
+    }
+
+    @Autowired
+    public void setPrivateTalkShareService(PrivateTalkShareService privateTalkShareService) {
+        this.privateTalkShareService = privateTalkShareService;
+    }
 
     @Autowired
     public void setRoomShareService(RoomShareService roomShareService) {
@@ -160,7 +187,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
     @RequestMapping(value = _PANEL_URL + "/details/{id}")
     public ModelAndView pDetails(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
 
-        Meeting dbObj = this.service.findById(id, Meeting._ROOM);
+        Meeting dbObj = this.service.findById(id, Meeting._ROOM, RePa.p__(Meeting._CURRENT_ROOM_MAP, Room_Map._ROOM, Room._ROOM_SERVICEUSERS, Room_ServiceUser._SERVICE_USER));
         if (dbObj == null) {
             Notice2[] noteIds = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.meeting.not.found", JsonBuilder.toJson("meetingId", "" + id), TtNotice.Warning));
             return Referer.redirect(
@@ -183,14 +210,14 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         Meeting.NAME
                 )
 
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         Meeting._ROOM,
                         Searchee.field(Room.ROOM_NAME, Room.class)
 
@@ -248,25 +275,278 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
         return Ixporter.init(Meeting.class)
                 .exportToFileInList(this.service.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
     }
-//=========================== Trash
-   /* @PersianName("حذف")
-    @RequestMapping(value = _PANEL_URL + "/trash/{id}")
-    public @ResponseBody
-    ResponseEntity<String> pTrash(@PathVariable("id") long id) {
 
-        Meeting dbObj = this.service.findById(id);
+    //#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#  PRIVATE TALK
+
+    @PersianName("فایل صوت تماس خصوصی")
+    @RequestMapping(_PANEL_URL + "/talk/sound/{id}")
+    @ResponseBody
+    public void fTalkDownloadSourceById(
+            @PathVariable("id") long id,
+            HttpServletResponse response) throws IOException {
+
+        PrivateTalk talk = privateTalkShareService.findById(id);
+
+        if(talk==null){
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        Path fpath = Paths.get(talk.getSoundPath());
+        if (Files.exists(fpath)) {
+            OutLog.pl("");
+            response.setContentType("audio/x-ms-wma");
+            response.addHeader("Content-Disposition", "attachment; filename=" +talk.getFileName());
+            try {
+                Files.copy(fpath, response.getOutputStream());
+                response.getOutputStream().flush();
+            } catch (IOException ex) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            }
+        }
+    }
+    //=========================== details private talk
+    @PersianName("جزئیات تماس خصوصی")
+    @RequestMapping(value = _PANEL_URL + "/talk/details/{uid}")
+    public ModelAndView pTalkDetails(Model model, @PathVariable("uid") long uid,
+                                     RedirectAttributes redirectAttributes) {
+
+
+        PrivateTalk dbObj = this.privateTalkShareService.findById(uid, PrivateTalk._SERVICE_USERS, PrivateTalk._MEETING, PrivateTalk._JOINED_USERS, PrivateTalk._REQUEST_USER);
+
         if (dbObj == null) {
-            return Ison.init(TtTaskActionSubType.Delete_From_DB, TtTaskActionStatus.Failure)
-                    .setStatus(TtIsonStatus.Nok)
-                    .setMessages(new Notice2("N.meeting.not.found", JsonBuilder.toJson("meetingId", "" + id)))
+            Notice2[] noteIds = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.talk.not.found", JsonBuilder.toJson("talkId", "" + uid), TtNotice.Warning));
+            return Referer.redirect(
+                    _PANEL_URL + "/list",
+                    TtTaskActionSubType.Take_Report,
+                    TtTaskActionStatus.Failure,
+                    noteIds);
+        }
+
+        model.addAttribute(dbObj);
+
+        File f = new File("D:\\_proji_sadr\\ftp\\voice\\001.mp3");
+
+        model.addAttribute("file", f);
+
+        return TtTile___.p_service_meeting_talk_details.___getDisModel(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
+    }
+
+    //=========================== list talk
+    @PersianName("لیست تماس های خصوصی")
+    @RequestMapping(value = _PANEL_URL + "/talk/list/{id}")
+    public ModelAndView pTalkList(Model model, @PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+
+        Meeting meeting = this.service.findById(id);
+        if (meeting == null) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.meeting.not.found", TtNotice.Warning)));
+            return Referer.redirect("/panel/meeting/list", TtTaskActionSubType.Take_Report, TtTaskActionStatus.Failure, notice2s);
+        }
+
+        Searchee.init(PrivateTalk.class, model)
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.ILike_ANY,
+                        TtSearcheeStrategy.Normal,
+                        PrivateTalk.FILE_NAME)
+                .setAttribute(
+                        TtDataType.Long,
+                        TtRestrictionOperator.Equal,
+                        TtSearcheeStrategy.HiddenAutoFill,
+                        id,
+                        PrivateTalk._MEETING,
+                        Searchee.field(Meeting.ID, Meeting.class)
+
+                );
+
+        GB.searchTableColumns(model,
+                PrivateTalk.class,
+                GB.col(PrivateTalk.ID),
+                GB.col(PrivateTalk.START_DATE_TIME),
+                GB.col(PrivateTalk.END_DATE_TIME),
+                GB.col(PrivateTalk.FILE_NAME),
+                GB.col(PrivateTalk.SIZE),
+                GB.col(PrivateTalk.STATUS)
+
+        );
+
+        model.addAttribute(meeting);
+
+        return TtTile___.p_service_meeting_talk_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
+    }
+
+    @RequestMapping(value = _PANEL_URL + "/talk/list", method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseEntity<String> pTalkList(@RequestParam(value = "ap", required = false) String ajaxParam,
+                                     @RequestParam(value = "ixp", required = false) String ixportParam,
+                                     HttpServletResponse response) throws IOException {
+
+        GB gb = GB.init(PrivateTalk.class)
+                .set(
+                        PrivateTalk.END_DATE_TIME,
+                        PrivateTalk.START_DATE_TIME,
+                        PrivateTalk.FILE_NAME,
+                        PrivateTalk.SIZE,
+                        PrivateTalk.STATUS
+
+                )
+                .setSearchParams(ajaxParam);
+
+        if (ixportParam == null) {
+
+            JB jb = JB.init()
+                    .set(
+                            PrivateTalk.END_DATE_TIME,
+                            PrivateTalk.START_DATE_TIME,
+                            PrivateTalk.FILE_NAME,
+                            PrivateTalk.SIZE,
+                            PrivateTalk.STATUS
+                    );
+
+            String jSearch = this.privateTalkShareService.findAllJson(gb, jb);
+
+            return Ison.init(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success)
+                    .setStatus(TtIsonStatus.Ok)
+                    .setPropertySearch(jSearch)
                     .toResponse();
         }
-        String name = dbObj.getValue();
-        this.service.trash(id);
+        gb.setIxportParams(ixportParam);
+        return Ixporter.init(Room_Map.class)
+                .exportToFileInList(this.privateTalkShareService.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IncludeSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
 
-        return Ison.init(TtTaskActionSubType.Delete_From_DB, TtTaskActionStatus.Success)
-                .setStatus(TtIsonStatus.Ok)
-                .setMessages(new Notice2("N1.all.trash.success", TtNotice.Success, name))
-                .toResponse();
-    }*/
+    }
+
+    //#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#  MEETING SETTING
+
+    @PersianName("فایل صوت مکالمات")
+    @RequestMapping(_PANEL_URL + "/setting/sound/{id}")
+    @ResponseBody
+    public void fSettingDownloadSourceById(
+            @PathVariable("id") long id,
+            HttpServletResponse response) throws IOException {
+
+        MeetingSetting setting = meetingSettingShareService.findById(id);
+
+        if(setting==null){
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        Path fpath = Paths.get(setting.getSoundPath());
+        if (Files.exists(fpath)) {
+            OutLog.pl("");
+            response.setContentType("audio/x-ms-wma");
+            response.addHeader("Content-Disposition", "attachment; filename=" +setting.getSoundRecFileName());
+            try {
+                Files.copy(fpath, response.getOutputStream());
+                response.getOutputStream().flush();
+            } catch (IOException ex) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            }
+        }
+    }
+    //=========================== details meeting setting
+    @PersianName("جزئیات مکالمات")
+    @RequestMapping(value = _PANEL_URL + "/setting/details/{uid}")
+    public ModelAndView pSettingDetails(Model model, @PathVariable("uid") long uid,
+                                        RedirectAttributes redirectAttributes) {
+
+
+        MeetingSetting dbObj = this.meetingSettingShareService.findById(uid, MeetingSetting._MEETING);
+
+        if (dbObj == null) {
+            Notice2[] noteIds = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.setting.not.found", JsonBuilder.toJson("settingId", "" + uid), TtNotice.Warning));
+            return Referer.redirect(
+                    _PANEL_URL + "/list",
+                    TtTaskActionSubType.Take_Report,
+                    TtTaskActionStatus.Failure,
+                    noteIds);
+        }
+
+        model.addAttribute(dbObj);
+        return TtTile___.p_service_meeting_setting_details.___getDisModel(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
+    }
+
+    //=========================== list setting
+    @PersianName("لیست تماس های خصوصی")
+    @RequestMapping(value = _PANEL_URL + "/setting/list/{id}")
+    public ModelAndView pSettingList(Model model, @PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+
+        Meeting meeting = this.service.findById(id);
+        if (meeting == null) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.meeting.not.found", TtNotice.Warning)));
+            return Referer.redirect("/panel/meeting/list", TtTaskActionSubType.Take_Report, TtTaskActionStatus.Failure, notice2s);
+        }
+
+        Searchee.init(MeetingSetting.class, model)
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.ILike_ANY,
+                        TtSearcheeStrategy.Normal,
+                        MeetingSetting.NAME)
+                .setAttribute(
+                        TtDataType.Long,
+                        TtRestrictionOperator.Equal,
+                        TtSearcheeStrategy.HiddenAutoFill,
+                        id,
+                        MeetingSetting._MEETING,
+                        Searchee.field(Meeting.ID, Meeting.class)
+                )
+
+
+        ;
+
+        GB.searchTableColumns(model,
+                MeetingSetting.class,
+                GB.col(MeetingSetting.ID),
+                GB.col(MeetingSetting.START_DATE_TIME),
+                GB.col(MeetingSetting.END_DATE_TIME),
+                GB.col(MeetingSetting.NAME),
+                GB.col(MeetingSetting.SOUND_REC_FILE_NAME),
+                GB.col(MeetingSetting.SOUND_REC_FILE_SIZE)
+        );
+
+        model.addAttribute(meeting);
+
+        return TtTile___.p_service_meeting_setting_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
+    }
+
+    @RequestMapping(value = _PANEL_URL + "/setting/list", method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseEntity<String> pSettingList(@RequestParam(value = "ap", required = false) String ajaxParam,
+                                        @RequestParam(value = "ixp", required = false) String ixportParam,
+                                        HttpServletResponse response) throws IOException {
+
+        GB gb = GB.init(MeetingSetting.class)
+                .set(
+                        MeetingSetting.END_DATE_TIME,
+                        MeetingSetting.START_DATE_TIME,
+                        MeetingSetting.NAME,
+                        MeetingSetting.SOUND_REC_FILE_NAME,
+                        MeetingSetting.SOUND_REC_FILE_SIZE
+
+                )
+                .setSearchParams(ajaxParam);
+
+        if (ixportParam == null) {
+
+            JB jb = JB.init()
+                    .set(
+                            MeetingSetting.END_DATE_TIME,
+                            MeetingSetting.START_DATE_TIME,
+                            MeetingSetting.NAME,
+                            MeetingSetting.SOUND_REC_FILE_NAME,
+                            MeetingSetting.SOUND_REC_FILE_SIZE
+                    );
+
+            String jSearch = this.meetingSettingShareService.findAllJson(gb, jb);
+
+            return Ison.init(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success)
+                    .setStatus(TtIsonStatus.Ok)
+                    .setPropertySearch(jSearch)
+                    .toResponse();
+        }
+        gb.setIxportParams(ixportParam);
+        return Ixporter.init(Room_Map.class)
+                .exportToFileInList(this.meetingSettingShareService.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IncludeSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
+
+    }
 }

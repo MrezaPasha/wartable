@@ -68,19 +68,20 @@
                                         <div class="r-button">
                                             <a
                                                     href="${_url}/room/list/@{id}"
-                                                    class="btn btn-sm btn-l-complete tooltips " data-placement="top"
-                                                    data-original-title="<spring:message code="T.p.service.room.map.list"/> ">
+                                                    class="btn btn-sm btn-l-complete" data-placement="top"
+                                                    title="<spring:message code="T.p.service.map.room.list"/> ">
                                                 <i class="clip-stack-2"></i>
                                             </a>
-                                            <a href="${_url}/edit/@{id}"
-                                               class="btn btn-sm btn-l-edit tooltips " data-placement="top"
-                                               data-original-title="<spring:message code="all.edit"/> ">
-                                                <i class="fa fa-edit"></i>
+                                            <a
+                                                    href="${_url}/layer/list/@{id}"
+                                                    class="btn btn-sm btn-l-assign" data-placement="top"
+                                                    title="<spring:message code="T.p.service.map.layer.list"/> ">
+                                                <i class="clip-stack"></i>
                                             </a>
-                                            <a href="javascript:void(0)" class="btn btn-sm btn-bricky tooltips"
+                                            <a href="javascript:void(0)" class="btn btn-sm btn-bricky"
                                                i-search-body-item-trash-id="@{id}"
                                                i-search-body-item-trash-title="@{name}"
-                                               data-original-title="<spring:message code="all.delete"/> ">
+                                               title="<spring:message code="all.delete"/> ">
                                                 <i class="fa fa-trash-o"></i>
                                             </a>
                                         </div>

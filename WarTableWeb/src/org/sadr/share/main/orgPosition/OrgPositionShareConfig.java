@@ -26,7 +26,6 @@ public class OrgPositionShareConfig extends WebConfig {
     public OrgPositionShareController orgPositionShareController() {
         OrgPositionShareController uc = new OrgPositionShareController();
         uc.setService(orgPositionShareServiceImp());
-        uc.setIrrorService(new IrrorConfig().irrorServiceImp());
         return uc;
     }
 }

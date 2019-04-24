@@ -42,16 +42,16 @@
             <form id="form" accept-charset="UTF-8" action="${action}" method="POST">
                 <form:hidden id="baseErrors_id" path="baseErrors.id"/>
                 <div class="row">
-                    <div class="col-sm-4 col-sm-offset-4">
-                        <div class="form-group">
-                            <c:set var="varName" value="baseErrors.errorValue"/>
-                            <form:label path="${varName}" cssClass="control-label">
-                                <spring:message code="${varName}"/>
-                                <span class="symbol required"></span>
-                                <form:errors cssClass="form-validation-error" path="${varName}"/>
-                            </form:label>
-                            <form:input path="${varName}" cssClass="form-control string-required"/>
-                        </div>
+                    <div class="col-sm-8 col-sm-offset-2">
+                        <%--<div class="form-group">--%>
+                        <%--<c:set var="varName" value="baseErrors.errorValue"/>--%>
+                        <%--<form:label path="${varName}" cssClass="control-label">--%>
+                        <%--<spring:message code="${varName}"/>--%>
+                        <%--<span class="symbol required"></span>--%>
+                        <%--<form:errors cssClass="form-validation-error" path="${varName}"/>--%>
+                        <%--</form:label>--%>
+                        <%--<form:input path="${varName}" cssClass="form-control string-required"/>--%>
+                        <%--</div>--%>
                         <div class="form-group">
                             <c:set var="varName" value="baseErrors.errorDescription"/>
                             <form:label path="${varName}" cssClass="control-label">
@@ -59,7 +59,7 @@
                                 <span class="symbol required"></span>
                                 <form:errors cssClass="form-validation-error" path="${varName}"/>
                             </form:label>
-                            <form:input path="${varName}" cssClass="form-control string-required string-max-30"/>
+                            <form:textarea path="${varName}" cssClass="form-control string-required string-max-100"/>
                         </div>
                     </div>
                 </div>

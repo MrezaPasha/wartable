@@ -47,10 +47,12 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="libs" level="project" />
     <orderEntry type="module" module-name="WarTableDataShare" exported="" />
     <orderEntry type="library" exported="" name="_libs-captcha" level="project" />
     <orderEntry type="library" name="_lib_test" level="project" />
-    <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" name="_lib-share" level="project" />
+    <orderEntry type="library" name="_libs" level="project" />
+    <orderEntry type="library" name="tomcat-juli" level="project" />
+    <orderEntry type="library" name="lib_tomcat" level="application" />
   </component>
 </module>

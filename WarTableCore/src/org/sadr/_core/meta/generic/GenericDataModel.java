@@ -207,7 +207,7 @@ public class GenericDataModel<T extends Serializable> implements Serializable {
 
                 //==============  null objects
                 if (o == null) {
-                    if (nullStrategy == TtToJsonNullStrategy.IncludNulls) {
+                    if (nullStrategy == TtToJsonNullStrategy.IncludeNulls) {
                         json.append("\"").append(f).append("\":\"null\",\n");
                     }
                 }
@@ -252,7 +252,7 @@ public class GenericDataModel<T extends Serializable> implements Serializable {
                     }
                 }
                 //==============  SubClasses Relations
-                else if (o.getClass().getModifiers() == 1 && subStrategy == TtToJsonSubStrategy.IncludSubs) {
+                else if (o.getClass().getModifiers() == 1 && subStrategy == TtToJsonSubStrategy.IncludeSubs) {
                     if (gb != null) {
                         json.append("\"").append(f).append("\":");
                         try {
@@ -275,7 +275,9 @@ public class GenericDataModel<T extends Serializable> implements Serializable {
 
                 //==============  Others (String)
                 else {
-                    json.append("\"").append(f).append("\":\"").append(o.toString().replaceAll("\t|\"", "")).append("\",\n");
+                    json.append("\"").append(f).append("\":\"").append(o.toString().replaceAll("\t|\"", "")
+                        .replaceAll("\\\\", "\\\\\\\\"))
+                        .append("\",\n");
                 }
             } catch (NoSuchMethodException ex) {
                 try {
@@ -300,12 +302,12 @@ public class GenericDataModel<T extends Serializable> implements Serializable {
     }
 
     public String toJson() {
-        return getJson(TtToJsonNullStrategy.IgnoreNulls, TtToJsonTtStrategy.TitleMode, TtToJsonSubStrategy.IncludSubs, null, null, (String[]) null);
+        return getJson(TtToJsonNullStrategy.IgnoreNulls, TtToJsonTtStrategy.TitleMode, TtToJsonSubStrategy.IncludeSubs, null, null, (String[]) null);
     }
 
     ///////////////////////////  Fields
     public String toJson(String... fields) {
-        return getJson(TtToJsonNullStrategy.IgnoreNulls, TtToJsonTtStrategy.TitleMode, TtToJsonSubStrategy.IncludSubs, null, null, fields);
+        return getJson(TtToJsonNullStrategy.IgnoreNulls, TtToJsonTtStrategy.TitleMode, TtToJsonSubStrategy.IncludeSubs, null, null, fields);
     }
 
     public String toJson(TtToJsonNullStrategy nullStrategy, TtToJsonTtStrategy ttStrategy, TtToJsonSubStrategy subStrategy, String... fields) {
@@ -314,7 +316,7 @@ public class GenericDataModel<T extends Serializable> implements Serializable {
 
     ///////////////////////////  JBs
     public String toJson(JB jb) {
-        return getJson(TtToJsonNullStrategy.IgnoreNulls, TtToJsonTtStrategy.TitleMode, TtToJsonSubStrategy.IncludSubs, null, jb, null);
+        return getJson(TtToJsonNullStrategy.IgnoreNulls, TtToJsonTtStrategy.TitleMode, TtToJsonSubStrategy.IncludeSubs, null, jb, null);
     }
 
     public String toJson(TtToJsonNullStrategy nullStrategy, TtToJsonTtStrategy ttStrategy, TtToJsonSubStrategy subStrategy, JB jb) {
@@ -323,7 +325,7 @@ public class GenericDataModel<T extends Serializable> implements Serializable {
 
     //////////////////////////// GBs
     public String toJson(GB gb) {
-        return getJson(TtToJsonNullStrategy.IgnoreNulls, TtToJsonTtStrategy.TitleMode, TtToJsonSubStrategy.IncludSubs, gb, null, null);
+        return getJson(TtToJsonNullStrategy.IgnoreNulls, TtToJsonTtStrategy.TitleMode, TtToJsonSubStrategy.IncludeSubs, gb, null, null);
     }
 
     public String toJson(TtToJsonNullStrategy nullStrategy, TtToJsonTtStrategy ttStrategy, TtToJsonSubStrategy subStrategy, GB gb) {

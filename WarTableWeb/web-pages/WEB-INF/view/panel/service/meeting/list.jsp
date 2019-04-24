@@ -62,14 +62,24 @@
                                     <td class="center">
                                         <div class="r-button">
                                             <a href="${_url}/edit/@{id}"
-                                               class="btn btn-sm btn-l-edit tooltips " data-placement="top"
-                                               data-original-title="<spring:message code="all.edit"/> ">
+                                               class="btn btn-sm btn-l-edit" data-placement="top"
+                                               title="<spring:message code="all.edit"/> ">
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                             <a href="${_url}/details/@{id}"
-                                               class="btn btn-sm btn-l-preview tooltips" data-placement="top"
-                                               data-original-title="<spring:message code="all.preview"/>">
+                                               class="btn btn-sm btn-l-preview" data-placement="top"
+                                               title="<spring:message code="all.preview"/>">
                                                 <i class="fa fa-desktop pad-2"></i>
+                                            </a>
+                                            <a href="${_url}/talk/list/@{id}"
+                                               class="btn btn-sm btn-l-call" data-placement="top"
+                                               title="<spring:message code="T.p.service.meeting.talk.list"/> ">
+                                                <i class="fa fa-caret-square-o-up"></i>
+                                            </a>
+                                            <a href="${_url}/setting/list/@{id}"
+                                               class="btn btn-sm btn-l-invoice" data-placement="top"
+                                               title="<spring:message code="T.p.service.meeting.setting.list"/> ">
+                                                <i class="fa fa-adjust"></i>
                                             </a>
                                         </div>
                                     </td>

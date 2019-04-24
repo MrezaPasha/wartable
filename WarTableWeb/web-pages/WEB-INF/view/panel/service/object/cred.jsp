@@ -43,50 +43,53 @@
             <form id="form" accept-charset="UTF-8" action="${action}" method="POST" enctype="multipart/form-data">
                 <form:hidden id="object_id" path="object.id"/>
                 <div class="row">
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <c:set var="varName" value="object.name"/>
-                            <form:label path="${varName}" cssClass="control-label">
-                                <spring:message code="${varName}"/>
+                    <%--<div class="col-sm-4">--%>
+                    <%--<div class="form-group">--%>
+                    <%--<c:set var="varName" value="object.name"/>--%>
+                    <%--<form:label path="${varName}" cssClass="control-label">--%>
+                    <%--<spring:message code="${varName}"/>--%>
+                    <%--<span class="symbol required"></span>--%>
+                    <%--<form:errors cssClass="form-validation-error" path="${varName}"/>--%>
+                    <%--</form:label>--%>
+                    <%--<form:input path="${varName}" cssClass="form-control string-required string-max-50"/>--%>
+                    <%--</div>--%>
+                    <%--<div class="form-group">--%>
+                    <%--<c:set var="varName" value="object.category"/>--%>
+                    <%--<form:label path="${varName}" cssClass="control-label">--%>
+                    <%--<spring:message code="${varName}"/>--%>
+                    <%--<span class="symbol required"></span>--%>
+                    <%--<form:errors cssClass="form-validation-error" path="${varName}"/>--%>
+                    <%--</form:label>--%>
+                    <%--<form:input path="${varName}" cssClass="form-control string-required string-max-50"/>--%>
+                    <%--</div>--%>
+                    <%--</div>--%>
+                    <div class="col-sm-8 col-sm-offset-2">
+                        <c:if test="${object.id==0}">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    <spring:message code="object.fileName"/>
+                                </label>
                                 <span class="symbol required"></span>
-                                <form:errors cssClass="form-validation-error" path="${varName}"/>
-                            </form:label>
-                            <form:input path="${varName}" cssClass="form-control string-required string-max-50"/>
-                        </div>
-                        <div class="form-group">
-                            <c:set var="varName" value="object.category"/>
-                            <form:label path="${varName}" cssClass="control-label">
-                                <spring:message code="${varName}"/>
-                                <span class="symbol required"></span>
-                                <form:errors cssClass="form-validation-error" path="${varName}"/>
-                            </form:label>
-                            <form:input path="${varName}" cssClass="form-control string-required string-max-50"/>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label class="control-label">
-                                <spring:message code="object.fileName"/>
-                            </label>
-                            <div class="fileupload-new" data-provides="fileupload">
-                                <div class="input-group">
-                                    <div class="form-control uneditable-input">
-                                        <i class="fa fa-file fileupload-exists"></i>
-                                        <span class="fileupload-preview"><c:if test="${not empty object.fileName}">${object.fileName}</c:if></span>
-                                    </div>
-                                    <div class="input-group-btn">
-                                        <div class="btn btn-light-grey btn-file">
-                                            <span class="fileupload-new"><i class="fa fa-folder-open-o"></i><spring:message code="all.file.choose"/></span>
-                                            <span class="fileupload-exists"><i class="fa fa-folder-open-o"></i><spring:message code="all.file.change"/></span>
-                                            <input name="attachment" type="file" class="file-input" value="${object.fileName}">
+                                <div class="fileupload-new" data-provides="fileupload">
+                                    <div class="input-group">
+                                        <div class="form-control uneditable-input">
+                                            <i class="fa fa-file fileupload-exists"></i>
+                                            <span class="fileupload-preview"><c:if test="${not empty object.fileName}">${object.fileName}</c:if></span>
                                         </div>
-                                        <a href="#" class="btn btn-light-grey fileupload-exists" data-dismiss="fileupload">
-                                            <i class="fa fa-times"></i><spring:message code="all.file.delete"/>
-                                        </a>
+                                        <div class="input-group-btn">
+                                            <div class="btn btn-light-grey btn-file">
+                                                <span class="fileupload-new"><i class="fa fa-folder-open-o"></i><spring:message code="all.file.choose"/></span>
+                                                <span class="fileupload-exists"><i class="fa fa-folder-open-o"></i><spring:message code="all.file.change"/></span>
+                                                <input name="attachment" type="file" class="file-input" value="${object.fileName}">
+                                            </div>
+                                            <a href="#" class="btn btn-light-grey fileupload-exists" data-dismiss="fileupload">
+                                                <i class="fa fa-times"></i><spring:message code="all.file.delete"/>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </c:if>
                         <div class="form-group">
                             <c:set var="varName" value="object.area"/>
                             <form:label path="${varName}" cssClass="control-label">
@@ -102,23 +105,23 @@
                     </div>
 
                 </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="form-group">
-                            <c:set var="varName" value="object.description"/>
-                            <form:label path="${varName}" cssClass="control-label">
-                                <spring:message code="${varName}"/>
-                                <span class="symbol required"></span>
-                                <form:errors cssClass="form-validation-error" path="${varName}"/>
-                            </form:label>
-                            <form:input path="${varName}" cssClass="form-control string-required"/>
-                        </div>
-                    </div>
-                </div>
+                <%--<div class="row">--%>
+                <%--<div class="col-sm-12">--%>
+                <%--<div class="form-group">--%>
+                <%--<c:set var="varName" value="object.description"/>--%>
+                <%--<form:label path="${varName}" cssClass="control-label">--%>
+                <%--<spring:message code="${varName}"/>--%>
+                <%--<span class="symbol required"></span>--%>
+                <%--<form:errors cssClass="form-validation-error" path="${varName}"/>--%>
+                <%--</form:label>--%>
+                <%--<form:input path="${varName}" cssClass="form-control string-required"/>--%>
+                <%--</div>--%>
+                <%--</div>--%>
+                <%--</div>--%>
                 <div class="row">
                     <div class="three-container three-service-object"
                          i-three-mode="2"
-                         i-three-name="male"
+                         i-three-name="${object.fileName}"
                          i-three-object="${objectPath}"
                     >
                     </div>
@@ -135,6 +138,14 @@
 <script type="text/javascript" src="${cp}/resources-p/plugins/select2/select2.min.js"></script>
 
 <script type="text/javascript" src="${cp}/resources-p/plugins/3d/three.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/OBJLoader.js"></script>
+
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/TrackballControls.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/MTLLoader.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/dat.gui.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/LoaderSupport.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/OBJLoader2.js"></script>
+
 
 <script type="text/javascript" src="${cp}/resources-p/plugins/3d/inflate.min.js"></script>
 <script type="text/javascript" src="${cp}/resources-p/plugins/3d/FBXLoader.js"></script>

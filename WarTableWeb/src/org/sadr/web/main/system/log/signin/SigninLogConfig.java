@@ -26,7 +26,6 @@ public class SigninLogConfig extends WebConfig {
     public SigninLogController signinLogController() {
         SigninLogController uc = new SigninLogController();
         uc.setService(signinLogServiceImp());
-        uc.setIrrorService(new IrrorConfig().irrorServiceImp());
         return uc;
     }
 }

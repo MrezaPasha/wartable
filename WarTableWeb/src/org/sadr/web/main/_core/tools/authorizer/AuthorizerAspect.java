@@ -392,13 +392,14 @@ public class AuthorizerAspect {
                 for (Task tk : group.getTasks()) {
                     if (tk.getIdi() == task.getIdi()) {
                         // master > ================================  Two step confirm
-                        if (task.getIsTwoLevelConfirm() && !userConfirmService.isConfirmed(u, task.getSignature())) {
+                        if (task.getIsTwoLevelConfirm() &&
+                                !userConfirmService.isConfirmed(u, task.getSignature())) {
                             //*********(log)********* Master
                             this.logService.log(
                                     new Log(
                                             null, request,
                                             "As Master- Dispatched to <" + TtTile___.p_user_reSignin + "> [Need Two Step Confirm]",
-                                            TtLogHandler.AuthorizerAspect, task, u)
+                                            TtLogHandler.AuthorizerAspect, task, u, ug)
                             );
                             return TtTile___.p_user_reSignin.___getDisModel("/panel/user/reSignin")
 .addObject("taskSignature", task.getSignature())
@@ -412,7 +413,7 @@ public class AuthorizerAspect {
                                 new Log(
                                         andView, request,
                                         "As Master (Group Access)- Dispatched to <" + andView.getViewName() + ">",
-                                        TtLogHandler.AuthorizerAspect, task, u)
+                                        TtLogHandler.AuthorizerAspect, task, u, ug)
                         );
                         return fillAndView(request, task, andView);
                     }
@@ -566,6 +567,7 @@ public class AuthorizerAspect {
         return -1;
     }
 
+    ///====================================================== MAIN
 
     @Around("@annotation(org.springframework.web.bind.annotation.RequestMapping)"
             + " && execution(org.springframework.web.servlet.ModelAndView *(..))"

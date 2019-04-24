@@ -26,6 +26,41 @@
 }
 
 /*--------------------------------
+    Chat
+----------------------------------*/
+.chat-sync-details {
+    height: 300px;
+    text-align: right;
+    color: #777777;
+    width: 100%;
+    padding: 20px;
+    font-size: 0.9em;
+    overflow-x: scroll;
+    line-height: 1.5;
+    background-color: rgba(238, 238, 238, 0.89);
+    margin: auto;
+}
+
+.chat-user-item{
+    border: #54bfbf solid 1px;
+    border-radius: 2px;
+    padding: 2px;
+    margin: 0px 3px;
+}
+
+.talk-sound-download{
+    width: 125px;
+    margin: auto;
+    display: inherit;
+    padding: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.sound-control{
+    width: 100%;
+}
+/*--------------------------------
     Note Sync
 ----------------------------------*/
 .note-sync-table {
@@ -494,7 +529,7 @@ li[i-search-pagination-value].disable a:hover {
 }
 
 /*--------------------------------
-    width&height uploderfile
+    propertor
 ----------------------------------*/
 
 .propertor-container {
@@ -2542,6 +2577,13 @@ a.accordion-toggle.line-height {
     font-size: 13px;
     line-height: 1;
     margin-top: 2px;
+}
+
+.service-user-item{
+    border: #54bfbf solid 1px;
+    border-radius: 2px;
+    padding: 2px;
+    margin: 0px 3px;
 }
 
 /****DO-NoT-REMOVE-IT*#- ==============  END  ============== -#*/

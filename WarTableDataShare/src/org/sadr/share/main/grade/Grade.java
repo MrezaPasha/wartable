@@ -1,5 +1,6 @@
 package org.sadr.share.main.grade;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GenericDataModel;
 
@@ -54,7 +55,7 @@ public class Grade extends GenericDataModel<Grade> {
 
     @PersianName("نام سازمانی")
     @Column(nullable = false)
-    @Size(max = 100)
+    @Size(min = 2,max = 100)
     private String value;
 
     // METHODS

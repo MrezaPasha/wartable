@@ -64,8 +64,8 @@
                                         <div class="r-button">
                                             <div class="r-button">
                                                 <a href="${_url}/details/@{id}"
-                                                   class="btn btn-sm btn-l-preview tooltips" data-placement="top"
-                                                   data-original-title="<spring:message code="all.preview"/>">
+                                                   class="btn btn-sm btn-l-preview" data-placement="top"
+                                                   title="<spring:message code="all.preview"/>">
                                                     <i class="fa fa-desktop pad-2"></i>
                                                 </a>
                                             </div>

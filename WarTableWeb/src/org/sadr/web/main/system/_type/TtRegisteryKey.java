@@ -11,7 +11,8 @@ public enum TtRegisteryKey {
     IxportPublicKey("ixport_public_key", "کلید عمومی خروجی گزارش", TtRegisteryType.Ixport),
     BackupCryptKey("backup_crypt_key", "کلید رمزنگاری پشتیان گیری", TtRegisteryType.Backup),
     BackupPrivateKey("backup_private_key", "کلید خصوصی پشتیان گیری", TtRegisteryType.Backup),
-    BackupPublicKey("backup_public_key", "کلید عمومی پشتیان گیری", TtRegisteryType.Backup),;
+    BackupPublicKey("backup_public_key", "کلید عمومی پشتیان گیری", TtRegisteryType.Backup),
+    ;
 
     private final String key;
     private final String title;

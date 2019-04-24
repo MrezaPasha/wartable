@@ -135,7 +135,7 @@ public class BaseErrorsShareController extends GenericControllerImpl<BaseErrors,
                     fObj);
         }
 
-        dbObj.setErrorValue(fObj.getErrorValue());
+//        dbObj.setErrorValue(fObj.getErrorValue());
         dbObj.setErrorDescription(fObj.getErrorDescription());
 
         this.service.update(dbObj);
@@ -159,15 +159,15 @@ public class BaseErrorsShareController extends GenericControllerImpl<BaseErrors,
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         BaseErrors.ERROR_VALUE
                 );
         GB.searchTableColumns(model,
                 BaseErrors.class,
                 GB.col(BaseErrors.ID),
                 GB.col(BaseErrors.CREATE_DATE_TIME),
-                GB.col(BaseErrors.ERROR_ID),
-                GB.col(BaseErrors.ERROR_VALUE)
+                GB.col(BaseErrors.ERROR_ID)
+//                GB.col(BaseErrors.ERROR_VALUE)
         );
         return TtTile___.p_service_baseErrors_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
     }

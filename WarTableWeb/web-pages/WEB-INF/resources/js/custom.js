@@ -466,7 +466,6 @@ var CustomJs = function () {
                 this.on("sending", function (file, xhr, formData) {
                     var addParams = myDropzone.attr("data-params");
                     if (addParams != undefined) {
-                        debugger
                         console.log(addParams);
                         addParams = JSON.parse(addParams);
                         for (key in addParams) {
@@ -1347,7 +1346,6 @@ var CustomJs = function () {
         /*************   **************/
 
         var fillMessageBody = function (_isearch, message, cssClass, liveCount) {
-            debugger;
             if (message) {
                 if (typeof (message) != "string") {
                     cssClass = message[0].cssClass;
@@ -1511,9 +1509,14 @@ var CustomJs = function () {
                 submitSearch(_isearch);
             });
             _isearch.on('change', "[i-search-field-id]", function () {
+                debugger;
                 createSearchQuery(_isearch, $(this));
+                if (_isearch.fields[$(this).attr("i-search-field-id")].submitOnChange) {
+                    submitSearch(_isearch);
+                }
             });
             _isearch.on('keyup', '[i-search-field-id]', function (e) {
+                debugger;
                 if (e.keyCode === 13) {
                     createSearchQuery(_isearch, $(this));
                     submitSearch(_isearch);

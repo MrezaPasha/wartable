@@ -4,6 +4,8 @@ package org.sadr.share.main.sessions;
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GenericDataModel;
 import org.sadr.share.main._types.TtSessionsState;
+import org.sadr.share.main.roomServiceUser.Room_ServiceUser;
+import org.sadr.share.main.roomServiceUser._types.TtRoomServiceUserPresence;
 import org.sadr.share.main.serviceUser.ServiceUser;
 
 import javax.persistence.Column;
@@ -23,6 +25,7 @@ public class Sessions extends GenericDataModel<Sessions> implements Serializable
     public static final String SESSION_ID = "sessionId";
     public static final String STATUS = "status";
     public static final String CREATION_DATE_TIME = "creationDateTime";
+    public static final String $ONLINE_ROOM_NAME= "onlineRoomName";
     public static final String UPDATE_DATE_TIME = "updateDateTime";
     public static final String $SERVICE_USER_FULL_NAME = "serviceUserFullName";
 
@@ -90,6 +93,14 @@ public class Sessions extends GenericDataModel<Sessions> implements Serializable
     @PersianName("نام کاربر")
     public String getServiceUserFullName() {
         return serviceUser == null ? "" : serviceUser.getFullName();
+    }
+
+    @PersianName("نام اتاق فعال")
+    public String getOnlineRoomName() {
+        if (serviceUser != null && serviceUser.getOnlineRoom()!= null) {
+          return serviceUser.getOnlineRoom().getRoomTitle();
+        }
+        return "";
     }
 
 

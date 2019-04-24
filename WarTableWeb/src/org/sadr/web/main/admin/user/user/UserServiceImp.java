@@ -99,7 +99,8 @@ public class UserServiceImp extends GenericServiceImpl<User, UserDao> implements
         }
         User duser;
         try {
-            duser = this.findById(suser.getId(), User._USER_UUIDS);
+            duser = this.findById(suser.getId()
+            );
         } catch (Exception e) {
             duser = null;
         }
@@ -197,7 +198,7 @@ public class UserServiceImp extends GenericServiceImpl<User, UserDao> implements
         }
         if (user.getAccessLimitTimelyEnd() != null
                 && !user.getAccessLimitTimelyEnd().isEmpty()
-                && ParsCalendar.getInstance().compareDateTime(user.getAccessLimitTimelyEnd(), shortTime) == TtCompareResult.SecondIsBigger
+                && ParsCalendar.getInstance().compareTime(user.getAccessLimitTimelyEnd(), shortTime) == TtCompareResult.SecondIsBigger
                 ) {
             return true;
         }

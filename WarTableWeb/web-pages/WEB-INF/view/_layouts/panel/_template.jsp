@@ -20,11 +20,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="description" content="شرکت ایده پردازان رایانش ابری سپاهان (ایراس)"/>
-    <meta name="keywords" content="پنل مدیریت  میراث"/>
+    <meta name="description" content="صدر"/>
+    <meta name="keywords" content="پنل مدیریت  صدر"/>
     <meta name="author" content="<spring:message  code="sadr.title"/>">
     <title>
-        ایراس-${title}
+        صدر-${title}
     </title>
 
     <c:set var="fontVar" value='${sessionScope.font}'/>

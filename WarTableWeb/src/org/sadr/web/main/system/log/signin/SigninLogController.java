@@ -44,14 +44,6 @@ public class SigninLogController extends GenericControllerImpl<SigninLog, Signin
     private final String _PANEL_URL = "/panel" + REQUEST_MAPPING_BASE;
     ////////////////////
 
-    private IrrorService irrorService;
-
-    @Autowired
-    public void setIrrorService(IrrorService irrorService) {
-        this.irrorService = irrorService;
-    }
-
-
     public SigninLogController() {
     }
 
@@ -66,20 +58,20 @@ public class SigninLogController extends GenericControllerImpl<SigninLog, Signin
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         SigninLog._USER,
                         Searchee.field(User.USERNAME, User.class)
                 )
 
                 .setAttribute(
-                        TtDataType.String,
+                        TtDataType.DateTime,
                         TtRestrictionOperator.GreaterEqual,
                         TtSearcheeStrategy.Normal,
                         SigninLog.CREATE_DATE_TIME
                 )
 
                 .setAttribute(
-                        TtDataType.String,
+                        TtDataType.DateTime,
                         TtRestrictionOperator.LessEqual,
                         TtSearcheeStrategy.Normal,
                         SigninLog.CREATE_DATE_TIME

@@ -76,14 +76,14 @@ public class ServiceLogShareController extends GenericControllerImpl<ServiceLog,
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         ServiceLog.SOFTWARE_ID
                 )
 
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         ServiceLog.SOFTWARE_NAME
                 );
 

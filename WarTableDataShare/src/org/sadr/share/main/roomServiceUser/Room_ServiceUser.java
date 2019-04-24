@@ -11,6 +11,8 @@ import org.sadr.share.main.roomServiceUser._types.TtRoomServiceUserPresence;
 import org.sadr.share.main.serviceUser.ServiceUser;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -73,16 +75,20 @@ public class Room_ServiceUser extends GenericDataModel<Room_ServiceUser> impleme
 
 
     @Column(nullable = false)
+    @Size(min = 2,max = 30)
     @PersianName("زمان تخصیص اتاق به کاربر")
     private String joinDateTime;
 
+    @NotNull
     @PersianName("مجوز ارتباط متنی خصوصی ")
     private TtRoomServiceUserEnablePrivateCommunication acceptPrivateChat;
 
+    @NotNull
     @PersianName("مجوز ارتباط صوتی خصوصی ")
     private TtRoomServiceUserEnablePrivateCommunication acceptPrivateTalk;
 
 
+    @NotNull
     @PersianName("نقش کاربر")
     private TtMemberStatus userStatus;
 
@@ -92,8 +98,14 @@ public class Room_ServiceUser extends GenericDataModel<Room_ServiceUser> impleme
     @PersianName("سطح دسترسی موقت")
     private TtUserRoleFlags temporaryUserRoleFlag;
 
+    @NotNull
     @PersianName("سطح دسترسی دائمی")
     private TtUserRoleFlags permanentUserRoleFlag;
+
+
+    @OneToMany
+    @PersianName("کاربران آنلاین اتاق")
+    private Set<ServiceUser> serviceUsers;
 
     @ManyToMany
     @JoinTable(name = "Service.RoomServiceUser_Invite",
@@ -104,6 +116,7 @@ public class Room_ServiceUser extends GenericDataModel<Room_ServiceUser> impleme
     @PersianName("دعوتنامه ها")
     private Set<Invite> invites;
 
+    @NotNull
     @PersianName("وضعیت حضور کاربر")
     private TtRoomServiceUserPresence presence;
 
@@ -199,5 +212,13 @@ public class Room_ServiceUser extends GenericDataModel<Room_ServiceUser> impleme
 
     public void setPresence(TtRoomServiceUserPresence presence) {
         this.presence = presence;
+    }
+
+    public Set<ServiceUser> getServiceUsers() {
+        return serviceUsers;
+    }
+
+    public void setServiceUsers(Set<ServiceUser> serviceUsers) {
+        this.serviceUsers = serviceUsers;
     }
 }

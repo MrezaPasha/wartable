@@ -74,21 +74,21 @@
                                     <td class="center">
                                         <div class="r-button">
                                             <a href="@{plugin_masterLink}@{id}"
-                                               class="btn btn-sm tooltips @{plugin_masterClass}" data-placement="top"
-                                               data-original-title="<spring:message code="user.level"/>">
+                                               class="btn btn-sm @{plugin_masterClass}" data-placement="top"
+                                               title="<spring:message code="user.level"/>">
                                                 <i class="fa fa-shield"></i>
                                             </a>
                                             <a
                                                     href="${_url}/edit/@{id}"
-                                                    class="btn btn-sm btn-l-edit tooltips " data-placement="top"
-                                                    data-original-title="<spring:message code="all.edit"/> ">
+                                                    class="btn btn-sm btn-l-edit" data-placement="top"
+                                                    title="<spring:message code="all.edit"/> ">
                                                 <i class="fa fa-edit"></i>
                                             </a>
-                                            <a href="javascript:void(0)" class="btn btn-sm btn-bricky tooltips"
+                                            <a href="javascript:void(0)" class="btn btn-sm btn-bricky"
                                                i-search-body-item-trash-id="@{id}"
                                                i-search-body-item-trash-title="@{fullName}"
                                                i-search-body-item-trash-url=""
-                                               data-original-title="<spring:message code="all.delete"/> ">
+                                               title="<spring:message code="all.delete"/> ">
                                                 <i class="fa fa-trash-o"></i>
                                             </a>
                                         </div>

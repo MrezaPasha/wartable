@@ -9,12 +9,41 @@
           <element id="module-output" name="WarTableDataShare" />
         </element>
         <element id="directory" name="lib">
-          <element id="library" level="project" name="_lib-share" />
-          <element id="library" level="project" name="libs" />
           <element id="library" level="application" name="lib_tomcat" />
           <element id="library" level="project" name="javax.servlet:jstl:1.2" />
           <element id="library" level="project" name="tomcat-juli" />
-          <element id="library" level="project" name="lib" />
+          <element id="library" level="project" name="_lib-share" />
+          <element id="library" level="project" name="_lib_test" />
+          <element id="library" level="project" name="_libs" />
+          <element id="library" level="project" name="_libs-captcha" />
+          <element id="library" level="application" name="lib" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/zip4j_1.3.2.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/amqp-client-3.5.4.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/hk2-api-2.5.0-b30.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jersey-guava-2.25.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jackson-core-2.9.4.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jersey-client-2.25.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jersey-server-2.25.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/hk2-utils-2.5.0-b30.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/javassist-3.20.0-GA.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/hk2-locator-2.5.0-b30.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jackson-databind-2.9.4.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jersey-media-jaxb-2.25.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jetty-io-9.4.0.v20161208.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/amqp-client-3.5.4-javadoc.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/amqp-client-3.5.4-sources.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jackson-annotations-2.9.4.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jetty-http-9.4.0.v20161208.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jetty-util-9.4.0.v20161208.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/validation-api-1.1.0.Final.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/osgi-resource-locator-1.0.1.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jetty-server-9.4.0.v20161208.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jetty-servlet-9.4.0.v20161208.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jetty-security-9.4.0.v20161208.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/aopalliance-repackaged-2.5.0-b30.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jersey-container-jetty-http-2.25.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jersey-container-servlet-core-2.25.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../_lib-share/jetty-continuation-9.2.14.v20151106.jar" />
         </element>
       </element>
       <element id="library" level="project" name="Hibernate 5.2.12-5.2.12" />

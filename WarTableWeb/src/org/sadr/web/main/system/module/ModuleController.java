@@ -57,7 +57,7 @@ public class ModuleController extends GenericControllerImpl<Module, ModuleServic
             @Override
             protected Object convertElement(Object element) {
                 if (element != null) {
-                    return taskService.findById(Integer.parseInt((String) element));
+                    return taskService.findById(Long.parseLong((String) element));
                 }
                 return null;
             }

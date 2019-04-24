@@ -6,5 +6,6 @@ package org.sadr._core.utils._type;
 public enum TtSearcheeStrategy {
 
     Normal,
-    IgnoreWhiteSpaces
+    IgnoreWhiteSpaces,
+    HiddenAutoFill,
 }

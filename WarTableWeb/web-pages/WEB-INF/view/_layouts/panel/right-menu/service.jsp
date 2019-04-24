@@ -61,25 +61,26 @@
                 </li>
                 <li>
                     <a href="javascript:void(0)">
-                        <i class="clip-users"></i>
-                        <span class="title"><spring:message code="rightmenu.orgPosition"/></span><i class="icon-arrow"></i>
+                        <i class="clip-cube-2"></i>
+                        <span class="title"><spring:message code="rightmenu.personModel"/></span><i class="icon-arrow"></i>
                         <span class="selected"></span>
                     </a>
                     <ul class="sub-menu">
-                        <li data-menu-id="p_service_orgPosition_create">
-                            <a href="${cp}/panel/service/orgPosition/create">
+                        <li data-menu-id="p_service_personModel_create">
+                            <a href="${cp}/panel/service/personModel/create">
                                 <i class="clip-add light"></i>
                                 <span class="title"><spring:message code="rightmenu.create"/></span>
                             </a>
                         </li>
-                        <li data-menu-id="|p_service_orgPosition_list|p_service_orgPosition_edit|">
-                            <a href="${cp}/panel/service/orgPosition/list">
+                        <li data-menu-id="|p_service_personModel_list|p_service_personModel_edit|">
+                            <a href="${cp}/panel/service/personModel/list">
                                 <i class="clip-list light"></i>
                                 <span class="title"><spring:message code="rightmenu.list"/></span>
                             </a>
                         </li>
                     </ul>
                 </li>
+
             </ul>
         </li>
         <li>
@@ -95,7 +96,7 @@
                         <span class="title"><spring:message code="rightmenu.create"/></span>
                     </a>
                 </li>
-                <li data-menu-id="|p_service_room_list|p_service_room_edit|p_service_room_user_list|p_service_room_user_details|p_service_room_user_create|p_service_room_user_edit|p_service_room_map_list|p_service_room_map_create|p_service_room_map_edit|">
+                <li data-menu-id="|p_service_room_list|p_service_room_edit|p_service_room_user_list|p_service_room_user_details|p_service_room_user_create|p_service_room_user_edit|p_service_room_map_list|p_service_room_map_create|p_service_room_map_edit|p_service_room_chat_list|p_service_room_chat_details|">
                     <a href="${cp}/panel/service/room/list">
                         <i class="clip-list light"></i>
                         <span class="title"><spring:message code="rightmenu.list"/></span>
@@ -116,7 +117,7 @@
                         <span class="title"><spring:message code="rightmenu.create"/></span>
                     </a>
                 </li>
-                <li data-menu-id="|p_service_map_list|p_service_map_edit|p_service_map_room_create|p_service_map_room_edit|p_service_map_room_list|">
+                <li data-menu-id="|p_service_map_list|p_service_map_edit|p_service_map_room_create|p_service_map_room_edit|p_service_map_room_list|p_service_map_layer_list|">
                     <a href="${cp}/panel/service/map/list">
                         <i class="clip-list light"></i>
                         <span class="title"><spring:message code="rightmenu.list"/></span>
@@ -129,27 +130,6 @@
                 <i class=" clip-tree light"></i>
                 <span class="title"><spring:message code="rightmenu.web.region"/></span>
             </a>
-        </li>
-        <li>
-            <a href="javascript:void(0)">
-                <i class="clip-users"></i>
-                <span class="title"><spring:message code="rightmenu.web.layer"/></span><i class="icon-arrow"></i>
-                <span class="selected"></span>
-            </a>
-            <ul class="sub-menu">
-                <li data-menu-id="p_service_layer_create">
-                    <a href="${cp}/panel/service/layer/create">
-                        <i class="clip-add light"></i>
-                        <span class="title"><spring:message code="rightmenu.create"/></span>
-                    </a>
-                </li>
-                <li data-menu-id="|p_service_layer_list|p_service_layer_edit|">
-                    <a href="${cp}/panel/service/layer/list">
-                        <i class="clip-list light"></i>
-                        <span class="title"><spring:message code="rightmenu.list"/></span>
-                    </a>
-                </li>
-            </ul>
         </li>
         <li>
             <a href="javascript:void(0)">
@@ -179,7 +159,7 @@
                 <span class="selected"></span>
             </a>
             <ul class="sub-menu">
-                <li data-menu-id="|p_service_meeting_list|p_service_meeting_edit|p_service_meeting_details|">
+                <li data-menu-id="|p_service_meeting_list|p_service_meeting_edit|p_service_meeting_details|p_service_meeting_talk_details|p_service_meeting_talk_list|p_service_meeting_setting_details|p_service_meeting_setting_list|">
                     <a href="${cp}/panel/service/meeting/list">
                         <i class="clip-list light"></i>
                         <span class="title"><spring:message code="rightmenu.list"/></span>
@@ -204,6 +184,27 @@
                     <a href="${cp}/panel/service/criticalLog/list">
                         <i class="clip-list light"></i>
                         <span class="title"><spring:message code="rightmenu.service.criticalLog"/></span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li data-menu-id="">
+            <a href="javascript:void(0)">
+                <i class="clip-list light"></i>
+                <span class="title"><spring:message code="rightmenu.service.startupNotice"/></span></span><i class="icon-arrow"></i>
+                <span class="selected"></span>
+            </a>
+            <ul class="sub-menu">
+                <li data-menu-id="|p_service_startupNotice_create|">
+                    <a href="${cp}/panel/service/notice/create">
+                        <i class="clip-add light"></i>
+                        <span class="title"><spring:message code="rightmenu.create"/></span>
+                    </a>
+                </li>
+                <li data-menu-id="|p_service_startupNotice_edit|p_service_startupNotice_list|p_service_startupNotice_details|p_service_startupNotice_item_list|p_service_startupNotice_item_details|">
+                    <a href="${cp}/panel/service/notice/list">
+                        <i class="clip-list light"></i>
+                        <span class="title"><spring:message code="rightmenu.list"/></span>
                     </a>
                 </li>
             </ul>

@@ -26,7 +26,6 @@ public class GradeShareConfig extends WebConfig {
     public GradeShareController gradeShareController() {
         GradeShareController uc = new GradeShareController();
         uc.setService(gradeShareServiceImp());
-        uc.setIrrorService(new IrrorConfig().irrorServiceImp());
         return uc;
     }
 }

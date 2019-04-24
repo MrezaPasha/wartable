@@ -87,7 +87,7 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
             @Override
             protected Object convertElement(Object element) {
                 if (element != null) {
-                    return userService.findById(Integer.parseInt((String) element));
+                    return userService.findById(Long.parseLong((String) element));
                 }
                 return null;
             }
@@ -100,7 +100,7 @@ public class UserGroupController extends GenericControllerImpl<UserGroup, UserGr
             @Override
             protected Object convertElement(Object element) {
                 if (element != null) {
-                    return taskService.findById(Integer.parseInt((String) element));
+                    return taskService.findById(Long.parseLong((String) element));
                 }
                 return null;
             }

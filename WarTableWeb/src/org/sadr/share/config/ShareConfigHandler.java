@@ -37,13 +37,17 @@ import org.sadr.share.main.meetingItem.MeetingItem;
 import org.sadr.share.main.meetingLog.MeetingLog;
 import org.sadr.share.main.meetingRecFile.MeetingRecFile;
 import org.sadr.share.main.meetingSetting.MeetingSetting;
+import org.sadr.share.main.meetingSetting.MeetingSettingConfig;
+import org.sadr.share.main.meetingSetting.MeetingSettingShareConfig;
 import org.sadr.share.main.meetingSnapshot.MeetingSnapshot;
 import org.sadr.share.main.mrml.Mrml;
 import org.sadr.share.main.orgPosition.OrgPosition;
 import org.sadr.share.main.orgPosition.OrgPositionShareConfig;
 import org.sadr.share.main.personModel.PersonModel;
+import org.sadr.share.main.personModel.PersonModelShareConfig;
 import org.sadr.share.main.pollVotes.PollVotes;
 import org.sadr.share.main.privateTalk.PrivateTalk;
+import org.sadr.share.main.privateTalk.PrivateTalkShareConfig;
 import org.sadr.share.main.room.Room;
 import org.sadr.share.main.room.RoomShareConfig;
 import org.sadr.share.main.roomModel.RoomModel;
@@ -56,7 +60,12 @@ import org.sadr.share.main.serviceUser.ServiceUserShareConfig;
 import org.sadr.share.main.services.Services;
 import org.sadr.share.main.sessions.Sessions;
 import org.sadr.share.main.sessions.SessionsShareConfig;
+import org.sadr.share.main.startupNotice.item.StartupNoticeItem;
+import org.sadr.share.main.startupNotice.item.StartupNoticeItemShareConfig;
+import org.sadr.share.main.startupNotice.startupNotice.StartupNotice;
+import org.sadr.share.main.startupNotice.startupNotice.StartupNoticeShareConfig;
 import org.sadr.share.main.textChat.TextChat;
+import org.sadr.share.main.textChat.TextChatShareConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,6 +155,10 @@ public class ShareConfigHandler {
         addModelClass(Sessions.class);
         addModelClass(TextChat.class);
 
+        addModelClass(StartupNotice.class);
+        addModelClass(StartupNoticeItem.class);
+
+
     }
 
     //=========================################===========================// ConfigClasses
@@ -191,7 +204,14 @@ public class ShareConfigHandler {
         addConfigClass(Room_MapShareConfig.class);
         addConfigClass(ServiceLogShareConfig.class);
         addConfigClass(ServiceUserShareConfig.class);
+        addConfigClass(PersonModelShareConfig.class);
         addConfigClass(SessionsShareConfig.class);
+        addConfigClass(TextChatShareConfig.class);
+        addConfigClass(PrivateTalkShareConfig.class);
+        addConfigClass(MeetingSettingShareConfig.class);
+        addConfigClass(StartupNoticeShareConfig.class);
+        addConfigClass(StartupNoticeItemShareConfig.class);
+
     }
 
 }

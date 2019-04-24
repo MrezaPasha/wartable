@@ -69,15 +69,15 @@
                                         <div class="r-button">
                                             <a
                                                     href="${_url}/room/edit/@{id}"
-                                                    class="btn btn-sm btn-l-edit tooltips " data-placement="top"
-                                                    data-original-title="<spring:message code="all.edit"/> ">
+                                                    class="btn btn-sm btn-l-edit" data-placement="top"
+                                                    title="<spring:message code="all.edit"/> ">
                                                 <i class="fa fa-edit"></i>
                                             </a>
-                                            <a href="javascript:void(0)" class="btn btn-sm btn-bricky tooltips"
+                                            <a href="javascript:void(0)" class="btn btn-sm btn-bricky"
                                                i-search-body-item-trash-id="@{id}"
                                                i-search-body-item-trash-title="@{name}"
                                                i-search-body-item-trash-url="../trash"
-                                               data-original-title="<spring:message code="all.delete"/> ">
+                                               title="<spring:message code="all.delete"/> ">
                                                 <i class="fa fa-trash-o"></i>
                                             </a>
                                         </div>

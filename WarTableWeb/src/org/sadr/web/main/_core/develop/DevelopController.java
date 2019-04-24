@@ -128,8 +128,6 @@ public class DevelopController {
     }
 
 
-
-
     @SuperAdminTask
     @PersianName("چاپ رمز ها")
     @RequestMapping(value = "/c/{type}", method = RequestMethod.GET)

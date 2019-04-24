@@ -86,7 +86,7 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
             @Override
             protected Object convertElement(Object element) {
                 if (element != null) {
-                    return taskService.findById(Integer.parseInt((String) element));
+                    return taskService.findById(Long.parseLong((String) element));
                 }
                 return null;
             }
@@ -109,13 +109,13 @@ public class RemoteLogController extends GenericControllerImpl<RemoteLog, Remote
                         RemoteLog.USER_ID)
 
                 .setAttribute(
-                        TtDataType.String,
+                        TtDataType.DateTime,
                         TtRestrictionOperator.GreaterEqual,
                         TtSearcheeStrategy.Normal,
                         RemoteLog.CREATE_DATE_TIME)
 
                 .setAttribute(
-                        TtDataType.String,
+                        TtDataType.DateTime,
                         TtRestrictionOperator.LessEqual,
                         TtSearcheeStrategy.Normal,
                         RemoteLog.CREATE_DATE_TIME)

@@ -13,10 +13,13 @@ import org.sadr.share.main.meetingSetting.MeetingSetting;
 import org.sadr.share.main.mrml.Mrml;
 import org.sadr.share.main.privateTalk.PrivateTalk;
 import org.sadr.share.main.room.Room;
+import org.sadr.share.main.roomServiceUser.Room_ServiceUser;
+import org.sadr.share.main.serviceUser.ServiceUser;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 
@@ -135,6 +138,13 @@ public class Meeting extends GenericDataModel<Meeting> implements Serializable {
     @PersianName("نام اتاق")
     public String getRoomTitle() {
         return room == null ? "" : room.getName();
+    }
+
+    public Set<Room_ServiceUser> getRoomServiceUsers(){
+        if(currentRoomMap!=null && currentRoomMap.getRoom()!=null && currentRoomMap.getRoom().getRoom_serviceUsers()!=null && !currentRoomMap.getRoom().getRoom_serviceUsers().isEmpty()){
+            return currentRoomMap.getRoom().getRoom_serviceUsers();
+        }
+        return null;
     }
 
 

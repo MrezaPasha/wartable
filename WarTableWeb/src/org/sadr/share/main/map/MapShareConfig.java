@@ -1,6 +1,8 @@
 package org.sadr.share.main.map;
 
 import org.sadr.share.main.Room_Map.Room_MapShareConfig;
+import org.sadr.share.main.layer.LayerConfig;
+import org.sadr.share.main.layer.LayerShareConfig;
 import org.sadr.share.main.room.RoomShareConfig;
 import org.sadr.web.config.WebConfig;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +31,7 @@ public class MapShareConfig extends WebConfig {
         uc.setService(mapShareServiceImp());
         uc.setRoom_mapShareService(new Room_MapShareConfig().room_MapShareServiceImp());
         uc.setRoomShareService(new RoomShareConfig().roomShareServiceImp());
+        uc.setLayerShareService(new LayerShareConfig().layerShareServiceImp());
         return uc;
     }
 }

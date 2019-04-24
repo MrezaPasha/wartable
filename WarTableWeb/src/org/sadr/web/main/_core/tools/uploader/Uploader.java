@@ -216,6 +216,30 @@ public class Uploader {
         //  outlog.pl(orginalFileName + "  " + fn + "   " + fe + "  " + fileExt + "   " + sourceFile.getName());
         acceptedFileName = originalFileName;
 
+
+        if (fileService.isExist(Restrictions.and(
+                Restrictions.eq(File.ORGINAL_NAME, originalFileName),
+                Restrictions.eq(File.DIRECTORY_ABSOLUTE_PATH, dirPath)))) {
+            //  outlog.pl("");
+            switch (ifExist) {
+                case RenameNewFile:
+                default:
+                    //  outlog.pl("");
+                    int i = 1;
+                    while (fileService.isExist(Restrictions.and(
+                            Restrictions.eq(File.ORGINAL_NAME, acceptedFileName),
+                            Restrictions.eq(File.DIRECTORY_ABSOLUTE_PATH, dirPath)))) {
+                        acceptedFileName
+                                = fn + "_" + i
+                                + fe;
+                        i++;
+                    }
+                    break;
+                case ReplaceOldFile:
+
+                    break;
+            }
+        }
         //  outlog.pl(acceptedFileName);
         File file = new File(
                 acceptedFileName,

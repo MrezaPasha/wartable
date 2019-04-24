@@ -8,6 +8,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
+<link rel="stylesheet" href="${cp}/resources/plugins/persian-datetimepicker/persian-datepicker-0.4.5.css">
+
 <div class="container c-list-container">
     <div class="page-header">
         <div class="cred-header">
@@ -70,14 +72,14 @@
                                     <td class="center">
                                         <div class="r-button btn-group">
                                             <a href="${_url}/restore/@{id}"
-                                               class="btn btn-sm btn-l-notClient tooltips btn-animated btn-animated-right" data-placement="top"
-                                               data-original-title="<spring:message code="backup.restore"/>">
+                                               class="btn btn-sm btn-l-notClient btn-animated btn-animated-right" data-placement="top"
+                                               title="<spring:message code="backup.restore"/>">
                                                 <i class="clip-rotate-2 pad-2"></i>
                                                 <spring:message code="backup.restore"/>
                                             </a>
                                             <a href="${cp}/panel/file/dl/@{file.id}"
-                                               class="btn btn-sm btn-l-call tooltips btn-animated btn-animated-right" data-placement="top"
-                                               data-original-title="<spring:message code="backup.download"/>">
+                                               class="btn btn-sm btn-l-call btn-animated btn-animated-right" data-placement="top"
+                                               title="<spring:message code="backup.download"/>">
                                                 <i class="fa fa-download pad-2"></i>
                                                 <spring:message code="backup.download"/>
                                             </a>
@@ -109,11 +111,13 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript" src="${cp}/resources/plugins/persian-datetimepicker/persian-date-0.1.8.js"></script>
+<script type="text/javascript" src="${cp}/resources/plugins/persian-datetimepicker/persian-datepicker-0.4.5.js"></script>
 <script>
     jQuery(document).ready(function () {
-
+        CustomJs.initPersianDateTime();
         pluginFillBody = function (i, value, newItem) {
-            console.log(value);
             return newItem;
         };
         CustomJs.initAjaxSearch();

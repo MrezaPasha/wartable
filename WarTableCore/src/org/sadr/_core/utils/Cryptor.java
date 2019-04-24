@@ -79,7 +79,6 @@ public class Cryptor {
             cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
 
             byte[] original = cipher.doFinal(Base64.decodeBase64(encrypted));
-            OutLog.pl(new String(original));
             return new String(original);
         } catch (Exception ex) {
             ex.printStackTrace();

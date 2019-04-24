@@ -8,9 +8,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Hibernate 5.2.12-5.2.12" level="project" />
-    <orderEntry type="library" exported="" name="libs" level="project" />
     <orderEntry type="module" module-name="WarTableCore" exported="" />
-    <orderEntry type="library" name="tomcat-juli" level="project" />
     <orderEntry type="library" exported="" name="_lib-share" level="project" />
+    <orderEntry type="library" name="_libs" level="project" />
   </component>
 </module>

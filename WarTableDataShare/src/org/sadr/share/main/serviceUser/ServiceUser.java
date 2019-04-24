@@ -1,5 +1,6 @@
 package org.sadr.share.main.serviceUser;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GenericDataModel;
 import org.sadr.share.main._types.TtServiceUserState;
@@ -10,9 +11,11 @@ import org.sadr.share.main.personModel.PersonModel;
 import org.sadr.share.main.privateTalk.PrivateTalk;
 import org.sadr.share.main.room.Room;
 import org.sadr.share.main.roomServiceUser.Room_ServiceUser;
+import org.sadr.share.main.startupNotice.item.StartupNoticeItem;
 import org.sadr.share.main.textChat.TextChat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
@@ -32,6 +35,8 @@ public class ServiceUser extends GenericDataModel<ServiceUser> implements Serial
     public static final String _ORG_POSITION = "orgPosition";
     public static final String DELETED = "deleted";
     public static final String BANNED = "banned";
+    public static final String LAST_IP_ADDRESS = "lastIpAddress";
+    public static final String LAST_SIGNIN_DATETIME = "lastSigninDateTime";
     public static final String LOGIN_COUNT = "loginCount";
     public static final String LAST_PASSWORD = "lastPassword";
     public static final String CREATION_TIME = "creationDateTime";
@@ -41,8 +46,12 @@ public class ServiceUser extends GenericDataModel<ServiceUser> implements Serial
     public static final String _ROOM_SERVICE_USER = "room_serviceUsers";
     public static final String _USER_MODEL = "userModel";
     public static final String _GROUP_POLICY = "groupPolicy";
+    public static final String _ONLINE_ROOM = "onlineRoom";
     public static final String _TEXT_CHATS = "textChats";
     public static final String _PRIVATE_TALKS = "privateTalks";
+    public static final String $GRAGE_TITLE = "gradeTitle";
+    public static final String $ORG_POSITION_TITLE= "orgPositionTitle";
+    public static final String _STARTUP_NOTICE_ITEMS= "startupNoticeItems";
 
     private static String[] actColumns;
     private static String[] relColumns;
@@ -75,11 +84,10 @@ public class ServiceUser extends GenericDataModel<ServiceUser> implements Serial
     // static fields end
 
 
-    @PersianName("شناسه")
+    @PersianName("نام کاربری")
     @Column(nullable = false)
-    @Size(max = 100)
+    @Size(min = 2, max = 100)
     private String userName;
-
 
     @PersianName("گذرواژه")
     @Column(nullable = false)
@@ -88,12 +96,12 @@ public class ServiceUser extends GenericDataModel<ServiceUser> implements Serial
 
     @PersianName("نام")
     @Column(nullable = false)
-    @Size(max = 100)
+    @Size(min = 2, max = 100)
     private String name;
 
     @PersianName("نام خانوادگی")
     @Column(nullable = false)
-    @Size(max = 100)
+    @Size(min = 2, max = 100)
     private String family;
 
 
@@ -136,14 +144,25 @@ public class ServiceUser extends GenericDataModel<ServiceUser> implements Serial
     @Size(max = 30)
     private String failedDateTime;
 
+    @PersianName("آخرین زمان ورود")
+    @Size(max = 30)
+    private String lastSigninDateTime;
+
+    @PersianName("آخرین آدرس آی پی ورود")
+    @Size(max = 100)
+    private String lastIpAddress;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @PersianName("آخرین اتاق وارد شده")
     private Room lastRoom;
 
-
     @OneToMany(mappedBy = "serviceUser")
     @PersianName("اتاق ها")
     private Set<Room_ServiceUser> room_serviceUsers;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @PersianName("اتاق فعال")
+    private Room_ServiceUser onlineRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @PersianName("مدل کاربر")
@@ -161,26 +180,42 @@ public class ServiceUser extends GenericDataModel<ServiceUser> implements Serial
     @PersianName("تماس های خصوصی")
     private Set<PrivateTalk_ServiceUser> privateTalkServiceUsers;*/
 
+    @OneToMany(mappedBy = "serviceUser")
+    @PersianName("فراخوان ها")
+    private Set<StartupNoticeItem> startupNoticeItems;
+
     @ManyToMany
     @JoinTable(name = "Service.TextChat_ServiceUser",
-        joinColumns = {
-            @JoinColumn(name = "serviceUser_id", nullable = false)},
-        inverseJoinColumns = {
-            @JoinColumn(name = "textChat_id")})
+            joinColumns = {
+                    @JoinColumn(name = "serviceUser_id", nullable = false)},
+            inverseJoinColumns = {
+                    @JoinColumn(name = "textChat_id")})
     @PersianName("پیام ها")
     private Set<TextChat> textChats;
 
     @ManyToMany
     @JoinTable(name = "Service.PrivateTalk_ServiceUser",
-        joinColumns = {
-            @JoinColumn(name = "serviceUser_id", nullable = false)},
-        inverseJoinColumns = {
-            @JoinColumn(name = "privateTalk_id")})
+            joinColumns = {
+                    @JoinColumn(name = "serviceUser_id", nullable = false)},
+            inverseJoinColumns = {
+                    @JoinColumn(name = "privateTalk_id")})
     @PersianName("تماس ها")
     private Set<PrivateTalk> privateTalks;
 
 
     // METHODS
+
+
+    @PersianName("درجه سازمانی")
+    public String getGradeTitle() {
+        return grade != null ? grade.getValue() : "";
+    }
+
+    @PersianName("جایگاه سازمانی")
+    public String getOrgPositionTitle() {
+        return orgPosition != null ? orgPosition.getValue() : "";
+    }
+
 
     public String getFullName() {
         return name + " " + family;
@@ -341,7 +376,40 @@ public class ServiceUser extends GenericDataModel<ServiceUser> implements Serial
         this.privateTalks = privateTalks;
     }
 
-// METHOD End
+    public String getLastIpAddress() {
+        return lastIpAddress;
+    }
+
+    public void setLastIpAddress(String lastIpAddress) {
+        this.lastIpAddress = lastIpAddress;
+    }
+
+    public String getLastSigninDateTime() {
+        return lastSigninDateTime;
+    }
+
+    public void setLastSigninDateTime(String lastSigninDateTime) {
+        this.lastSigninDateTime = lastSigninDateTime;
+    }
+
+    public Room_ServiceUser getOnlineRoom() {
+        return onlineRoom;
+    }
+
+    public void setOnlineRoom(Room_ServiceUser onlineRoom) {
+        this.onlineRoom = onlineRoom;
+    }
+
+    public Set<StartupNoticeItem> getStartupNoticeItems() {
+        return startupNoticeItems;
+    }
+
+    public void setStartupNoticeItems(Set<StartupNoticeItem> startupNoticeItems) {
+        this.startupNoticeItems = startupNoticeItems;
+    }
+
+
+    // METHOD End
 
 
 }

@@ -20,9 +20,22 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="_lib-share" level="project" />
-    <orderEntry type="library" exported="" name="libs" level="project" />
     <orderEntry type="module" module-name="WarTableCore" />
     <orderEntry type="module" module-name="WarTableDataShare" />
-    <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../_lib-share" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../_lib-share" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/../_lib-share" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/../_lib-share" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="_libs" level="project" />
+    <orderEntry type="library" name="lib_tomcat" level="application" />
   </component>
 </module>

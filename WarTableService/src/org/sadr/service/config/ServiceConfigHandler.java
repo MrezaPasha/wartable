@@ -82,6 +82,10 @@ import org.sadr.share.main.services.Services;
 import org.sadr.share.main.services.ServicesConfig;
 import org.sadr.share.main.sessions.Sessions;
 import org.sadr.share.main.sessions.SessionsConfig;
+import org.sadr.share.main.startupNotice.item.StartupNoticeItem;
+import org.sadr.share.main.startupNotice.item.StartupNoticeItemConfig;
+import org.sadr.share.main.startupNotice.startupNotice.StartupNotice;
+import org.sadr.share.main.startupNotice.startupNotice.StartupNoticeConfig;
 import org.sadr.share.main.textChat.TextChat;
 import org.sadr.share.main.textChat.TextChatConfig;
 import org.springframework.core.env.Environment;
@@ -192,6 +196,9 @@ public class ServiceConfigHandler {
         addModelClass(BaseConfig.class);
         //============================  ServiceLog
         addModelClass(ServiceLog.class);
+
+        addModelClass(StartupNotice.class);
+        addModelClass(StartupNoticeItem.class);
 
 
         ////////////////////////////////////////////
@@ -471,6 +478,9 @@ public class ServiceConfigHandler {
 
         //============================  Room_ServiceUserConfig
         addConfigClass(Room_ServiceUserConfig.class);
+
+        addConfigClass(StartupNoticeConfig.class);
+        addConfigClass(StartupNoticeItemConfig.class);
 
         //============================  MeetingItemLayer
         //addModelClass(MeetingItemLayerConfig.class);

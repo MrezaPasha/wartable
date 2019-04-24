@@ -295,4 +295,64 @@ public class MeetingShareControllerTest extends AbstractContextControllerTests {
     }
     //............................. pDetailsTest_accessTo  #
 
+
+ //#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=# pTalkDetailsTest  #
+    //============================= pTalkDetailsTest_accessTo  #
+@Test
+    public void pTalkDetailsTest_accessTo() throws Exception {
+        //--- EMPTY_TEST 
+
+    }
+   //............................. pTalkDetailsTest_accessTo  #
+
+
+ //#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=# pSettingListTest  #
+    //============================= pSettingListTest_accessTo  #
+@Test
+    public void pSettingListTest_accessTo() throws Exception {
+        //--- EMPTY_TEST 
+
+    }
+   //............................. pSettingListTest_accessTo  #
+
+
+ //#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=# pSettingDetailsTest  #
+    //============================= pSettingDetailsTest_accessTo  #
+@Test
+    public void pSettingDetailsTest_accessTo() throws Exception {
+        //--- EMPTY_TEST 
+
+    }
+   //............................. pSettingDetailsTest_accessTo  #
+
+
+ //#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=# pTalkListTest  #
+    //============================= pTalkListTest_accessTo  #
+@Test
+    public void pTalkListTest_accessTo() throws Exception {
+        //--- EMPTY_TEST 
+
+    }
+   //............................. pTalkListTest_accessTo  #
+
+
+ //#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=# fSettingDownloadSourceByIdTest  #
+    //============================= fSettingDownloadSourceByIdTest_accessTo  #
+@Test
+    public void fSettingDownloadSourceByIdTest_accessTo() throws Exception {
+        //--- EMPTY_TEST 
+
+    }
+   //............................. fSettingDownloadSourceByIdTest_accessTo  #
+
+
+ //#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=# fTalkDownloadSourceByIdTest  #
+    //============================= fTalkDownloadSourceByIdTest_accessTo  #
+@Test
+    public void fTalkDownloadSourceByIdTest_accessTo() throws Exception {
+        //--- EMPTY_TEST 
+
+    }
+   //............................. fTalkDownloadSourceByIdTest_accessTo  #
+
 }

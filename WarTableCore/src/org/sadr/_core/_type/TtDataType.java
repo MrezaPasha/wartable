@@ -27,7 +27,11 @@ public enum TtDataType {
     Float("float", "float", "f"),
     Float_JL("float", "java.lang.Float", "f"),
     Enum("enum", "enum", "e"),
-    Enum_JL("enum", "java.lang.Enum", "e");
+    Enum_JL("enum", "java.lang.Enum", "e"),
+    DateTime("varchar", "java.lang.String", "sdt"),
+    Date("varchar", "java.lang.String", "sd"),
+    Time("varchar", "java.lang.String", "st"),
+    ;
 
     public static TtDataType getByDbType(String dt) {
         for (TtDataType value : values()) {
@@ -79,6 +83,12 @@ public enum TtDataType {
                 return Text;
             case "e":
                 return Enum;
+            case "sd":
+                return Date;
+            case "st":
+                return Time;
+            case "sdt":
+                return DateTime;
             default:
                 return null;
         }
@@ -93,6 +103,9 @@ public enum TtDataType {
         switch (type) {
             case "s":
             case "t":
+            case "sd":
+            case "st":
+            case "sdt":
                 if (value instanceof String) {
                     return value;
                 } else {

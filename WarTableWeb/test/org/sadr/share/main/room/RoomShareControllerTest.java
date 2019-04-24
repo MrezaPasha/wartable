@@ -203,7 +203,7 @@ public class RoomShareControllerTest extends AbstractContextControllerTests {
                 )
                 .andDo(print())
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrlPattern(_PANEL_URL + "/edit/*"))
+                .andExpect(redirectedUrl(_PANEL_URL + "/create"))
                 .andExpect(flash().attributeExists("notice"))
         ;
 
@@ -407,7 +407,7 @@ public class RoomShareControllerTest extends AbstractContextControllerTests {
                 )
                 .andDo(print())
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrlPattern(_PANEL_URL + "/edit/*"))
+                .andExpect(redirectedUrl(_PANEL_URL + "/create"))
                 .andExpect(flash().attributeExists("notice"))
                 .andReturn();
 
@@ -525,5 +525,25 @@ public class RoomShareControllerTest extends AbstractContextControllerTests {
 
     }
     //............................. pUserListTest_accessTo  #
+
+
+ //#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=# pChatListTest  #
+    //============================= pChatListTest_accessTo  #
+@Test
+    public void pChatListTest_accessTo() throws Exception {
+        //--- EMPTY_TEST 
+
+    }
+   //............................. pChatListTest_accessTo  #
+
+
+ //#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=# pChatDetailsTest  #
+    //============================= pChatDetailsTest_accessTo  #
+@Test
+    public void pChatDetailsTest_accessTo() throws Exception {
+        //--- EMPTY_TEST 
+
+    }
+   //............................. pChatDetailsTest_accessTo  #
 
 }

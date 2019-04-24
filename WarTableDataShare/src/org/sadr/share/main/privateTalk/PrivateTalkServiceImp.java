@@ -367,7 +367,7 @@ public class PrivateTalkServiceImp extends GenericServiceImpl<PrivateTalk, Priva
                     savedPrivateCall.setFileName(savedFileName);
                     Set<ServiceUser> joinedServiceUser = new HashSet<>();
                     joinedServiceUser.add(sessions.getServiceUser());
-                    savedPrivateCall.setJoinedServiceUSer(joinedServiceUser);
+                    savedPrivateCall.setJoinedServiceUsers(joinedServiceUser);
                     update(savedPrivateCall);
                     /*PrivateTalk insertedPrivateTalk = findBy(Restrictions.and(Restrictions.eq(PrivateTalk._MEETING,meeting),Restrictions.eq(PrivateTalk._REQUEST_USER,sessions.getServiceUser()),Restrictions.eq(PrivateTalk.CALL_NUMBER,privateConfNumber)));*/
                     List<Integer> broadcastFlags = new State().setStateBytes(true, TtState.SESS_UPDATE_REQUESTPRIVATE);
@@ -439,11 +439,11 @@ public class PrivateTalkServiceImp extends GenericServiceImpl<PrivateTalk, Priva
                 if (meeting != null) {
                     PrivateTalk privateTalk = findBy(Restrictions.and(Restrictions.eq(PrivateTalk._MEETING, meeting), Restrictions.eq(PrivateTalk.ID, privateTalkId)));
                     if (privateTalk != null) {
-                        Set<ServiceUser> currentPrivateTalkUsers = privateTalk.getJoinedServiceUSer();
+                        Set<ServiceUser> currentPrivateTalkUsers = privateTalk.getJoinedServiceUsers();
                         if (!currentPrivateTalkUsers.contains(sessions.getServiceUser())) {
-                            Set<ServiceUser> joinedServiceUserList = privateTalk.getJoinedServiceUSer();
+                            Set<ServiceUser> joinedServiceUserList = privateTalk.getJoinedServiceUsers();
                             joinedServiceUserList.add(sessions.getServiceUser());
-                            privateTalk.setJoinedServiceUSer(joinedServiceUserList);
+                            privateTalk.setJoinedServiceUsers(joinedServiceUserList);
                             update(privateTalk);
                             rpcResponse = generateAcceptRequesterPrivateVoiceChatRequest(privateTalk.getId(), TtErrors.NoError);
                             // broadcast message
@@ -491,13 +491,13 @@ public class PrivateTalkServiceImp extends GenericServiceImpl<PrivateTalk, Priva
             if (sessions != null) {
                 PrivateTalk privateTalk = findBy(Restrictions.eq(PrivateTalk.ID, privateTalkId));
                 if (privateTalk != null) {
-                    Set<ServiceUser> serviceUsers = privateTalk.getJoinedServiceUSer();
+                    Set<ServiceUser> serviceUsers = privateTalk.getJoinedServiceUsers();
                     if (serviceUsers.contains(sessions.getServiceUser())) {
                         serviceUsers.remove(sessions.getServiceUser());
                         if (serviceUsers.isEmpty()) {
                             Utils.stopRecord(privateTalkId.toString());
                         }
-                        privateTalk.setJoinedServiceUSer(serviceUsers);
+                        privateTalk.setJoinedServiceUsers(serviceUsers);
                         update(privateTalk);
 
                         // get the room
@@ -563,7 +563,7 @@ public class PrivateTalkServiceImp extends GenericServiceImpl<PrivateTalk, Priva
                                 meetingRecFile.setFileType(TtMeetingRecFileType.Audio);
                                 meetingRecFileServiceImp.save(meetingRecFile);
                                 meetingRecFiles.add(meetingRecFile);
-                                meetingSetting.setRecFiles(meetingRecFiles);
+//                                meetingSetting.setRecFiles(meetingRecFiles);
                                 meetingSettingServiceImp.save(meetingSetting);
 
                                 // broadcast to all the user of the room that start session
@@ -575,7 +575,7 @@ public class PrivateTalkServiceImp extends GenericServiceImpl<PrivateTalk, Priva
                             }
 
                         } else {
-                            meetingSetting.setRecFiles(null);
+//                            meetingSetting.setRecFiles(null);
                             meetingSettingServiceImp.save(meetingSetting);
                             // broadcast to all the user of the room that start session
                             List<Integer> broadcastFlags = new State().setStateBytes(true, TtState.SESS__UPDATE_START_MAPSESSIONTIME);
@@ -685,9 +685,9 @@ public class PrivateTalkServiceImp extends GenericServiceImpl<PrivateTalk, Priva
             Integer meetingId = new Double(Double.parseDouble((java.lang.String) rpcRequest.getParams().get("MapSessionId").toString())).intValue();
             Sessions sessions = sessionsServiceImp.findBy(Restrictions.eq(Sessions.SESSION_ID, sessionId), Sessions._SERVICE_USER);
             if (sessions != null) {
-                Meeting meeting = meetingServiceImp.findBy(Restrictions.eq(Meeting.ID, meetingId), RePa.p__(Meeting._CURRENT_ROOM_MAP, Room_Map._ROOM, Room._ROOM_SERVICEUSER, Room_ServiceUser._SERVICE_USER));
+                Meeting meeting = meetingServiceImp.findBy(Restrictions.eq(Meeting.ID, meetingId), RePa.p__(Meeting._CURRENT_ROOM_MAP, Room_Map._ROOM, Room._ROOM_SERVICEUSERS, Room_ServiceUser._SERVICE_USER));
                 if (meeting != null) {
-                    List<MeetingSetting> meetingSettings = meetingSettingServiceImp.findAllBy(Restrictions.and(Restrictions.eq(MeetingSetting._MEETING, meeting), Restrictions.isNotNull(MeetingSetting.END_DATE_TIME), Restrictions.isNotNull(MeetingSetting.START_DATE_TIME)), MeetingSetting._REC_FILES);
+                    List<MeetingSetting> meetingSettings = meetingSettingServiceImp.findAllBy(Restrictions.and(Restrictions.eq(MeetingSetting._MEETING, meeting), Restrictions.isNotNull(MeetingSetting.END_DATE_TIME), Restrictions.isNotNull(MeetingSetting.START_DATE_TIME)));
                     if (!meetingSettings.isEmpty()) {
                         rpcResponse = generateGetPublicVoiceArchiveResponse(meetingSettings, TtErrors.NoError);
                     } else {
@@ -713,7 +713,7 @@ public class PrivateTalkServiceImp extends GenericServiceImpl<PrivateTalk, Priva
             Integer meetingId = new Double(Double.parseDouble((java.lang.String) rpcRequest.getParams().get("MapSessionId").toString())).intValue();
             Sessions sessions = sessionsServiceImp.findBy(Restrictions.eq(Sessions.SESSION_ID, sessionId), Sessions._SERVICE_USER);
             if (sessions != null) {
-                Meeting meeting = meetingServiceImp.findBy(Restrictions.eq(Meeting.ID, meetingId), RePa.p__(Meeting._CURRENT_ROOM_MAP, Room_Map._ROOM, Room._ROOM_SERVICEUSER, Room_ServiceUser._SERVICE_USER));
+                Meeting meeting = meetingServiceImp.findBy(Restrictions.eq(Meeting.ID, meetingId), RePa.p__(Meeting._CURRENT_ROOM_MAP, Room_Map._ROOM, Room._ROOM_SERVICEUSERS, Room_ServiceUser._SERVICE_USER));
                 if (meeting != null) {
                     List<PrivateTalk> privateTalks = findAllBy(Restrictions.and(Restrictions.eq(PrivateTalk._MEETING, meeting), Restrictions.isNotNull(PrivateTalk.END_DATE_TIME), Restrictions.isNotNull(PrivateTalk.START_DATE_TIME)), PrivateTalk._SERVICE_USERS);
                     if (!privateTalks.isEmpty()) {

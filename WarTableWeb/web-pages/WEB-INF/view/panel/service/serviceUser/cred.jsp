@@ -41,11 +41,18 @@
             </ul>
         </div>
         <div class="tab-content">
-            <form id="form" accept-charset="UTF-8" action="${action}" method="POST">
+            <form id="form" accept-charset="UTF-8" action="${action}" method="POST" enctype="multipart/form-data">
                 <form:hidden id="serviceUser_id" path="serviceUser.id"/>
                 <div class="row">
                     <div class="col-sm-4">
-                        <div class="form-group">
+                        <div class="">
+                            <input id="uploadModel" name="uploadModel" type="checkbox" class="checkbox checkbox-table" data-visible-src="dv1">
+                            <label for="uploadModel" class="control-label">
+                                <spring:message code="serviceUser.userModel.type"/>
+                            </label>
+                        </div>
+
+                        <div class="form-group" data-visible-dst="dv1" data-visible-align="true">
                             <label class="control-label">
                                 <spring:message code="serviceUser.userModel"/>
                             </label>
@@ -68,10 +75,30 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group" data-visible-dst="dv1" data-visible-align="false">
+                            <c:set var="varName" value="serviceUser.userModel"/>
+                            <form:label path="${varName}" cssClass="control-label">
+                                <spring:message code="${varName}"/>
+                                <form:errors cssClass="form-validation-error" path="${varName}"/>
+                            </form:label>
+                            <form:select path="${varName}.id" cssClass="form-control search-select">
+                                <option value=""></option>
+                                <form:options items="${umlist}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                        <div class="form-group">
+                            <c:set var="varName" value="serviceUser.userModel.scale"/>
+                            <form:label path="${varName}" cssClass="control-label">
+                                <spring:message code="personModel.scale"/>
+                                <span class="symbol required"></span>
+                                <form:errors cssClass="form-validation-error" path="${varName}"/>
+                            </form:label>
+                            <form:input path="${varName}" cssClass="form-control number-required number-format"/>
+                        </div>
                         <div class="three-container three-service-user"
                              i-three-mode="2"
-                             i-three-name="male"
-                             i-three-object="${userObjectPath}"
+                             i-three-name="${serviceUser.userModel.fileName}"
+                             i-three-object="${objectPath}"
                              i-three-material="${userMaterialPath}">
                         </div>
 
@@ -103,6 +130,30 @@
                                 <form:errors cssClass="form-validation-error" path="${varName}"/>
                             </form:label>
                             <form:input path="${varName}" cssClass="form-control string-required string-max-50"/>
+                        </div>
+                        <div class="form-group">
+                            <c:set var="varName" value="serviceUser.deleted"/>
+                            <form:label path="${varName}" cssClass="control-label">
+                                <spring:message code="${varName}"/>
+                                <span class="symbol required"></span>
+                                <form:errors cssClass="form-validation-error" path="${varName}"/>
+                            </form:label>
+                            <form:select path="${varName}" cssClass="form-control search-select dropdown-required">
+                                <option value=""></option>
+                                <form:options itemLabel="name"/>
+                            </form:select>
+                        </div>
+                        <div class="form-group">
+                            <c:set var="varName" value="serviceUser.banned"/>
+                            <form:label path="${varName}" cssClass="control-label">
+                                <spring:message code="${varName}"/>
+                                <span class="symbol required"></span>
+                                <form:errors cssClass="form-validation-error" path="${varName}"/>
+                            </form:label>
+                            <form:select path="${varName}" cssClass="form-control search-select dropdown-required">
+                                <option value=""></option>
+                                <form:options itemLabel="name"/>
+                            </form:select>
                         </div>
                     </div>
                     <div class="col-sm-4">
@@ -154,7 +205,6 @@
 <script src="${cp}/resources-p/plugins/bootstrap-fileupload/bootstrap-fileupload.min.js"></script>
 
 <script type="text/javascript" src="${cp}/resources-p/plugins/3d/three.min.js"></script>
-
 <script type="text/javascript" src="${cp}/resources-p/plugins/3d/OBJLoader.js"></script>
 
 <script type="text/javascript" src="${cp}/resources-p/plugins/3d/TrackballControls.js"></script>
@@ -163,6 +213,13 @@
 <script type="text/javascript" src="${cp}/resources-p/plugins/3d/LoaderSupport.js"></script>
 <script type="text/javascript" src="${cp}/resources-p/plugins/3d/OBJLoader2.js"></script>
 
+
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/inflate.min.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/FBXLoader.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/OrbitControls.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/WebGL.js"></script>
+<script type="text/javascript" src="${cp}/resources-p/plugins/3d/stats.min.js"></script>
+
 <script>
     jQuery(document).ready(function () {
         CustomJs.initSelect2();
@@ -170,6 +227,5 @@
         CustomJs.initVisibility();
         CustomJs.initPersianDateTime();
         CustomPanelJs.init3DxLoader();
-
     });
 </script>

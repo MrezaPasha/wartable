@@ -71,7 +71,8 @@ public enum TtPropertorInWebList {
 //    IrrorAlertEmailReceiverAddresses("N.propertor.irror.email.receiver.addresses", "reciever01@sadr.com,reciever02@sadr.com", TtPropertorType.String, TtPropertorInWebSection.IrrorAlertEmailReceiver, false), ///
 
     ///==================== service
-    ServiceUploadPath("N.propertor.service.upload.path", "/upload", TtPropertorType.String, TtPropertorInWebSection.ServiceUpload, false), ///
+    ServiceUploadMapPath("N.propertor.service.upload.map.path", "/ftp/upload", TtPropertorType.String, TtPropertorInWebSection.ServiceUpload, false), ///
+//    ServiceUploadObjectPath("N.propertor.service.upload.object.path", "/ftp/objects", TtPropertorType.String, TtPropertorInWebSection.ServiceUpload, false), ///
     ServiceUserDefaultModelId("N.propertor.service.user.default.model.id", 1, TtPropertorType.Integer, TtPropertorInWebSection.ServiceUser, false), ///
 
     ;

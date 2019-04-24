@@ -1,7 +1,12 @@
-_libs
-_libs-captcha
-_out
-_tomcat
+/_lib*
+/_out
+/_tomcat
+
+**/.idea/**
+**/assets
+**/registery
+**/repository
+**/*.iml
 
 # Created by https://www.gitignore.io/api/java,intellij
 
@@ -55,9 +60,6 @@ cmake-build-*/
 
 # File-based project format
 *.iws
-
-# IntelliJ
-out/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -118,4 +120,3 @@ hs_err_pid*
 
 
 # End of https://www.gitignore.io/api/java,intellij
-WarTableWeb/registery/ROOT/boot\.properties

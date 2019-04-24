@@ -1,6 +1,7 @@
 package org.sadr.share.main.room;
 
 import org.hibernate.criterion.Restrictions;
+import org.jvnet.hk2.annotations.Service;
 import org.sadr._core._type.TtDataType;
 import org.sadr._core._type.TtRestrictionOperator;
 import org.sadr._core.meta.annotation.PersianName;
@@ -13,12 +14,17 @@ import org.sadr._core.utils.Searchee;
 import org.sadr._core.utils._type.TtSearcheeStrategy;
 import org.sadr.share.main.Room_Map.Room_Map;
 import org.sadr.share.main.Room_Map.Room_MapShareService;
+import org.sadr.share.main._types.TtUserRoleFlags;
 import org.sadr.share.main.map.Map;
 import org.sadr.share.main.map.MapShareService;
+import org.sadr.share.main.meeting.Meeting;
 import org.sadr.share.main.roomServiceUser.Room_ServiceUser;
 import org.sadr.share.main.roomServiceUser.Room_ServiceUserShareService;
 import org.sadr.share.main.serviceUser.ServiceUser;
 import org.sadr.share.main.serviceUser.ServiceUserShareService;
+import org.sadr.share.main.textChat.TextChat;
+import org.sadr.share.main.textChat.TextChatService;
+import org.sadr.share.main.textChat.TextChatShareService;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.tools._type.TtIxportRowIndex;
 import org.sadr.web.main._core.tools._type.TtIxportSubStrategy;
@@ -43,6 +49,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.xml.soap.Text;
 import java.io.IOException;
 import java.util.List;
 
@@ -64,6 +71,13 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
     private Room_MapShareService room_mapShareService;
     private MapShareService mapShareService;
     private ServiceUserShareService serviceUserShareService;
+    private TextChatShareService textChatShareService;
+
+    @Autowired
+    public void setTextChatShareService(TextChatShareService textChatShareService) {
+        this.textChatShareService = textChatShareService;
+    }
+
 
     @Autowired
     public void setServiceUserShareService(ServiceUserShareService serviceUserShareService) {
@@ -109,7 +123,8 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
         this.service.save(fObj);
 
         Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room.register.success", TtNotice.Success)));
-        return Referer.redirect(_PANEL_URL + "/edit/" + fObj.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
+        return Referer.redirect(_PANEL_URL + "/create", TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
+//        return Referer.redirect(_PANEL_URL + "/edit/" + fObj.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
     }
 
     //=========================== edit
@@ -204,7 +219,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         Room.ROOM_NAME
                 );
 
@@ -212,9 +227,12 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
                 Room.class,
                 GB.col(Room.ID),
                 GB.col(Room.CREATE_DATE_TIME),
+                GB.col(Room.MODIFY_DATE_TIME),
                 GB.col(Room.ROOM_NAME),
                 GB.col(Room.TABLE_LENGHT),
-                GB.col(Room.TABLE_WIDTH)
+                GB.col(Room.TABLE_WIDTH),
+                GB.col(Room.ROOM_TYPE),
+                GB.col(Room.$CURRENT_MEETING_NAME, Room.ROOM_TYPE)
         );
         return TtTile___.p_service_room_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
     }
@@ -228,10 +246,22 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
         GB gb = GB.init(Room.class)
                 .set(
                         Room.CREATE_DATE_TIME,
+                        Room.MODIFY_DATE_TIME,
                         Room.ROOM_NAME,
                         Room.TABLE_WIDTH,
-                        Room.TABLE_LENGHT
+                        Room.TABLE_LENGHT,
+                        Room.ROOM_TYPE,
+                        Room.DESCRIPTIONS,
+                        Room.BUSY_TYPE,
+                        Room.ACCESS_SETTING,
+                        Room.REC_SETTING
 
+                )
+                .setGbs(
+                        GB.init(Meeting.class, Room._CURRENT_MEETING)
+                                .set(
+                                        Meeting.NAME
+                                )
                 )
                 .setSearchParams(ajaxParam);
 
@@ -240,9 +270,12 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
             JB jb = JB.init()
                     .set(
                             Room.CREATE_DATE_TIME,
+                            Room.MODIFY_DATE_TIME,
                             Room.ROOM_NAME,
                             Room.TABLE_WIDTH,
-                            Room.TABLE_LENGHT
+                            Room.TABLE_LENGHT,
+                            Room.ROOM_TYPE,
+                            Room.$CURRENT_MEETING_NAME
                     );
 
             String jSearch = this.service.findAllJson(gb, jb);
@@ -254,7 +287,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
         }
         gb.setIxportParams(ixportParam);
         return Ixporter.init(Room.class)
-                .exportToFileInList(this.service.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
+                .exportToFileInList(this.service.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IncludeSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
 
     }
 
@@ -318,11 +351,32 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
         if (objBindingResult.hasErrors()) {
             return Referer.redirectBindingError(TtTaskActionSubType.New_Data, TtTaskActionStatus.Error, request, redirectAttributes, objBindingResult, fObj);
         }
+
+        if (fObj.getMap() == null || fObj.getMap().getIdi() == 0) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room_ServiceUser.select.map")));
+            return Referer.redirectObjects(
+                    TtTaskActionSubType.New_Data,
+                    TtTaskActionStatus.Error,
+                    notice2s,
+                    request,
+                    redirectAttributes,
+                    fObj);
+        }
+
+        if (this.room_mapShareService.isExist(
+                Restrictions.and(
+                        Restrictions.eq(Room_Map._MAP, fObj.getMap()),
+                        Restrictions.eq(Room_Map._ROOM, fObj.getRoom())))) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room_Map.record.exist", TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.New_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
+        }
+
         fObj.setCreationDateTime(ParsCalendar.getInstance().getShortDateTime());
         this.room_mapShareService.save(fObj);
 
         Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room_Map.register.success", TtNotice.Success)));
-        return Referer.redirect(_PANEL_URL + "/map/edit/" + fObj.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
+        return Referer.redirect(_PANEL_URL + "/map/create/" + fObj.getRoom().getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
+//        return Referer.redirect(_PANEL_URL + "/map/edit/" + fObj.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
     }
 
     //=========================== edit map
@@ -388,6 +442,17 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
                     fObj);
         }
 
+        if (fObj.getMap() == null || fObj.getMap().getIdi() == 0) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room_ServiceUser.select.map")));
+            return Referer.redirectObjects(
+                    TtTaskActionSubType.New_Data,
+                    TtTaskActionStatus.Error,
+                    notice2s,
+                    request,
+                    redirectAttributes,
+                    fObj);
+        }
+
         Room_Map dbObj;
 
 
@@ -404,6 +469,13 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
                     fObj);
         }
 
+        if (this.room_mapShareService.isDuplicateWith(
+                Restrictions.and(
+                        Restrictions.eq(Room_Map._MAP, fObj.getMap()),
+                        Restrictions.eq(Room_Map._ROOM, fObj.getRoom())), dbObj.getIdi())) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room_Map.record.exist", TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.New_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
+        }
 
 //        dbObj.setRoom(fObj.getRoom());
 //        dbObj.setServiceUser(fObj.getServiceUser());
@@ -427,23 +499,16 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
 
         Room room = this.service.findById(id);
         if (room == null) {
-            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room.register.success", TtNotice.Success)));
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room.not.found", TtNotice.Warning)));
             return Referer.redirect("/panel/room/list", TtTaskActionSubType.Take_Report, TtTaskActionStatus.Failure, notice2s);
         }
 
         Searchee.init(Room_Map.class, model)
                 .setAttribute(
-                        TtDataType.String,
-                        TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
-                        Room_Map._ROOM,
-                        Searchee.field(Room.ROOM_NAME, Room.class)
-                )
-
-                .setAttribute(
                         TtDataType.Long,
                         TtRestrictionOperator.Equal,
-                        TtSearcheeStrategy.Normal,
+                        TtSearcheeStrategy.HiddenAutoFill,
+                        id,
                         Room_Map._ROOM,
                         Searchee.field(Room.ID, Room.class)
 
@@ -453,7 +518,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
         GB.searchTableColumns(model,
                 Room_Map.class,
                 GB.col(Room_Map.ID),
-                GB.col(Room_Map.$MAP_TITLE, GB.path(Room_Map._MAP, Map.NAME)),
+                GB.col(Room_Map.$MAP_TITLE, Room_Map.MODIFY_DATE_TIME),
                 GB.col(Room_Map.CREATION_DATE_TIME)
         );
 
@@ -469,7 +534,8 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
 
         GB gb = GB.init(Room_Map.class)
                 .set(
-                        Room_Map.CREATION_DATE_TIME
+                        Room_Map.CREATION_DATE_TIME,
+                        Room_Map.MODIFY_DATE_TIME
                 )
                 .setGbs(
                         GB.init(Map.class, Room_Map._MAP)
@@ -500,7 +566,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
         }
         gb.setIxportParams(ixportParam);
         return Ixporter.init(Room_Map.class)
-                .exportToFileInList(this.service.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
+                .exportToFileInList(this.room_mapShareService.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IncludeSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
 
 
     }
@@ -518,8 +584,10 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
                     .setMessages(new Notice2("N.room_Map.not.found", JsonBuilder.toJson("room_MapId", "" + id)))
                     .toResponse();
         }
+
+
         String name = dbObj.getMapTitle();
-        this.service.delete(id);
+        this.room_mapShareService.delete(id);
 
         return Ison.init(TtTaskActionSubType.Delete_From_DB, TtTaskActionStatus.Success)
                 .setStatus(TtIsonStatus.Ok)
@@ -566,10 +634,47 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
             return Referer.redirectBindingError(TtTaskActionSubType.New_Data, TtTaskActionStatus.Error, request, redirectAttributes, objBindingResult, fObj);
         }
 
+
+        if (fObj.getServiceUser() == null || fObj.getServiceUser().getIdi() == 0) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room_ServiceUser.select.user")));
+            return Referer.redirectObjects(
+                    TtTaskActionSubType.New_Data,
+                    TtTaskActionStatus.Error,
+                    notice2s,
+                    request,
+                    redirectAttributes,
+                    fObj);
+        }
+
+        if (this.room_serviceUserShareService.isExist(
+                Restrictions.and(
+                        Restrictions.eq(Room_ServiceUser._SERVICE_USER, fObj.getServiceUser()),
+                        Restrictions.eq(Room_ServiceUser._ROOM, fObj.getRoom())))) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room_ServiceUser.record.exist", TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.New_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
+        }
+
+        if (fObj.getPermanentUserRoleFlag() == TtUserRoleFlags.Admin) {
+            if (this.room_serviceUserShareService.isExist(
+                    Restrictions.and(
+                            Restrictions.eq(Room_ServiceUser.PERMANENT_USER_ROLE_FLAG, TtUserRoleFlags.Admin),
+                            Restrictions.eq(Room_ServiceUser._ROOM, fObj.getRoom())))) {
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room_ServiceUser.admin.exist", TtNotice.Warning)));
+                return Referer.redirectObjects(TtTaskActionSubType.New_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
+            }
+        }
+
+        if (fObj.getPermanentUserRoleFlag() != TtUserRoleFlags.Admin && fObj.getPermanentUserRoleFlag() != TtUserRoleFlags.User) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room_ServiceUser.only.admin.user", TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.New_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
+        }
+
+
         this.room_serviceUserShareService.save(fObj);
 
         Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room_ServiceUser.register.success", TtNotice.Success)));
-        return Referer.redirect(_PANEL_URL + "/user/edit/" + fObj.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
+        return Referer.redirect(_PANEL_URL + "/user/create/" + fObj.getRoom().getId(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
+//        return Referer.redirect(_PANEL_URL + "/user/edit/" + fObj.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
     }
 
 
@@ -635,6 +740,18 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
                     fObj);
         }
 
+        if (fObj.getServiceUser() == null || fObj.getServiceUser().getIdi() == 0) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room_ServiceUser.select.user")));
+            return Referer.redirectObjects(
+                    TtTaskActionSubType.New_Data,
+                    TtTaskActionStatus.Error,
+                    notice2s,
+                    request,
+                    redirectAttributes,
+                    fObj);
+        }
+
+
         Room_ServiceUser dbObj;
 
 
@@ -649,6 +766,30 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
                     request,
                     redirectAttributes,
                     fObj);
+        }
+
+
+        if (this.room_serviceUserShareService.isDuplicateWith(
+                Restrictions.and(
+                        Restrictions.eq(Room_ServiceUser._SERVICE_USER, fObj.getServiceUser()),
+                        Restrictions.eq(Room_ServiceUser._ROOM, fObj.getRoom())), dbObj.getIdi())) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room_ServiceUser.record.exist", TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.New_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
+        }
+
+        if (fObj.getPermanentUserRoleFlag() == TtUserRoleFlags.Admin) {
+            if (this.room_serviceUserShareService.isDuplicateWith(
+                    Restrictions.and(
+                            Restrictions.eq(Room_ServiceUser.PERMANENT_USER_ROLE_FLAG, TtUserRoleFlags.Admin),
+                            Restrictions.eq(Room_ServiceUser._ROOM, fObj.getRoom())), dbObj.getIdi())) {
+                Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room_ServiceUser.admin.exist", TtNotice.Warning)));
+                return Referer.redirectObjects(TtTaskActionSubType.New_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
+            }
+        }
+
+        if (fObj.getPermanentUserRoleFlag() != TtUserRoleFlags.Admin && fObj.getPermanentUserRoleFlag() != TtUserRoleFlags.User) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room_ServiceUser.only.admin.user", TtNotice.Warning)));
+            return Referer.redirectObjects(TtTaskActionSubType.New_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
         }
 
         dbObj.setAcceptPrivateChat(fObj.getAcceptPrivateChat());
@@ -698,24 +839,18 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
 
         Room room = this.service.findById(id);
         if (room == null) {
-            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room.register.success", TtNotice.Success)));
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room.not.found", TtNotice.Warning)));
             return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Take_Report, TtTaskActionStatus.Failure, notice2s);
         }
 
 
         Searchee.init(Room_ServiceUser.class, model)
-                .setAttribute(
-                        TtDataType.String,
-                        TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
-                        Room_ServiceUser._SERVICE_USER,
-                        Searchee.field(ServiceUser.USERNAME, ServiceUser.class)
-                )
 
                 .setAttribute(
                         TtDataType.Long,
                         TtRestrictionOperator.Equal,
-                        TtSearcheeStrategy.Normal,
+                        TtSearcheeStrategy.HiddenAutoFill,
+                        id,
                         Room_ServiceUser._ROOM,
                         Searchee.field(Room.ID, Room.class)
 
@@ -725,12 +860,13 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
         GB.searchTableColumns(model,
                 Room_ServiceUser.class,
                 GB.col(Room_ServiceUser.ID),
-                GB.col(Room_ServiceUser.$SERVICE_USER_FULL_NAME),
+                GB.col(Room_ServiceUser.$SERVICE_USER_FULL_NAME, GB.path(Room_ServiceUser.TEMPORARY_USER_ROLE_FLAG)),
                 GB.col(Room_ServiceUser.JOIN_DATE_TIME),
                 GB.col(Room_ServiceUser.USER_STATUS),
                 GB.col(Room_ServiceUser.PRESENCE),
                 GB.col(Room_ServiceUser.ACCEPT_PRIVATE_CHAT),
-                GB.col(Room_ServiceUser.ACCEPT_PRIVATE_TALK)
+                GB.col(Room_ServiceUser.ACCEPT_PRIVATE_TALK),
+                GB.col(Room_ServiceUser.PERMANENT_USER_ROLE_FLAG)
         );
 
         model.addAttribute(room);
@@ -749,7 +885,9 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
                         Room_ServiceUser.USER_STATUS,
                         Room_ServiceUser.ACCEPT_PRIVATE_CHAT,
                         Room_ServiceUser.ACCEPT_PRIVATE_TALK,
-                        Room_ServiceUser.PRESENCE
+                        Room_ServiceUser.PRESENCE,
+                        Room_ServiceUser.TEMPORARY_USER_ROLE_FLAG,
+                        Room_ServiceUser.PERMANENT_USER_ROLE_FLAG
                 )
                 .setGbs(
                         GB.init(ServiceUser.class, Room_ServiceUser._SERVICE_USER)
@@ -774,7 +912,8 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
                             Room_ServiceUser.ACCEPT_PRIVATE_CHAT,
                             Room_ServiceUser.ACCEPT_PRIVATE_TALK,
                             Room_ServiceUser.$SERVICE_USER_FULL_NAME,
-                            Room_ServiceUser.PRESENCE
+                            Room_ServiceUser.PRESENCE,
+                            Room_ServiceUser.PERMANENT_USER_ROLE_FLAG
                     );
 
             String jSearch = this.room_serviceUserShareService.findAllJson(gb, jb);
@@ -786,7 +925,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
         }
         gb.setIxportParams(ixportParam);
         return Ixporter.init(Room_ServiceUser.class)
-                .exportToFileInList(this.service.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
+                .exportToFileInList(this.room_serviceUserShareService.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IncludeSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
 
     }
 
@@ -810,5 +949,112 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
                 .setStatus(TtIsonStatus.Ok)
                 .setMessages(new Notice2("N1.all.trash.success", TtNotice.Success, name))
                 .toResponse();
+    }
+
+
+    //#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#  CHAT
+//=========================== details chat
+    @PersianName("جزئیات چت")
+    @RequestMapping(value = _PANEL_URL + "/chat/details/{uid}")
+    public ModelAndView pChatDetails(Model model, @PathVariable("uid") long uid,
+                                  RedirectAttributes redirectAttributes) {
+
+
+        TextChat dbObj = this.textChatShareService.findById(uid, TextChat._ROOM,TextChat._SENDER,TextChat._RECEIVERS);
+
+        if (dbObj == null) {
+            Notice2[] noteIds = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.chat.not.found", JsonBuilder.toJson("chatId", "" + uid), TtNotice.Warning));
+            return Referer.redirect(
+                    _PANEL_URL + "/list",
+                    TtTaskActionSubType.Take_Report,
+                    TtTaskActionStatus.Failure,
+                    noteIds);
+        }
+
+        model.addAttribute(dbObj);
+        return TtTile___.p_service_room_chat_details.___getDisModel(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
+    }
+
+    //=========================== list chat
+    @PersianName("لیست چت های اتاق")
+    @RequestMapping(value = _PANEL_URL + "/chat/list/{id}")
+    public ModelAndView pChatList(Model model, @PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+
+        Room room = this.service.findById(id);
+        if (room == null) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room.not.found", TtNotice.Warning)));
+            return Referer.redirect("/panel/room/list", TtTaskActionSubType.Take_Report, TtTaskActionStatus.Failure, notice2s);
+        }
+
+        Searchee.init(TextChat.class, model)
+                .setAttribute(
+                        TtDataType.Long,
+                        TtRestrictionOperator.Equal,
+                        TtSearcheeStrategy.HiddenAutoFill,
+                        id,
+                        TextChat._ROOM,
+                        Searchee.field(Room.ID, Room.class)
+
+                );
+
+        GB.searchTableColumns(model,
+                TextChat.class,
+                GB.col(TextChat.ID),
+                GB.col(TextChat.CHAT_TYPE),
+                GB.col(TextChat.DELIVER_DATE_TIME),
+                GB.col(TextChat.SEND_DATE_TIME),
+                GB.col(TextChat.SEND_STATUS),
+                GB.col(TextChat.$SENDER_FUUL_NAME)
+        );
+
+        model.addAttribute(room);
+
+        return TtTile___.p_service_room_chat_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
+    }
+
+    @RequestMapping(value = _PANEL_URL + "/chat/list", method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseEntity<String> pChatList(@RequestParam(value = "ap", required = false) String ajaxParam,
+                                    @RequestParam(value = "ixp", required = false) String ixportParam,
+                                    HttpServletResponse response) throws IOException {
+
+        GB gb = GB.init(TextChat.class)
+                .set(
+                        TextChat.CHAT_TYPE,
+                        TextChat.DELIVER_DATE_TIME,
+                        TextChat.SEND_DATE_TIME,
+                        TextChat.SEND_STATUS
+                )
+                .setGbs(
+                        GB.init(ServiceUser.class, TextChat._SENDER)
+                                .set(
+                                        ServiceUser.NAME,
+                                        ServiceUser.FAMILY
+                                )
+                )
+                .setSearchParams(ajaxParam);
+
+        if (ixportParam == null) {
+
+            JB jb = JB.init()
+                    .set(
+                            TextChat.CHAT_TYPE,
+                            TextChat.DELIVER_DATE_TIME,
+                            TextChat.SEND_DATE_TIME,
+                            TextChat.SEND_STATUS,
+                            TextChat.$SENDER_FUUL_NAME
+                    );
+
+            String jSearch = this.textChatShareService.findAllJson(gb, jb);
+
+            return Ison.init(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success)
+                    .setStatus(TtIsonStatus.Ok)
+                    .setPropertySearch(jSearch)
+                    .toResponse();
+        }
+        gb.setIxportParams(ixportParam);
+        return Ixporter.init(Room_Map.class)
+                .exportToFileInList(this.textChatShareService.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IncludeSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
+
     }
 }

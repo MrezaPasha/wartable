@@ -13,6 +13,9 @@ import org.sadr._core.utils.Searchee;
 import org.sadr._core.utils._type.TtSearcheeStrategy;
 import org.sadr.share.main.Room_Map.Room_Map;
 import org.sadr.share.main.Room_Map.Room_MapShareService;
+import org.sadr.share.main._utils.ShareUtils;
+import org.sadr.share.main.layer.Layer;
+import org.sadr.share.main.layer.LayerShareService;
 import org.sadr.share.main.room.Room;
 import org.sadr.share.main.room.RoomShareService;
 import org.sadr.web.main._core._type.TtTile___;
@@ -45,7 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author masoud
@@ -64,6 +67,13 @@ public class MapShareController extends GenericControllerImpl<Map, MapShareServi
     private Room_MapShareService room_mapShareService;
 
     private RoomShareService roomShareService;
+
+    private LayerShareService layerShareService;
+
+    @Autowired
+    public void setLayerShareService(LayerShareService layerShareService) {
+        this.layerShareService = layerShareService;
+    }
 
     @Autowired
     public void setRoomShareService(RoomShareService roomShareService) {
@@ -89,14 +99,22 @@ public class MapShareController extends GenericControllerImpl<Map, MapShareServi
     }
 
     @RequestMapping(value = _PANEL_URL + "/create", method = RequestMethod.POST)
-    public ModelAndView pCreate(@ModelAttribute("map") @Valid Map fObj,
+    public ModelAndView pCreate(@ModelAttribute("map") Map fObj,
                                 BindingResult objBindingResult,
                                 HttpServletRequest request,
                                 @RequestParam(value = "attachment", required = false) MultipartFile attachment,
                                 final RedirectAttributes redirectAttributes) {
-        if (objBindingResult.hasErrors()) {
-            return Referer.redirectBindingError(TtTaskActionSubType.New_Data, TtTaskActionStatus.Error, request, redirectAttributes, objBindingResult, fObj);
-        }
+//        if (objBindingResult.hasErrors()) {
+//            return Referer.redirectBindingError(TtTaskActionSubType.New_Data, TtTaskActionStatus.Error, request, redirectAttributes, objBindingResult, fObj);
+//        }
+
+//        if (this.service.isExist(
+//                Restrictions.eq(Map.NAME, fObj.getName()))) {
+//            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.map.name.exist", TtNotice.Warning)));
+//            return Referer.redirectObjects(TtTaskActionSubType.New_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
+//        }
+        Notice2[] notice2s = null;
+
         if (attachment != null && attachment.getSize() > 0) {
             if (!attachment.getOriginalFilename().endsWith(".map")) {
                 Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.map.upload.format.invalid", TtNotice.Danger)));
@@ -108,112 +126,47 @@ public class MapShareController extends GenericControllerImpl<Map, MapShareServi
                 return Referer.redirectObject(request, redirectAttributes, fObj);
             }
 
-            File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath));
+            File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadMapPath));
             //
-            fObj.setFileName(upload.getOrginalName());
-        }
 
-        fObj.setCreationDateTime(ParsCalendar.getInstance().getShortDateTime());
+            Map map = ShareUtils.uploadMap(upload.getOrginalName());
+            if (map != null) {
 
-        this.service.save(fObj);
-
-        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.map.register.success", TtNotice.Success)));
-        return Referer.redirect(_PANEL_URL + "/edit/" + fObj.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
-    }
-
-    //=========================== edit
-    @PersianName("ویرایش")
-    @RequestMapping(value = _PANEL_URL + "/edit/{uid}")
-    public ModelAndView pEdit(Model model, @PathVariable("uid") long uid,
-                              RedirectAttributes redirectAttributes) {
-
-        Map dbObj = (Map) model.asMap().get("map");
-        if (dbObj == null) {
-            dbObj = this.service.findById(uid);
-        }
-        if (dbObj == null) {
-            Notice2[] noteIds = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.map.not.found", JsonBuilder.toJson("mapId", "" + uid), TtNotice.Warning));
-            return Referer.redirect(
-                    _PANEL_URL + "/list",
-                    TtTaskActionSubType.Edit_Data,
-                    TtTaskActionStatus.Failure,
-                    noteIds);
-        }
-
-        model.addAttribute(dbObj);
-        return TtTile___.p_service_map_edit.___getDisModel(_PANEL_URL + "/edit", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
-    }
-
-    @RequestMapping(value = _PANEL_URL + "/edit", method = RequestMethod.POST)
-    public ModelAndView pEdit(
-            @ModelAttribute("map")
-            @Valid Map fObj,
-            BindingResult suBindingResult,
-            HttpServletRequest request,
-            @RequestParam(value = "attachment", required = false) MultipartFile attachment,
-            RedirectAttributes redirectAttributes) {
-
-        if (suBindingResult.hasErrors()) {
-            return Referer.redirectBindingError(
-                    TtTaskActionSubType.Edit_Data,
-                    TtTaskActionStatus.Error,
-                    request,
-                    redirectAttributes,
-                    suBindingResult,
-                    fObj);
-        }
-
-        Map dbObj;
-
-
-        dbObj = this.service.findById(fObj.getIdi());
-
-        if (dbObj == null) {
-            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.map.not.found")));
-            return Referer.redirectObjects(
-                    TtTaskActionSubType.Edit_Data,
-                    TtTaskActionStatus.Error,
-                    notice2s,
-                    request,
-                    redirectAttributes,
-                    fObj);
-        }
-
-        if (attachment != null) {
-            if (attachment.getSize() > 0) {
-                if (!attachment.getOriginalFilename().endsWith(".map")) {
-                    Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.map.upload.format.invalid", TtNotice.Danger)));
+                if (this.service.isExist(Restrictions.eq(Map.NAME, map.getName()))) {
+                    Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.map.name.exist", TtNotice.Warning, map.getName())));
                     return Referer.redirectObject(request, redirectAttributes, fObj);
                 }
 
-                if (attachment.getSize() > 1024 * 1024 * PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize)) {
-                    Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.map.upload.max.size.exceed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
-                    return Referer.redirectObject(request, redirectAttributes, fObj);
-                }
+                if (map.getLayers() != null && !map.getLayers().isEmpty()) {
+                    Set<Layer> layers = map.getLayers();
+                    map.setLayers(null);
+                    this.service.save(map);
+                    for (Layer layer : layers) {
+                        layer.setMap(map);
+                        this.layerShareService.save(layer);
+                    }
+                    notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.map.register.success", TtNotice.Success)));
 
-                File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath));
-                //
-                dbObj.setFileName(upload.getOrginalName());
+                } else {
+                    notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.map.layer.not.found", TtNotice.Danger)));
+
+                }
+            } else {
+                notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.map.not.found", TtNotice.Danger)));
             }
+
         } else {
-            dbObj.setFileName(null);
+            notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.map.not.found", TtNotice.Danger)));
         }
 
-        dbObj.setName(fObj.getName());
-        dbObj.setCategory(fObj.getCategory());
-        dbObj.setUpdateDateTime(ParsCalendar.getInstance().getShortDateTime());
-        dbObj.setDescriptions(fObj.getDescriptions());
+//        fObj.setCreationDateTime(ParsCalendar.getInstance().getShortDateTime());
 
-        this.service.update(dbObj);
+//        this.service.save(fObj);
 
-        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.edit.success", TtNotice.Success, "" + dbObj.getIdi())));
-
-        return Referer.redirect(
-                _PANEL_URL + "/edit/" + dbObj.getIdi(),
-                TtTaskActionSubType.Edit_Data,
-                TtTaskActionStatus.Success,
-                notice2s);
+        return Referer.redirect(_PANEL_URL + "/create", TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
+//        return Referer.redirect(_PANEL_URL + "/edit/" + fObj.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
     }
+
 
     //=========================== list
     @PersianName("لیست")
@@ -224,7 +177,7 @@ public class MapShareController extends GenericControllerImpl<Map, MapShareServi
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         Map.NAME
                 );
 
@@ -235,7 +188,8 @@ public class MapShareController extends GenericControllerImpl<Map, MapShareServi
                 GB.col(Map.NAME),
                 GB.col(Map.CATEGORY),
                 GB.col(Map.FILE_SIZE),
-                GB.col(Map.UPDATE_TIME)
+                GB.col(Map.UPDATE_TIME),
+                GB.col(Map.FILE_NAME)
         );
         return TtTile___.p_service_map_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
     }
@@ -252,7 +206,8 @@ public class MapShareController extends GenericControllerImpl<Map, MapShareServi
                         Map.NAME,
                         Map.CATEGORY,
                         Map.FILE_SIZE,
-                        Map.UPDATE_TIME
+                        Map.UPDATE_TIME,
+                        Map.FILE_NAME
 
                 )
                 .setSearchParams(ajaxParam);
@@ -265,7 +220,8 @@ public class MapShareController extends GenericControllerImpl<Map, MapShareServi
                             Map.NAME,
                             Map.CATEGORY,
                             Map.FILE_SIZE,
-                            Map.UPDATE_TIME
+                            Map.UPDATE_TIME,
+                            Map.FILE_NAME
                     );
 
             String jSearch = this.service.findAllJson(gb, jb);
@@ -449,7 +405,7 @@ public class MapShareController extends GenericControllerImpl<Map, MapShareServi
 
         Map map = this.service.findById(id);
         if (map == null) {
-            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room.register.success", TtNotice.Success)));
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.map.not.found", TtNotice.Warning)));
             return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Take_Report, TtTaskActionStatus.Failure, notice2s);
         }
 
@@ -458,12 +414,11 @@ public class MapShareController extends GenericControllerImpl<Map, MapShareServi
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         Room_Map._ROOM,
                         Searchee.field(Room.ROOM_NAME, Room.class)
                 )
         ;
-
 
         GB.searchTableColumns(model,
                 Room_Map.class,
@@ -472,6 +427,16 @@ public class MapShareController extends GenericControllerImpl<Map, MapShareServi
                 GB.col(Room_Map.$ROOM_TITLE)
 
         );
+        Searchee.init(Room_Map.class, model)
+                .setAttribute(
+                        TtDataType.Long,
+                        TtRestrictionOperator.Equal,
+                        TtSearcheeStrategy.HiddenAutoFill,
+                        id,
+                        Room_Map._MAP,
+                        Searchee.field(Map.ID, Map.class)
+                );
+
 
         model.addAttribute(map);
         return TtTile___.p_service_map_room_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
@@ -524,6 +489,98 @@ public class MapShareController extends GenericControllerImpl<Map, MapShareServi
 
 
     }
+
+    //=========================== list
+    @PersianName("لیست")
+    @RequestMapping(value = _PANEL_URL + "/layer/list/{id}")
+    public ModelAndView pLayerList(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
+
+        Map map = this.service.findById(id);
+        if (map == null) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.map.not.found", TtNotice.Warning)));
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Take_Report, TtTaskActionStatus.Failure, notice2s);
+        }
+
+        Searchee.init(Layer.class, model)
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.ILike_ANY,
+                        TtSearcheeStrategy.Normal,
+                        Layer.NAME
+                );
+
+        Searchee.init(Layer.class, model)
+                .setAttribute(
+                        TtDataType.Long,
+                        TtRestrictionOperator.Equal,
+                        TtSearcheeStrategy.HiddenAutoFill,
+                        id,
+                        Layer._MAP,
+                        Searchee.field(Map.ID, Map.class)
+                );
+
+
+        GB.searchTableColumns(model,
+                Layer.class,
+                GB.col(Layer.ID),
+                GB.col(Layer.CREATE_DATE_TIME),
+                GB.col(Layer.MODIFY_DATE_TIME),
+                GB.col(Layer.NAME),
+                GB.col(Layer.LAYER_STATUS),
+                GB.col(Layer.ORDER),
+                GB.col(Layer.LAYER_TYPE),
+                GB.col(Layer.TYPE),
+                GB.col(Layer.DESCRIPTION)
+        );
+        return TtTile___.p_service_map_layer_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
+    }
+
+    @RequestMapping(value = _PANEL_URL + "/layer/list", method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseEntity<String> pLayerList(@RequestParam(value = "ap", required = false) String ajaxParam,
+                                      @RequestParam(value = "ixp", required = false) String ixportParam,
+                                      HttpServletResponse response) throws IOException {
+
+        GB gb = GB.init(Layer.class)
+                .set(
+                        Layer.CREATE_DATE_TIME,
+                        Layer.MODIFY_DATE_TIME,
+                        Layer.NAME,
+                        Layer.ORDER,
+                        Layer.LAYER_STATUS,
+                        Layer.LAYER_TYPE,
+                        Layer.TYPE,
+                        Layer.DESCRIPTION
+
+                )
+                .setSearchParams(ajaxParam);
+
+        if (ixportParam == null) {
+
+            JB jb = JB.init()
+                    .set(
+                            Layer.CREATE_DATE_TIME,
+                            Layer.MODIFY_DATE_TIME,
+                            Layer.NAME,
+                            Layer.ORDER,
+                            Layer.LAYER_STATUS,
+                            Layer.LAYER_TYPE,
+                            Layer.TYPE,
+                            Layer.DESCRIPTION);
+
+            String jSearch = this.layerShareService.findAllJson(gb, jb);
+
+            return Ison.init(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success)
+                    .setStatus(TtIsonStatus.Ok)
+                    .setPropertySearch(jSearch)
+                    .toResponse();
+        }
+        gb.setIxportParams(ixportParam);
+        return Ixporter.init(Layer.class)
+                .exportToFileInList(this.layerShareService.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
+
+    }
+
 
     //=========================== Trash room
     @PersianName("حذف اتاق از نقشه")

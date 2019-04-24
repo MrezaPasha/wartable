@@ -2,6 +2,7 @@ package org.sadr.share.main.privateTalk;
 
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GenericDataModel;
+import org.sadr.share.main._utils.ShareUtils;
 import org.sadr.share.main.meeting.Meeting;
 import org.sadr.share.main.privateTalk._types.TtPrivateTalkStatus;
 import org.sadr.share.main.serviceUser.ServiceUser;
@@ -24,9 +25,8 @@ public class PrivateTalk extends GenericDataModel<PrivateTalk> implements Serial
     public static final String STATUS = "status";
     public static final String FILE_NAME = "fileName";
     public static final String SIZE = "size";
-    public static final String _PRIVATETALK_SERVICEUSER = "privateTalkServiceUsers";
     public static final String _REQUEST_USER = "requestUser";
-    public static final String _JOINED_USERS = "joinedServiceUSers";
+    public static final String _JOINED_USERS = "joinedServiceUsers";
 /*
     public static final String CALL_NUMBER = "callNumber";
 */
@@ -59,22 +59,22 @@ public class PrivateTalk extends GenericDataModel<PrivateTalk> implements Serial
 
     @ManyToMany
     @JoinTable(name = "Service.PrivateTalk_ServiceUser",
-        joinColumns = {
-            @JoinColumn(name = "privateTalk_id", nullable = false)},
-        inverseJoinColumns = {
-            @JoinColumn(name = "serviceUser_id")})
+            joinColumns = {
+                    @JoinColumn(name = "privateTalk_id", nullable = false)},
+            inverseJoinColumns = {
+                    @JoinColumn(name = "serviceUser_id")})
     @PersianName("کاربران")
-    private Set<ServiceUser> serviceUsers ;
+    private Set<ServiceUser> serviceUsers;
 
     @ManyToMany
     @JoinTable(name = "Service.PrivateTalk_JoinedServiceUser",
-        joinColumns = {
-            @JoinColumn(name = "privateTalk_id", nullable = false)},
-        inverseJoinColumns = {
-            @JoinColumn(name = "serviceUser_id")})
+            joinColumns = {
+                    @JoinColumn(name = "privateTalk_id", nullable = false)},
+            inverseJoinColumns = {
+                    @JoinColumn(name = "serviceUser_id")})
 
     @PersianName("کاربران آنلاین")
-    private Set<ServiceUser> joinedServiceUSers ;
+    private Set<ServiceUser> joinedServiceUsers;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @PersianName("جلسه")
@@ -83,7 +83,6 @@ public class PrivateTalk extends GenericDataModel<PrivateTalk> implements Serial
     @ManyToOne(fetch = FetchType.LAZY)
     @PersianName("کاربر درخواست دهنده")
     private ServiceUser requestUser;
-
 
 
     @PersianName("زمان شروع تماس خصوصی")
@@ -108,8 +107,9 @@ public class PrivateTalk extends GenericDataModel<PrivateTalk> implements Serial
 
 
     // METHODS
-
-
+    public String getSoundPath() {
+        return ShareUtils.getTalkFileAddress(fileName);
+    }
 
 
     public Meeting getMeeting() {
@@ -176,12 +176,12 @@ public class PrivateTalk extends GenericDataModel<PrivateTalk> implements Serial
         this.requestUser = requestUser;
     }
 
-    public Set<ServiceUser> getJoinedServiceUSer() {
-        return joinedServiceUSers;
+    public Set<ServiceUser> getJoinedServiceUsers() {
+        return joinedServiceUsers;
     }
 
-    public void setJoinedServiceUSer(Set<ServiceUser> joinedServiceUSer) {
-        this.joinedServiceUSers = joinedServiceUSer;
+    public void setJoinedServiceUsers(Set<ServiceUser> joinedServiceUSer) {
+        this.joinedServiceUsers = joinedServiceUSer;
     }
 
     /*public String getCallNumber() {

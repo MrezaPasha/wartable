@@ -639,7 +639,6 @@ public abstract class GenericDaoImpl<T extends Serializable> implements GenericD
             );
             m_set.invoke(entity, getDateTime());
             m_set = clazz.getMethod("setEntityState", TtEntityState.class);
-
             m_set.invoke(entity, TtEntityState.Exist);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             Logger.getLogger(GenericDaoImpl.class
@@ -741,7 +740,7 @@ public abstract class GenericDaoImpl<T extends Serializable> implements GenericD
         try {
             Query query = getCurrentSession().createQuery("UPDATE " + clazz.getName()
                 + " SET entityState= :es" + " WHERE id= :eid");
-            query.setLong("es", TtEntityState.Remove.ordinal());
+            query.setInteger("es", TtEntityState.Remove.ordinal());
             query.setLong("eid", id);
             query.executeUpdate();
         } catch (Exception e) {

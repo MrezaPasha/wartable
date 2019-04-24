@@ -67,19 +67,19 @@
                                     <td class="center">
                                         <div class="r-button">
                                             <a href="${_url}/details/@{id}"
-                                               class="btn btn-sm btn-l-details tooltips " data-placement="top"
-                                               data-original-title="<spring:message code="all.details"/> ">
+                                               class="btn btn-sm btn-l-details" data-placement="top"
+                                               title="<spring:message code="all.details"/> ">
                                                 <i class="fa fa-info"></i>
                                             </a>
                                             <a href="${_url}/edit/@{id}"
-                                               class="btn btn-sm btn-l-edit tooltips " data-placement="top"
-                                               data-original-title="<spring:message code="all.edit"/> ">
+                                               class="btn btn-sm btn-l-edit" data-placement="top"
+                                               title="<spring:message code="all.edit"/> ">
                                                 <i class="fa fa-edit"></i>
                                             </a>
-                                            <a href="javascript:void(0)" class="btn btn-sm btn-bricky tooltips"
+                                            <a href="javascript:void(0)" class="btn btn-sm btn-bricky"
                                                i-search-body-item-trash-id="@{id}"
                                                i-search-body-item-trash-title="@{title}"
-                                               data-original-title="<spring:message code="all.delete"/> ">
+                                               title="<spring:message code="all.delete"/> ">
                                                 <i class="fa fa-trash-o"></i>
                                             </a>
                                         </div>

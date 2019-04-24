@@ -83,7 +83,7 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
 
                 } else {
                     uatt = this.findBy(Restrictions.and(
-                            Restrictions.eq(UserAttempt.COMPUTER_SIGNATURE, InetAddress.getLocalHost().getHostAddress()),
+                            Restrictions.eq(UserAttempt.COMPUTER_SIGNATURE, request.getRemoteAddr()),
                             Restrictions.eq(UserAttempt.ATTEMPT_TYPE, attemptType)));
 
                 }
@@ -125,7 +125,7 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
             uatt = new UserAttempt();
 //                uatt.setUser(user);
             uatt.setAgentSignature(request.getHeader("User-Agent"));
-            uatt.setComputerSignature(InetAddress.getLocalHost().getHostAddress());
+            uatt.setComputerSignature(request.getRemoteAddr());
             uatt.refreshDateTime();
             uatt.setAttemptType(attemptType);
             uatt.setIsSuccess(false);
@@ -152,7 +152,7 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
         if (!PropertorInWeb.getInstance().isOnProperty(TtPropertorInWebList.UserAttemptOn)) {
         } else {
             uatt = this.findBy(Restrictions.and(
-                    Restrictions.eq(UserAttempt.COMPUTER_SIGNATURE, InetAddress.getLocalHost().getHostAddress()),
+                    Restrictions.eq(UserAttempt.COMPUTER_SIGNATURE, request.getRemoteAddr()),
                     Restrictions.isNull(UserAttempt._USER),
                     Restrictions.eq(UserAttempt.ATTEMPT_TYPE, attemptType)));
             if (uatt != null) {
@@ -171,7 +171,7 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
                 uatt = new UserAttempt();
 //                uatt.setUser(user);
                 uatt.setAgentSignature(request.getHeader("User-Agent"));
-                uatt.setComputerSignature(InetAddress.getLocalHost().getHostAddress());
+                uatt.setComputerSignature(request.getRemoteAddr());
                 uatt.refreshDateTime();
                 uatt.setAttemptType(attemptType);
                 uatt.setIsSuccess(false);
@@ -205,7 +205,7 @@ public class UserAttemptServiceImp extends GenericServiceImpl<UserAttempt, UserA
                     uatt = new UserAttempt();
                     uatt.setUser(user);
                     uatt.setAgentSignature(request.getHeader("User-Agent"));
-                    uatt.setComputerSignature(InetAddress.getLocalHost().getHostAddress());
+                    uatt.setComputerSignature(request.getRemoteAddr());
                     uatt.refreshDateTime();
                     uatt.setAttemptType(attemptType);
                     uatt.setIsSuccess(false);

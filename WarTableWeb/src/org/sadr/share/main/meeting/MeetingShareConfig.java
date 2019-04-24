@@ -1,6 +1,9 @@
 package org.sadr.share.main.meeting;
 
 import org.sadr.share.config.ShareConfig;
+import org.sadr.share.main.meetingSetting.MeetingSettingShareConfig;
+import org.sadr.share.main.privateTalk.PrivateTalkConfig;
+import org.sadr.share.main.privateTalk.PrivateTalkShareConfig;
 import org.sadr.share.main.room.RoomShareConfig;
 import org.springframework.context.annotation.Bean;
 
@@ -27,6 +30,8 @@ public class MeetingShareConfig extends ShareConfig {
         MeetingShareController uc = new MeetingShareController();
         uc.setService(meetingShareServiceImp());
         uc.setRoomShareService(new RoomShareConfig().roomShareServiceImp());
+        uc.setPrivateTalkShareService(new PrivateTalkShareConfig().privateTalkShareServiceImp());
+        uc.setMeetingSettingShareService(new MeetingSettingShareConfig().meetingSettingShareServiceImp());
         return uc;
     }
 }

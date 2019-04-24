@@ -24,7 +24,10 @@ public class TextChat extends GenericDataModel<TextChat> implements Serializable
     public static final String SEND_DATE_TIME = "sendDateTime";
     public static final String SEND_STATUS = "sendStatus";
     public static final String CHAT_TYPE = "chatType";
-
+    public static final String MESSAGE_BODY = "messageBody";
+    public static final String DELIVER_DATE_TIME = "deliverDateTime";
+    public static final String $SENDER_FUUL_NAME = "senderFullName";
+    public static final String _PRIVATE_CHAT_RECEIVER = "privateChatReceiver";
 
 
     private static String[] actColumns;
@@ -51,6 +54,15 @@ public class TextChat extends GenericDataModel<TextChat> implements Serializable
     @PersianName("فرستنده")
     private ServiceUser sender;
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @PersianName("گیرنده خصوصی")
+    private ServiceUser privateChatReceiver;
+
+
+
+
+
     @ManyToMany
     @JoinTable(name = "Service.TextChat_ServiceUser",
         joinColumns = {
@@ -69,8 +81,20 @@ public class TextChat extends GenericDataModel<TextChat> implements Serializable
     @PersianName("نوع پیام")
     private TtTextChatType chatType;
 
+    @PersianName("محتوای پیام")
+    @Column(length = 1024)
+    private String messageBody;
+
+    @PersianName("زمان دریافت پیام")
+    private String deliverDateTime;
+
 
     // METHODS
+
+    @PersianName("فرستنده")
+    public String getSenderFullName(){
+        return sender!=null? sender.getFullName():"";
+    }
 
 
     public Room getRoom() {
@@ -89,13 +113,6 @@ public class TextChat extends GenericDataModel<TextChat> implements Serializable
         this.sender = sender;
     }
 
-    public Set<ServiceUser> getReceivers() {
-        return receivers;
-    }
-
-    public void setReceivers(Set<ServiceUser> receivers) {
-        this.receivers = receivers;
-    }
 
     public String getSendDateTime() {
         return sendDateTime;
@@ -119,5 +136,37 @@ public class TextChat extends GenericDataModel<TextChat> implements Serializable
 
     public void setChatType(TtTextChatType chatType) {
         this.chatType = chatType;
+    }
+
+    public String getMessageBody() {
+        return messageBody;
+    }
+
+    public void setMessageBody(String messageBody) {
+        this.messageBody = messageBody;
+    }
+
+    public String getDeliverDateTime() {
+        return deliverDateTime;
+    }
+
+    public void setDeliverDateTime(String deliverDateTime) {
+        this.deliverDateTime = deliverDateTime;
+    }
+
+    public Set<ServiceUser> getReceivers() {
+        return receivers;
+    }
+
+    public void setReceivers(Set<ServiceUser> receivers) {
+        this.receivers = receivers;
+    }
+
+    public ServiceUser getPrivateChatReceiver() {
+        return privateChatReceiver;
+    }
+
+    public void setPrivateChatReceiver(ServiceUser privateChatReceiver) {
+        this.privateChatReceiver = privateChatReceiver;
     }
 }

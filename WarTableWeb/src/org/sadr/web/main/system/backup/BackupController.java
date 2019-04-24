@@ -191,14 +191,21 @@ public class BackupController extends GenericControllerImpl<Backup, BackupServic
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.Like_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         Backup._FILE,
                         Searchee.field(File.TITLE, File.class)
                 )
 
                 .setAttribute(
-                        TtDataType.String,
-                        TtRestrictionOperator.Equal,
+                        TtDataType.DateTime,
+                        TtRestrictionOperator.GreaterEqual,
+                        TtSearcheeStrategy.Normal,
+                        Backup.BACKUP_DATE_TIME
+                )
+
+                .setAttribute(
+                        TtDataType.DateTime,
+                        TtRestrictionOperator.LessEqual,
                         TtSearcheeStrategy.Normal,
                         Backup.BACKUP_DATE_TIME
                 )

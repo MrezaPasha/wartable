@@ -13,6 +13,7 @@ import org.sadr.share.main.roomPolls.RoomPolls;
 import org.sadr.share.main.roomServiceUser.Room_ServiceUser;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
@@ -30,7 +31,7 @@ public class Room extends GenericDataModel<Room> implements Serializable {
     public static final String TABLE_WIDTH = "tableWidth";
     public static final String _CURRENT_MEETING = "currentMeeting";
     public static final String _ROOM_MAPS = "roomMaps";
-    public static final String _ROOM_SERVICEUSER = "room_serviceUsers" ;
+    public static final String _ROOM_SERVICEUSERS = "room_serviceUsers" ;
     public static final String _ROOM_MAP = "room_maps";
     public static final String _MEETINGS = "meetings";
     public static final String _ROOM_MODELS = "roomModel";
@@ -38,6 +39,7 @@ public class Room extends GenericDataModel<Room> implements Serializable {
     public static final String REC_SETTING = "recSetting";
     public static final String ACCESS_SETTING = "recSetting";
     public static final String BUSY_TYPE = "busyType";
+    public static final String $CURRENT_MEETING_NAME = "currentMeetingName";
     private static String[] actColumns;
     private static String[] relColumns;
     private static String[] virColumns;
@@ -71,26 +73,29 @@ public class Room extends GenericDataModel<Room> implements Serializable {
 
 
     @Column(nullable = false)
+    @NotNull
     @PersianName("نوع اتاق")
     private TtRoomType roomType;
 
 
     @Column(nullable = false )
-    @Size(max = 100)
+    @Size(min = 2, max = 100)
     @PersianName("نام اتاق")
     private String name;
 
 
     @Column(nullable = false)
-    @Size(max = 1000)
+    @Size(min = 2, max = 1000)
     @PersianName("توضیحات اتاق")
     private String descriptions;
 
     @Column(nullable = false)
+    @NotNull
     @PersianName("طول میز اتاق")
     private double tableLenght;
 
     @Column(nullable = false)
+    @NotNull
     @PersianName("عرض میز اتاق")
     private double tableWidth;
 
@@ -131,6 +136,11 @@ public class Room extends GenericDataModel<Room> implements Serializable {
 
 
 
+    @PersianName("جلسه فعال")
+    public String getCurrentMeetingName()
+    {
+        return currentMeeting != null ? currentMeeting.getName() : "";
+    }
 
     // getter and setter
 

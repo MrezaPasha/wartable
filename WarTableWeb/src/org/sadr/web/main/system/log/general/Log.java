@@ -47,7 +47,7 @@ import java.util.Date;
 @Table(name = "Web.System.Log")
 public class Log extends GenericDataModel<Log> implements Serializable {
 //#########++++++#######// StaticFields: Start //
-public static final String SERVER_ID = "serverId";public static final String IMPORTANCE_LEVEL = "importanceLevel";public static final String SENSITIVITY = "sensitivity";public static final String ACTION_TYPE = "actionType";public static final String ACTION_SUB_TYPE = "actionSubType";public static final String ACTION_STATUS = "actionStatus";public static final String USER_ID = "userId";public static final String USERNAME = "username";public static final String USER_CODE = "userCode";public static final String USER_LEVEL = "userLevel";public static final String USER_GROUP_ID = "userGroupId";public static final String DATE_TIME_G = "dateTimeG";public static final String TASK_NAME = "taskName";public static final String TASK_TITLE = "taskTitle";public static final String IS_TASK_TWO_LEVEL_CONFIRM = "isTaskTwoLevelConfirm";public static final String MESSAGE = "message";public static final String SESSION_ID = "sessionId";public static final String COMPUTER_SIGNATURE = "computerSignature";public static final String AGENT_SIGNATURE = "agentSignature";public static final String PORTER_UUID = "porterUuid";public static final String CLIENT_PORT_NUMBER = "clientPortNumber";public static final String CLIENT_IP_ADDRESS = "clientIpAddress";public static final String CLIENT_NAME = "clientName";public static final String URL = "url";public static final String REQUEST_METHOD = "requestMethod";public static final String HTTP_CODE = "httpCode";public static final String HOST_IP_ADDRESS = "hostIpAddress";public static final String HOST_PORT_NUMBER = "hostPortNumber";public static final String SEND_DATE_TIME_G = "sendDateTimeG";public static final String SEND_STATUS = "sendStatus";public static final String ONLINE_LOGGING_STRATEGY = "onlineLoggingStrategy";public static final String $ACT_COLUMNS = "actColumns";public static final String $REL_COLUMNS = "relColumns";public static final String $SEND_DATE_TIME = "sendDateTime";public static final String $VIR_COLUMNS = "virColumns";public static final String $IS_TASK_TWO_LEVEL_CONFIRM_Y = "isTaskTwoLevelConfirmY";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
+public static final String SERVER_ID = "serverId";public static final String IMPORTANCE_LEVEL = "importanceLevel";public static final String SENSITIVITY = "sensitivity";public static final String ACTION_TYPE = "actionType";public static final String ACTION_SUB_TYPE = "actionSubType";public static final String ACTION_STATUS = "actionStatus";public static final String USER_ID = "userId";public static final String USERNAME = "username";public static final String USER_CODE = "userCode";public static final String USER_LEVEL = "userLevel";public static final String USER_GROUP_ID = "userGroupId";public static final String DATE_TIME_G = "dateTimeG";public static final String TASK_NAME = "taskName";public static final String TASK_TITLE = "taskTitle";public static final String IS_TASK_TWO_LEVEL_CONFIRM = "isTaskTwoLevelConfirm";public static final String MESSAGE = "message";public static final String SESSION_ID = "sessionId";public static final String COMPUTER_SIGNATURE = "computerSignature";public static final String AGENT_SIGNATURE = "agentSignature";public static final String PORTER_UUID = "porterUuid";public static final String CLIENT_PORT_NUMBER = "clientPortNumber";public static final String CLIENT_IP_ADDRESS = "clientIpAddress";public static final String CLIENT_NAME = "clientName";public static final String URL = "url";public static final String REQUEST_METHOD = "requestMethod";public static final String HTTP_CODE = "httpCode";public static final String HOST_IP_ADDRESS = "hostIpAddress";public static final String HOST_PORT_NUMBER = "hostPortNumber";public static final String SEND_DATE_TIME_G = "sendDateTimeG";public static final String SEND_STATUS = "sendStatus";public static final String ONLINE_LOGGING_STRATEGY = "onlineLoggingStrategy";public static final String $ACT_COLUMNS = "actColumns";public static final String $REL_COLUMNS = "relColumns";public static final String $VIR_COLUMNS = "virColumns";public static final String $SEND_DATE_TIME = "sendDateTime";public static final String $IS_TASK_TWO_LEVEL_CONFIRM_Y = "isTaskTwoLevelConfirmY";private static String[] actColumns;private static String[] relColumns;private static String[] virColumns;public static void setAvrColumns(String acts, String virts, String rels) {if (acts != null) {actColumns = acts.split(",");}if (virts != null) {virColumns = virts.split(",");}if (rels != null) {relColumns = rels.split(",");}}public static String[] getActColumns() {return actColumns;} public static String[] getVirColumns() {return virColumns;} public static String[] getRelColumns() {return relColumns;} 
 //#########******#######// StaticFields: End //
 
     private static final int MESSAGE_LEN = 2048;
@@ -59,7 +59,7 @@ public static final String SERVER_ID = "serverId";public static final String IMP
                HttpServletRequest request, String message,
                TtLogHandler handler,
                Task task,
-               User user) throws UnknownHostException {
+               User user) {
 
         this.serverId = PropertorInLog.getInstance().getProperty(TtPropertorInLogList.SystemName)
                 + "|" + PropertorInLog.getInstance().getProperty(TtPropertorInLogList.SystemHostName)
@@ -120,7 +120,7 @@ public static final String SERVER_ID = "serverId";public static final String IMP
         if (task != null) {
             this.actionType = task.getActionType();
             this.taskName = task.getSignature();
-            this.taskTitle = task.getTitle();
+            this.taskTitle = task.getTitleAndModuleTitle();
             this.sensitivity = task.getSensitivity();
             this.importanceLevel = task.getImportanceLevel();
             this.isTaskTwoLevelConfirm = task.getIsTwoLevelConfirm();
@@ -180,7 +180,7 @@ public static final String SERVER_ID = "serverId";public static final String IMP
         this.dateTimeG = new Date().getTime();
 
         this.agentSignature = request.getHeader("User-Agent");
-        this.computerSignature = InetAddress.getLocalHost().getHostAddress();
+        this.computerSignature = request.getRemoteAddr();
         this.porterUuid = Cookier.getValue(request, TtCookierVariable.UserPorterUUID.getKey());
         this.sessionId = request.getSession().getId();
         this.requestMethod = request.getMethod();
@@ -190,7 +190,7 @@ public static final String SERVER_ID = "serverId";public static final String IMP
 
     public Log(ModelAndView andView, HttpServletRequest request, String message, TtLogHandler handler,
                Task task,
-               User user, UserGroup ug) throws UnknownHostException {
+               User user, UserGroup ug) {
         this(andView, request, message, handler, task, user);
         this.userGroupId = ug != null ? ug.getId() : 0;
 

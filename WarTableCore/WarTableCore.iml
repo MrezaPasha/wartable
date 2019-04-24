@@ -9,6 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Hibernate 5.2.12-5.2.12" level="project" />
-    <orderEntry type="library" exported="" name="libs" level="project" />
+    <orderEntry type="library" name="_libs" level="project" />
   </component>
 </module>

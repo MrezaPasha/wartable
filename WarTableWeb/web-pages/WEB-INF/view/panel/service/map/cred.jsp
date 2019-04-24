@@ -43,32 +43,32 @@
             <form id="form" accept-charset="UTF-8" action="${action}" method="POST" enctype="multipart/form-data">
                 <form:hidden id="map_id" path="map.id"/>
                 <div class="row">
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <c:set var="varName" value="map.name"/>
-                            <form:label path="${varName}" cssClass="control-label">
-                                <spring:message code="${varName}"/>
-                                <span class="symbol required"></span>
-                                <form:errors cssClass="form-validation-error" path="${varName}"/>
-                            </form:label>
-                            <form:input path="${varName}" cssClass="form-control string-required string-max-50"/>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <c:set var="varName" value="map.category"/>
-                            <form:label path="${varName}" cssClass="control-label">
-                                <spring:message code="${varName}"/>
-                                <span class="symbol required"></span>
-                                <form:errors cssClass="form-validation-error" path="${varName}"/>
-                            </form:label>
-                            <form:select path="${varName}" cssClass="form-control search-select dropdown-required">
-                                <option value=""></option>
-                                <form:options itemLabel="title"/>
-                            </form:select>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
+                    <%--<div class="col-sm-4">--%>
+                        <%--<div class="form-group">--%>
+                            <%--<c:set var="varName" value="map.name"/>--%>
+                            <%--<form:label path="${varName}" cssClass="control-label">--%>
+                                <%--<spring:message code="${varName}"/>--%>
+                                <%--<span class="symbol required"></span>--%>
+                                <%--<form:errors cssClass="form-validation-error" path="${varName}"/>--%>
+                            <%--</form:label>--%>
+                            <%--<form:input path="${varName}" cssClass="form-control string-required string-max-50"/>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                    <%--<div class="col-sm-4">--%>
+                        <%--<div class="form-group">--%>
+                            <%--<c:set var="varName" value="map.category"/>--%>
+                            <%--<form:label path="${varName}" cssClass="control-label">--%>
+                                <%--<spring:message code="${varName}"/>--%>
+                                <%--<span class="symbol required"></span>--%>
+                                <%--<form:errors cssClass="form-validation-error" path="${varName}"/>--%>
+                            <%--</form:label>--%>
+                            <%--<form:select path="${varName}" cssClass="form-control search-select dropdown-required">--%>
+                                <%--<option value=""></option>--%>
+                                <%--<form:options itemLabel="title"/>--%>
+                            <%--</form:select>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                    <div class="col-sm-8 col-sm-offset-2">
                         <div class="form-group">
                             <label class="control-label">
                                 <spring:message code="map.fileName"/>
@@ -94,19 +94,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="form-group">
-                            <c:set var="varName" value="map.descriptions"/>
-                            <form:label path="${varName}" cssClass="control-label">
-                                <spring:message code="${varName}"/>
-                                <span class="symbol required"></span>
-                                <form:errors cssClass="form-validation-error" path="${varName}"/>
-                            </form:label>
-                            <form:input path="${varName}" cssClass="form-control string-required"/>
-                        </div>
-                    </div>
-                </div>
+                <%--<div class="row">--%>
+                    <%--<div class="col-sm-12">--%>
+                        <%--<div class="form-group">--%>
+                            <%--<c:set var="varName" value="map.descriptions"/>--%>
+                            <%--<form:label path="${varName}" cssClass="control-label">--%>
+                                <%--<spring:message code="${varName}"/>--%>
+                                <%--<span class="symbol required"></span>--%>
+                                <%--<form:errors cssClass="form-validation-error" path="${varName}"/>--%>
+                            <%--</form:label>--%>
+                            <%--<form:input path="${varName}" cssClass="form-control string-required"/>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
             </form>
         </div>
     </div>

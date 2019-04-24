@@ -1992,6 +1992,7 @@
 
             self.element.cleanButton.click(function () {
                 self.inputElem.val("");
+                self.inputElem.change();
                 self.changeView(self.viewMode);
                 self.element.cleanButton.hide();
             });

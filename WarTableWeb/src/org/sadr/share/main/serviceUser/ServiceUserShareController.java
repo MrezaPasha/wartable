@@ -11,8 +11,13 @@ import org.sadr._core.utils.*;
 import org.sadr._core.utils._type.TtPasswordType;
 import org.sadr._core.utils._type.TtSearcheeStrategy;
 import org.sadr.share.main._types.TtMemberStatus;
+import org.sadr.share.main.grade.Grade;
 import org.sadr.share.main.grade.GradeShareService;
+import org.sadr.share.main.orgPosition.OrgPosition;
 import org.sadr.share.main.orgPosition.OrgPositionShareService;
+import org.sadr.share.main.personModel.PersonModel;
+import org.sadr.share.main.personModel.PersonModelShareService;
+import org.sadr.share.main.room.Room;
 import org.sadr.share.main.roomServiceUser.Room_ServiceUser;
 import org.sadr.share.main.roomServiceUser.Room_ServiceUserShareService;
 import org.sadr.share.main.sessions.Sessions;
@@ -35,7 +40,6 @@ import org.sadr.web.main.admin.user.user.User;
 import org.sadr.web.main.archive.file.file.File;
 import org.sadr.web.main.system._type.TtTaskActionStatus;
 import org.sadr.web.main.system._type.TtTaskActionSubType;
-import org.sadr.web.main.system.irror.irror.IrrorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -65,11 +69,16 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
     }
     /////////////////////////////////////////////////////// PANEL
 
-    private IrrorService irrorService;
     private GradeShareService gradeShareService;
     private OrgPositionShareService orgPositionShareService;
     private SessionsShareService sessionsShareService;
     private Room_ServiceUserShareService room_serviceUserShareService;
+    private PersonModelShareService personModelShareService;
+
+    @Autowired
+    public void setPersonModelShareService(PersonModelShareService personModelShareService) {
+        this.personModelShareService = personModelShareService;
+    }
 
     @Autowired
     public void setRoom_serviceUserShareService(Room_ServiceUserShareService room_serviceUserShareService) {
@@ -91,11 +100,6 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
         this.orgPositionShareService = orgPositionShareService;
     }
 
-    @Autowired
-    public void setIrrorService(IrrorService irrorService) {
-        this.irrorService = irrorService;
-    }
-
     @PersianName("ثبت")
     @RequestMapping(_PANEL_URL + "/create")
     public ModelAndView pCreate(Model model) {
@@ -103,9 +107,22 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
         if (u == null) {
             u = new ServiceUser();
         }
+
+        PersonModel userModel = this.personModelShareService.findById(PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.ServiceUserDefaultModelId));
+        if (userModel == null) {
+            userModel = new PersonModel();
+        } else {
+            model.addAttribute("objectPath",
+                    "/panel/file/dl/" + userModel.getFileId()
+            );
+        }
+
+        u.setUserModel(userModel);
+
         model.addAttribute(u);
         model.addAttribute("glist", gradeShareService.findAll());
         model.addAttribute("oplist", orgPositionShareService.findAll());
+        model.addAttribute("umlist", personModelShareService.findAll());
         return TtTile___.p_service_serviceUser_create.___getDisModel(_PANEL_URL + "/create", TtTaskActionSubType.New_Data, TtTaskActionStatus.Success);
     }
 
@@ -114,6 +131,7 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
     public ModelAndView pCreate(@ModelAttribute("serviceUser") @Valid ServiceUser fObj,
                                 BindingResult suBindingResult,
                                 HttpServletRequest request,
+                                @RequestParam(name = "uploadModel", required = false, defaultValue = "false") Boolean uploadModel,
                                 @RequestParam(value = "attachment", required = false) MultipartFile attachment,
                                 final RedirectAttributes redirectAttributes) {
         OutLog.pl(suBindingResult.toString());
@@ -121,6 +139,9 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
             return Referer.redirectBindingError(TtTaskActionSubType.New_Data, TtTaskActionStatus.Error, request, redirectAttributes, suBindingResult, fObj);
         }
 
+        if (fObj.getUserModel() != null && fObj.getUserModel().getId() == 0) {
+            fObj.setUserModel(null);
+        }
         if (fObj.getGrade() == null || fObj.getGrade().getId() == 0) {
             Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.serviceUser.grade.is.empty", TtNotice.Warning)));
             return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
@@ -138,28 +159,52 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
             return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
         }
 
-        if (attachment != null && attachment.getSize() > 0) {
-            if (!attachment.getOriginalFilename().endsWith(".model")
-                    && !attachment.getOriginalFilename().endsWith(".fbx")) {
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.serviceUser.upload.format.invalid", TtNotice.Danger)));
-                return Referer.redirectObject(request, redirectAttributes, fObj);
-            }
+        if (uploadModel) {
+            if (attachment != null && attachment.getSize() > 0) {
+                if (!attachment.getOriginalFilename().endsWith(".obj")
+                        && !attachment.getOriginalFilename().endsWith(".fbx")) {
+                    Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.serviceUser.upload.format.invalid", TtNotice.Danger)));
+                    return Referer.redirectObject(request, redirectAttributes, fObj);
+                }
 
-            if (attachment.getSize() > 1024 * 1024 * PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize)) {
-                Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.serviceUser.upload.max.size.exceed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
-                return Referer.redirectObject(request, redirectAttributes, fObj);
-            }
+                if (attachment.getSize() > 1024 * 1024 * PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize)) {
+                    Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.serviceUser.upload.max.size.exceed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
+                    return Referer.redirectObject(request, redirectAttributes, fObj);
+                }
 
-            File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath));
-            //
-//            fObj.setFileName(upload.getOrginalName());
+                File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadMapPath));
+                //
+                if (upload != null) {
+                    PersonModel model = new PersonModel();
+                    model.setFileName(upload.getAbsolutePathName());
+                    model.setName("مدل " + fObj.getFullName() + "_" + CodeGenerator.code(4));
+                    model.setSize(upload.getSize());
+                    model.setScale(fObj.getUserModel().getScale());
+                    model.setUploadDateTime(ParsCalendar.getInstance().getShortDateTime());
+                    model.setFileId(upload.getId());
+                    personModelShareService.save(model);
+                    fObj.setUserModel(model);
+                }
+            }
+        } else if (fObj.getUserModel() != null) {
+            PersonModel um = this.personModelShareService.findById(fObj.getUserModel().getId());
+            if (um == null) {
+                fObj.setUserModel(null);
+            } else {
+                um.setScale(fObj.getUserModel().getScale());
+                this.personModelShareService.update(um);
+                fObj.setUserModel(um);
+            }
+        } else {
+            fObj.setUserModel(null);
         }
 
         fObj.setPassword(CodeGenerator.password(TtPasswordType.Mix, 12));
         this.service.save(fObj);
 
         Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.serviceUser.register.success", TtNotice.Success)));
-        return Referer.redirect(_PANEL_URL + "/edit/" + fObj.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
+        return Referer.redirect(_PANEL_URL + "/create", TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
+//        return Referer.redirect(_PANEL_URL + "/edit/" + fObj.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
     }
 
     //=========================== edit
@@ -180,16 +225,21 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                     TtTaskActionStatus.Failure,
                     noteIds);
         }
-        model.addAttribute("userObjectPath",
+        model.addAttribute("objectPath",
                 dbObj.getUserModel() == null || dbObj.getUserModel().getFileName() == null || dbObj.getUserModel().getFileName().isEmpty() ? null :
-                        PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath) + "/user/" + dbObj.getUserModel().getFileName()
+                        "/panel/file/dl/" + dbObj.getUserModel().getFileId()
         );
-        model.addAttribute("userMaterialPath",
-                dbObj.getUserModel() == null || dbObj.getUserModel().getFileName() == null || dbObj.getUserModel().getFileName().isEmpty() ? null :
-                        PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath) + "/user/" + dbObj.getUserModel().getFileName().substring(0, dbObj.getUserModel().getFileName().lastIndexOf(".")) + ".mtl"
-        );
+//        model.addAttribute("objectPath",
+//                dbObj.getUserModel() == null || dbObj.getUserModel().getFileName() == null || dbObj.getUserModel().getFileName().isEmpty() ? null :
+//                        PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath) + "/user/" + dbObj.getUserModel().getFileName()
+//        );
+//        model.addAttribute("userMaterialPath",
+//                dbObj.getUserModel() == null || dbObj.getUserModel().getFileName() == null || dbObj.getUserModel().getFileName().isEmpty() ? null :
+//                        PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath) + "/user/" + dbObj.getUserModel().getFileName().substring(0, dbObj.getUserModel().getFileName().lastIndexOf(".")) + ".mtl"
+//        );
         model.addAttribute("glist", gradeShareService.findAll());
         model.addAttribute("oplist", orgPositionShareService.findAll());
+        model.addAttribute("umlist", personModelShareService.findAll());
         model.addAttribute("serviceUser", dbObj);
         return TtTile___.p_service_serviceUser_edit.___getDisModel(_PANEL_URL + "/edit", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
     }
@@ -200,6 +250,7 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
             @Valid ServiceUser fObj,
             BindingResult suBindingResult,
             HttpServletRequest request,
+            @RequestParam(name = "uploadModel", required = false, defaultValue = "false") Boolean uploadModel,
             @RequestParam(value = "attachment", required = false) MultipartFile attachment,
             RedirectAttributes redirectAttributes) {
 
@@ -213,6 +264,9 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                     fObj);
         }
 
+        if (fObj.getUserModel() != null && fObj.getUserModel().getId() == 0) {
+            fObj.setUserModel(null);
+        }
         if (fObj.getGrade() == null || fObj.getGrade().getId() == 0) {
             Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.serviceUser.grade.is.empty", TtNotice.Warning)));
             return Referer.redirectObjects(TtTaskActionSubType.Add_New_User, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
@@ -237,8 +291,7 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
             return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fObj);
         }
 
-
-        dbObj = this.service.findById(fObj.getIdi(), ServiceUser._GRADE, ServiceUser._ORG_POSITION);
+        dbObj = this.service.findById(fObj.getIdi(), ServiceUser._GRADE, ServiceUser._ORG_POSITION, ServiceUser._USER_MODEL);
 
         if (dbObj == null) {
             Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.serviceUser.not.found")));
@@ -251,33 +304,60 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                     fObj);
         }
 
-        if (attachment != null) {
-            if (attachment.getSize() > 0) {
-                if (!attachment.getOriginalFilename().endsWith(".model")
-                        && !attachment.getOriginalFilename().endsWith(".fbx")) {
-                    Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.serviceUser.upload.format.invalid", TtNotice.Danger)));
-                    return Referer.redirectObject(request, redirectAttributes, fObj);
-                }
+        if (uploadModel) {
+            if (attachment != null) {
+                if (attachment.getSize() > 0) {
+                    if (!attachment.getOriginalFilename().endsWith(".obj")
+                            && !attachment.getOriginalFilename().endsWith(".fbx")) {
+                        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.serviceUser.upload.format.invalid", TtNotice.Danger)));
+                        return Referer.redirectObject(request, redirectAttributes, fObj);
+                    }
 
-                if (attachment.getSize() > 1024 * 1024 * PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize)) {
-                    Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.serviceUser.upload.max.size.exceed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
-                    return Referer.redirectObject(request, redirectAttributes, fObj);
+                    if (attachment.getSize() > 1024 * 1024 * PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize)) {
+                        Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.serviceUser.upload.max.size.exceed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
+                        return Referer.redirectObject(request, redirectAttributes, fObj);
+                    }
+                    File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadMapPath));
+                    if (upload != null) {
+                        PersonModel model = new PersonModel();
+                        model.setFileName(upload.getAbsolutePathName());
+                        model.setSize(upload.getSize());
+                        model.setName("مدل " + fObj.getFullName() + "_" + CodeGenerator.code(4));
+                        model.setScale(fObj.getUserModel().getScale());
+                        model.setUploadDateTime(ParsCalendar.getInstance().getShortDateTime());
+                        model.setFileId(upload.getId());
+                        personModelShareService.save(model);
+                        dbObj.setUserModel(model);
+                    }
+                } else {
+                    dbObj.getUserModel().setScale(fObj.getUserModel().getScale());
+                    personModelShareService.update(dbObj.getUserModel());
                 }
-                File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath));
-                //
-//                dbObj.setFileName(upload.getOrginalName());
+            } else {
+                dbObj.setUserModel(null);
+            }
+        } else if (fObj.getUserModel() != null) {
+            PersonModel um = this.personModelShareService.findById(fObj.getUserModel().getId());
+            if (um == null) {
+                dbObj.setUserModel(null);
+            } else {
+                um.setScale(fObj.getUserModel().getScale());
+                this.personModelShareService.update(um);
+                dbObj.setUserModel(um);
             }
         } else {
             dbObj.setUserModel(null);
         }
-
         dbObj.setName(fObj.getName());
         dbObj.setFamily(fObj.getFamily());
         dbObj.setUserName(fObj.getUserName());
         dbObj.setGrade(fObj.getGrade());
         dbObj.setOrgPosition(fObj.getOrgPosition());
+        dbObj.setBanned(fObj.getBanned());
+        dbObj.setDeleted(fObj.getDeleted());
 
         this.service.update(dbObj);
+
 
         Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.all.edit.success", TtNotice.Success, dbObj.getUserName())));
 
@@ -299,21 +379,21 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         ServiceUser.USERNAME
                 )
 
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         ServiceUser.NAME
                 )
 
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         ServiceUser.FAMILY
                 );
 
@@ -323,7 +403,13 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                 GB.col(ServiceUser.CREATE_DATE_TIME),
                 GB.col(ServiceUser.NAME),
                 GB.col(ServiceUser.FAMILY),
-                GB.col(ServiceUser.USERNAME)
+                GB.col(ServiceUser.USERNAME),
+                GB.col(ServiceUser.DELETED),
+                GB.col(ServiceUser.BANNED),
+                GB.col(ServiceUser.LAST_IP_ADDRESS),
+                GB.col(ServiceUser.LAST_SIGNIN_DATETIME),
+                GB.col(ServiceUser.$GRAGE_TITLE, ServiceUser.MODIFY_DATE_TIME),
+                GB.col(ServiceUser.$ORG_POSITION_TITLE, ServiceUser.CREATION_TIME)
         );
         return TtTile___.p_service_serviceUser_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
     }
@@ -339,7 +425,19 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                         ServiceUser.CREATE_DATE_TIME,
                         ServiceUser.NAME,
                         ServiceUser.FAMILY,
-                        ServiceUser.USERNAME
+                        ServiceUser.USERNAME,
+                        ServiceUser.DELETED,
+                        ServiceUser.BANNED,
+                        ServiceUser.MODIFY_DATE_TIME,
+                        ServiceUser.LAST_SIGNIN_DATETIME,
+                        ServiceUser.LAST_IP_ADDRESS,
+                        ServiceUser.CREATION_TIME
+                )
+                .setGbs(
+                        GB.init(Grade.class, ServiceUser._GRADE)
+                                .set(Grade.VALUE),
+                        GB.init(OrgPosition.class, ServiceUser._ORG_POSITION)
+                                .set(OrgPosition.VALUE)
                 )
                 .setSearchParams(ajaxParam);
 
@@ -350,7 +448,13 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                             ServiceUser.CREATE_DATE_TIME,
                             ServiceUser.NAME,
                             ServiceUser.FAMILY,
-                            ServiceUser.USERNAME
+                            ServiceUser.USERNAME,
+                            ServiceUser.DELETED,
+                            ServiceUser.BANNED,
+                            ServiceUser.LAST_IP_ADDRESS,
+                            ServiceUser.LAST_SIGNIN_DATETIME,
+                            ServiceUser.$GRAGE_TITLE,
+                            ServiceUser.$ORG_POSITION_TITLE
                     );
 
             String jSearch = this.service.findAllJson(gb, jb);
@@ -362,7 +466,7 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
         }
         gb.setIxportParams(ixportParam);
         return Ixporter.init(ServiceUser.class)
-                .exportToFileInList(this.service.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IgnoreSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
+                .exportToFileInList(this.service.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IncludeSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
 
     }
 
@@ -376,7 +480,7 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         Sessions.SESSION_ID
                 );
 
@@ -388,6 +492,7 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                 GB.col(Sessions.STATUS),
                 GB.col(Sessions.$SERVICE_USER_FULL_NAME, GB.path(Sessions._SERVICE_USER, ServiceUser.NAME)),
                 GB.col(Sessions.UPDATE_DATE_TIME),
+                GB.col(Sessions.$ONLINE_ROOM_NAME),
                 GB.col(Sessions.PRIVILAGE_FLAG)
         );
         return TtTile___.p_service_serviceUser_listOnline.___getDisModel(null, TtTaskActionStatus.Success);
@@ -414,6 +519,13 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                                         ServiceUser.NAME,
                                         ServiceUser.FAMILY
                                 )
+                                .setGbs(
+                                        GB.init(Room_ServiceUser.class, ServiceUser._ONLINE_ROOM)
+                                                .setGbs(
+                                                        GB.init(Room.class, Room_ServiceUser._ROOM)
+                                                                .set(Room.ROOM_NAME)
+                                                )
+                                )
                 )
                 .setSearchParams(ajaxParam);
 
@@ -426,7 +538,8 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                             Sessions.SESSION_ID,
                             Sessions.STATUS,
                             Sessions.UPDATE_DATE_TIME,
-                            Sessions.$SERVICE_USER_FULL_NAME
+                            Sessions.$SERVICE_USER_FULL_NAME,
+                            Sessions.$ONLINE_ROOM_NAME
                     )
                     .setJbs(
                             JB.init(ServiceUser.class, Sessions._SERVICE_USER)
@@ -484,6 +597,43 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
 
         model.addAttribute("room_ServiceUser", sess);
         return TtTile___.p_service_serviceUser_room.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
+    }
+
+    @PersianName("خروج از اتاق آنلاین")
+    @RequestMapping(value = _PANEL_URL + "/room/exit/{uid}")
+    public ModelAndView pExitFromOnlineRoom(@PathVariable("uid") long uid,
+                                            RedirectAttributes redirectAttributes) {
+
+        ServiceUser dbObj = this.service.findById(uid, ServiceUser._ONLINE_ROOM);
+
+        if (dbObj == null) {
+            Notice2[] noteIds = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.serviceUser.not.found", JsonBuilder.toJson("suId", "" + uid), TtNotice.Warning));
+            return Referer.redirect(
+                    _PANEL_URL + "/list/online",
+                    TtTaskActionSubType.Take_Report,
+                    TtTaskActionStatus.Failure,
+                    noteIds);
+        }
+
+        if (dbObj.getOnlineRoom() == null) {
+            Notice2[] noteIds = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.serviceUser.online.room.not.found", JsonBuilder.toJson("suId", "" + uid), TtNotice.Warning));
+            return Referer.redirect(
+                    _PANEL_URL + "/list/online",
+                    TtTaskActionSubType.Take_Report,
+                    TtTaskActionStatus.Failure,
+                    noteIds);
+        }
+
+
+        dbObj.setOnlineRoom(null);
+        this.service.update(dbObj);
+
+        Notice2[] noteIds = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.serviceUser.online.room.exit.success", JsonBuilder.toJson("suId", "" + uid), TtNotice.Success));
+        return Referer.redirect(
+                _PANEL_URL + "/list/online",
+                TtTaskActionSubType.Take_Report,
+                TtTaskActionStatus.Success,
+                noteIds);
     }
 
     //=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* DEACTIVATE & EXPIRE

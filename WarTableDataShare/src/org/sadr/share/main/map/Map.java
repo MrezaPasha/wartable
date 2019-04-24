@@ -9,6 +9,7 @@ import org.sadr.share.main.layer.Layer;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
@@ -20,7 +21,7 @@ public class Map extends GenericDataModel<Map> implements Serializable {
 
     // static fields
     public static final String NAME = "name";
-    public static final String DESCRIPTION ="descriptions";
+    public static final String DESCRIPTION = "descriptions";
     public static final String FILE_NAME = "fileName";
     public static final String FILE_SIZE = "fileSize";
     public static final String CREATION_TIME = "creationDateTime";
@@ -28,7 +29,6 @@ public class Map extends GenericDataModel<Map> implements Serializable {
     public static final String CATEGORY = "category";
     public static final String _ASSIGN_ROOMS = "assignRooms";
     public static final String _LAYERS = "layers";
-
 
 
     private static String[] actColumns;
@@ -83,7 +83,6 @@ public class Map extends GenericDataModel<Map> implements Serializable {
     private double fileSize;
 
 
-
     @Size(max = 100)
     @PersianName("زمان ساخت نقشه")
     private String creationDateTime;
@@ -104,10 +103,6 @@ public class Map extends GenericDataModel<Map> implements Serializable {
     @OneToMany(mappedBy = "map")
     @PersianName("لایه ها")
     private Set<Layer> layers;
-
-
-
-
 
 
     // METHODS

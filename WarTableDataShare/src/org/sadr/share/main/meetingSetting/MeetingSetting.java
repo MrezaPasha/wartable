@@ -1,7 +1,10 @@
 package org.sadr.share.main.meetingSetting;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GenericDataModel;
+import org.sadr.share.main._utils.ShareUtils;
 import org.sadr.share.main.meeting.Meeting;
 import org.sadr.share.main.meetingRecFile.MeetingRecFile;
 
@@ -13,14 +16,17 @@ import java.util.Set;
 @PersianName("تنظیمات جلسه")
 @Entity
 @Table(name = "Service.MeetingSetting")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = MeetingSetting.class)
+
 public class MeetingSetting extends GenericDataModel<MeetingSetting> implements Serializable {
 
     public static final String _MEETING = "meeting";
-    public static final String NAME = "name" ;
-    public static final String DESCRIPTION = "description" ;
+    public static final String NAME = "name";
+    public static final String DESCRIPTION = "description";
     public static final String START_DATE_TIME = "startDateTime";
     public static final String END_DATE_TIME = "endDateTime";
-    public static final String _REC_FILES = "recFiles";
+    public static final String SOUND_REC_FILE_NAME = "soundRecFileName";
+    public static final String SOUND_REC_FILE_SIZE = "soundRecFileSize";
 
 
     private static String[] actColumns;
@@ -42,8 +48,6 @@ public class MeetingSetting extends GenericDataModel<MeetingSetting> implements 
     // static fields end
 
 
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     @PersianName("جلسه")
     private Meeting meeting;
@@ -58,21 +62,25 @@ public class MeetingSetting extends GenericDataModel<MeetingSetting> implements 
     private String startDateTime;
 
 
-
     @PersianName("تاریخ پایان جلسه")
     private String endDateTime;
 
 
+    // inserted new items
 
-    @PersianName("فایل های ذخیره شده")
-    @OneToMany(mappedBy = "meetingSetting")
-    private Set<MeetingRecFile> recFiles;
+    @PersianName("نام فایل")
+    private String soundRecFileName;
 
 
+    @PersianName("سایز فایل")
+    private double soundRecFileSize;
 
 
     // METHODS
 
+    public String getSoundPath() {
+        return ShareUtils.getTalkFileAddress(soundRecFileName);
+    }
 
     public Meeting getMeeting() {
         return meeting;
@@ -115,13 +123,19 @@ public class MeetingSetting extends GenericDataModel<MeetingSetting> implements 
     }
 
 
-    public Set<MeetingRecFile> getRecFiles() {
-        return recFiles;
+    public String getSoundRecFileName() {
+        return soundRecFileName;
     }
 
-    public void setRecFiles(Set<MeetingRecFile> recFiles) {
-        this.recFiles = recFiles;
+    public void setSoundRecFileName(String soundRecFileName) {
+        this.soundRecFileName = soundRecFileName;
     }
 
+    public double getSoundRecFileSize() {
+        return soundRecFileSize;
+    }
 
+    public void setSoundRecFileSize(double soundRecFileSize) {
+        this.soundRecFileSize = soundRecFileSize;
+    }
 }

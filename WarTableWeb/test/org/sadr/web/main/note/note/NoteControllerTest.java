@@ -242,7 +242,7 @@ public class NoteControllerTest extends AbstractContextControllerTests {
                 )
                 .andDo(print())
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrlPattern(_PANEL_URL + "/edit/*"))
+                .andExpect(redirectedUrl(_PANEL_URL + "/create"))
                 .andExpect(flash().attributeExists("notice"))
                 .andReturn();
 
@@ -349,7 +349,7 @@ public class NoteControllerTest extends AbstractContextControllerTests {
                 )
                 .andDo(print())
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrlPattern(_PANEL_URL + "/edit/*"))
+                .andExpect(redirectedUrl(_PANEL_URL + "/create"))
                 .andExpect(flash().attributeExists("notice"))
         ;
 

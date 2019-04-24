@@ -91,7 +91,8 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
         fnote.setIsVisited(false);
         this.service.save(fnote);
         Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.note.register.success", fnote.getSecretNote(), TtNotice.Success)));
-        return Referer.redirect(_PANEL_URL + "/edit/" + fnote.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
+        return Referer.redirect(_PANEL_URL + "/create", TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
+//        return Referer.redirect(_PANEL_URL + "/edit/" + fnote.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
     }
 
     @PersianName("مشاهده")
@@ -228,7 +229,7 @@ public class NoteController extends GenericControllerImpl<Note, NoteService> {
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.Like_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         Note.TITLE
                 )
         ;

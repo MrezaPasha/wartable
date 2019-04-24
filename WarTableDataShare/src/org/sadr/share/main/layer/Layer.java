@@ -1,5 +1,6 @@
 package org.sadr.share.main.layer;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GenericDataModel;
 import org.sadr.share.main.layer._type.TtLayerStatus;
@@ -9,6 +10,7 @@ import org.sadr.share.main.mrml.Mrml;
 import org.sadr.share.main.serviceUser.ServiceUser;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
@@ -77,11 +79,11 @@ public class Layer extends GenericDataModel<Layer> {
     @PersianName("ترتیب نقشه")
     private int order;
 
-    @Size(max = 100)
+    @Size(min = 2, max = 100)
     @PersianName("نام لایه")
     private String name;
 
-    @Size(max = 1000)
+    @Size(min = 2,max = 1000)
     @PersianName("توضیحات لایه")
     private String description;
 
@@ -101,7 +103,7 @@ public class Layer extends GenericDataModel<Layer> {
     private TtLayerStatus layerStatus;
 
 
-
+    @NotEmpty
     @PersianName("نوع لایه")
     private String type;
 
@@ -142,7 +144,7 @@ public class Layer extends GenericDataModel<Layer> {
     private Map map;
 
 
-    @PersianName("نوع لایه")
+    @PersianName("فرمت لایه")
     private TtLayerType layerType;
 
     @OneToMany(mappedBy = "meeting")

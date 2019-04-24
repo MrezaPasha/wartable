@@ -50,7 +50,7 @@ public class TaskController extends GenericControllerImpl<Task, TaskService> {
             @Override
             protected Object convertElement(Object element) {
                 if (element != null) {
-                    return service.findById(Integer.parseInt((String) element));
+                    return service.findById(Long.parseLong((String) element));
                 }
                 return null;
             }

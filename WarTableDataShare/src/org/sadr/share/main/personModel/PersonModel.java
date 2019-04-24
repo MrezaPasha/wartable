@@ -58,6 +58,8 @@ public class PersonModel extends GenericDataModel<PersonModel> implements Serial
     @PersianName("اندازه فایل شی")
     private double size;
 
+    @PersianName("شناسه فایل")
+    private long fileId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @PersianName("کاربر بارگذار کننده شی")
@@ -128,5 +130,13 @@ public class PersonModel extends GenericDataModel<PersonModel> implements Serial
 
     public void setAssignUSers(Set<ServiceUser> assignUSers) {
         this.assignUSers = assignUSers;
+    }
+
+    public long getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(long fileId) {
+        this.fileId = fileId;
     }
 }

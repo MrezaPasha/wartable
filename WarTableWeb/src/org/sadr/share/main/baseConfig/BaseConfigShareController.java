@@ -132,7 +132,7 @@ public class BaseConfigShareController extends GenericControllerImpl<BaseConfig,
                 .setAttribute(
                         TtDataType.String,
                         TtRestrictionOperator.ILike_ANY,
-                        TtSearcheeStrategy.IgnoreWhiteSpaces,
+                        TtSearcheeStrategy.Normal,
                         BaseConfig.CONFIG_NAME
                 );
 
