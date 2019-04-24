@@ -153,6 +153,8 @@ public enum TtTile___ {
     p_service_meeting_talk_details(TtSystemTileLayout.Panel, null),
     p_service_meeting_setting_list(TtSystemTileLayout.Panel, null),
     p_service_meeting_setting_details(TtSystemTileLayout.Panel, null),
+    p_service_meeting_vector_details(TtSystemTileLayout.Panel, null),
+    p_service_meeting_vector_list(TtSystemTileLayout.Panel, null),
     p_service_object_create(TtSystemTileLayout.Panel, a_service_object_cred),
     p_service_object_edit(TtSystemTileLayout.Panel, a_service_object_cred),
     p_service_object_list(TtSystemTileLayout.Panel, null),

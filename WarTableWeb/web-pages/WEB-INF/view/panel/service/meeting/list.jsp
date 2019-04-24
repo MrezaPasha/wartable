@@ -81,6 +81,11 @@
                                                title="<spring:message code="T.p.service.meeting.setting.list"/> ">
                                                 <i class="fa fa-adjust"></i>
                                             </a>
+                                            <a href="${_url}/vector/list/@{id}"
+                                               class="btn btn-sm btn-l-assign" data-placement="top"
+                                               title="<spring:message code="T.p.service.meeting.vector.list"/> ">
+                                                <i class="clip-location"></i>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>

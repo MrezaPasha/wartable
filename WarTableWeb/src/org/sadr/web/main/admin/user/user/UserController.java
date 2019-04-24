@@ -493,7 +493,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
         }
 
         User dbuser;
-        dbuser = this.service.findById(fuser.getId(),User._TASKS,User._USER_GROUPS);
+        dbuser = this.service.findById(fuser.getId(), User._TASKS, User._USER_GROUPS);
         if (dbuser == null) {
             Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.not.found")));
             return Referer.redirectObjects(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Failure, notice2s, request, redirectAttributes, fuser);
@@ -1532,7 +1532,7 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                     }
                     break;
                 case One:
-                    if (user.getIpAddress() != request.getRemoteAddr()) {
+                    if (user.getIpAddress() == null || !user.getIpAddress().equals(request.getRemoteAddr())) {
                         Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.ip.is.not.allowed", user.getSecretNote(), TtNotice.Danger)));
                         SessionListener.invalidate(user.getId());
                         return Referer.redirect("/signin", TtTaskActionSubType.Unsuccess_Login, TtTaskActionStatus.Failure, notice2s);
@@ -1545,8 +1545,6 @@ public class UserController extends GenericControllerImpl<User, UserService> {
                     if (ipp != null
                             && user.getIpAddressEnd() != null
                             && user.getIpAddressStart() != null) {
-                        OutLog.pl(ipp.compareTo(user.getIpAddressStart()));
-                        OutLog.pl(ipp.compareTo(user.getIpAddressEnd()));
                         if (ipp.compareTo(user.getIpAddressStart()) == -1
                                 || ipp.compareTo(user.getIpAddressEnd()) == 1) {
                             Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.user.signin.ip.is.not.allowed", user.getSecretNote(), TtNotice.Danger)));

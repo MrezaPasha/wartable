@@ -34,6 +34,7 @@ import org.sadr.share.main.map.MapShareConfig;
 import org.sadr.share.main.meeting.Meeting;
 import org.sadr.share.main.meeting.MeetingShareConfig;
 import org.sadr.share.main.meetingItem.MeetingItem;
+import org.sadr.share.main.meetingItem.MeetingItemShareConfig;
 import org.sadr.share.main.meetingLog.MeetingLog;
 import org.sadr.share.main.meetingRecFile.MeetingRecFile;
 import org.sadr.share.main.meetingSetting.MeetingSetting;
@@ -211,6 +212,7 @@ public class ShareConfigHandler {
         addConfigClass(MeetingSettingShareConfig.class);
         addConfigClass(StartupNoticeShareConfig.class);
         addConfigClass(StartupNoticeItemShareConfig.class);
+        addConfigClass(MeetingItemShareConfig.class);
 
     }
 

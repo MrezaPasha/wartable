@@ -1,6 +1,5 @@
 package org.sadr.share.main.meeting;
 
-import org.hibernate.criterion.Restrictions;
 import org.sadr._core._type.TtDataType;
 import org.sadr._core._type.TtRestrictionOperator;
 import org.sadr._core.meta.annotation.PersianName;
@@ -13,8 +12,10 @@ import org.sadr._core.utils.RePa;
 import org.sadr._core.utils.Searchee;
 import org.sadr._core.utils._type.TtSearcheeStrategy;
 import org.sadr.share.main.Room_Map.Room_Map;
+import org.sadr.share.main.item.vector.Vector;
+import org.sadr.share.main.meetingItem.MeetingItem;
+import org.sadr.share.main.meetingItem.MeetingItemShareService;
 import org.sadr.share.main.meetingSetting.MeetingSetting;
-import org.sadr.share.main.meetingSetting.MeetingSettingService;
 import org.sadr.share.main.meetingSetting.MeetingSettingShareService;
 import org.sadr.share.main.privateTalk.PrivateTalk;
 import org.sadr.share.main.privateTalk.PrivateTalkShareService;
@@ -22,7 +23,6 @@ import org.sadr.share.main.room.Room;
 import org.sadr.share.main.room.RoomShareService;
 import org.sadr.share.main.roomServiceUser.Room_ServiceUser;
 import org.sadr.web.main._core._type.TtTile___;
-import org.sadr.web.main._core.meta.annotation.TaskAccessLevel;
 import org.sadr.web.main._core.tools._type.TtIxportRowIndex;
 import org.sadr.web.main._core.tools._type.TtIxportSubStrategy;
 import org.sadr.web.main._core.tools._type.TtIxportTtStrategy;
@@ -69,6 +69,12 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
     private RoomShareService roomShareService;
     private PrivateTalkShareService privateTalkShareService;
     private MeetingSettingShareService meetingSettingShareService;
+    private MeetingItemShareService meetingItemShareService;
+
+    @Autowired
+    public void setMeetingItemShareService(MeetingItemShareService meetingItemShareService) {
+        this.meetingItemShareService = meetingItemShareService;
+    }
 
     @Autowired
     public void setMeetingSettingShareService(MeetingSettingShareService meetingSettingShareService) {
@@ -287,7 +293,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
 
         PrivateTalk talk = privateTalkShareService.findById(id);
 
-        if(talk==null){
+        if (talk == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -295,7 +301,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
         if (Files.exists(fpath)) {
             OutLog.pl("");
             response.setContentType("audio/x-ms-wma");
-            response.addHeader("Content-Disposition", "attachment; filename=" +talk.getFileName());
+            response.addHeader("Content-Disposition", "attachment; filename=" + talk.getFileName());
             try {
                 Files.copy(fpath, response.getOutputStream());
                 response.getOutputStream().flush();
@@ -304,6 +310,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
             }
         }
     }
+
     //=========================== details private talk
     @PersianName("جزئیات تماس خصوصی")
     @RequestMapping(value = _PANEL_URL + "/talk/details/{uid}")
@@ -410,7 +417,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
                     .toResponse();
         }
         gb.setIxportParams(ixportParam);
-        return Ixporter.init(Room_Map.class)
+        return Ixporter.init(PrivateTalk.class)
                 .exportToFileInList(this.privateTalkShareService.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IncludeSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
 
     }
@@ -426,7 +433,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
 
         MeetingSetting setting = meetingSettingShareService.findById(id);
 
-        if(setting==null){
+        if (setting == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -434,7 +441,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
         if (Files.exists(fpath)) {
             OutLog.pl("");
             response.setContentType("audio/x-ms-wma");
-            response.addHeader("Content-Disposition", "attachment; filename=" +setting.getSoundRecFileName());
+            response.addHeader("Content-Disposition", "attachment; filename=" + setting.getSoundRecFileName());
             try {
                 Files.copy(fpath, response.getOutputStream());
                 response.getOutputStream().flush();
@@ -443,6 +450,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
             }
         }
     }
+
     //=========================== details meeting setting
     @PersianName("جزئیات مکالمات")
     @RequestMapping(value = _PANEL_URL + "/setting/details/{uid}")
@@ -545,8 +553,116 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
                     .toResponse();
         }
         gb.setIxportParams(ixportParam);
-        return Ixporter.init(Room_Map.class)
+        return Ixporter.init(MeetingSetting.class)
                 .exportToFileInList(this.meetingSettingShareService.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IncludeSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
 
     }
+
+
+    //=========================== list area
+
+    @PersianName("جزئیات")
+    @RequestMapping(value = _PANEL_URL + "/vector/details/{id}")
+    public ModelAndView pVectorDetails(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
+
+        MeetingItem dbObj = this.meetingItemShareService.findById(id, MeetingItem._VECTOR, MeetingItem._MEETING);
+        if (dbObj == null) {
+            Notice2[] noteIds = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.meeting.not.found", JsonBuilder.toJson("meetingId", "" + id), TtNotice.Warning));
+            return Referer.redirect(
+                    _PANEL_URL + "/list",
+                    TtTaskActionSubType.Edit_Data,
+                    TtTaskActionStatus.Failure,
+                    noteIds);
+        }
+
+        model.addAttribute(dbObj);
+        return TtTile___.p_service_meeting_vector_details.___getDisModel(_PANEL_URL + "/details", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
+    }
+
+    @PersianName("لیست ناحیه های جغرافیایی")
+    @RequestMapping(value = _PANEL_URL + "/vector/list/{id}")
+    public ModelAndView pVectorList(Model model, @PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+
+        Meeting meeting = this.service.findById(id);
+        if (meeting == null) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.meeting.not.found", TtNotice.Warning)));
+            return Referer.redirect("/panel/meeting/list", TtTaskActionSubType.Take_Report, TtTaskActionStatus.Failure, notice2s);
+        }
+
+        Searchee.init(MeetingItem.class, model)
+                .setAttribute(
+                        TtDataType.String,
+                        TtRestrictionOperator.ILike_ANY,
+                        TtSearcheeStrategy.Normal,
+                        MeetingItem._VECTOR, Searchee.field(Vector.NAME, Vector.class)
+                )
+                .setAttribute(
+                        TtDataType.Long,
+                        TtRestrictionOperator.Equal,
+                        TtSearcheeStrategy.HiddenAutoFill,
+                        id,
+                        MeetingItem._MEETING,
+                        Searchee.field(Meeting.ID, Meeting.class)
+                )
+
+
+        ;
+
+        GB.searchTableColumns(model,
+                MeetingItem.class,
+                GB.col(MeetingItem.ID),
+                GB.col(MeetingItem.CREATE_DATE_TIME),
+                GB.col(MeetingItem.$VECTOR_NAME),
+                GB.col(MeetingItem.$VECTOR_FILE_NAME),
+                GB.col(MeetingItem.$VECTOR_TYPE)
+        );
+
+        model.addAttribute(meeting);
+
+        return TtTile___.p_service_meeting_vector_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
+    }
+
+    @RequestMapping(value = _PANEL_URL + "/vector/list", method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseEntity<String> pVectorList(@RequestParam(value = "ap", required = false) String ajaxParam,
+                                       @RequestParam(value = "ixp", required = false) String ixportParam,
+                                       HttpServletResponse response) throws IOException {
+
+        GB gb = GB.init(MeetingItem.class)
+                .set(
+                        MeetingItem.ITEM_TYPE
+                ).setGbs(
+                        GB.init(Vector.class, MeetingItem._VECTOR)
+                                .set(
+                                        Vector.NAME,
+                                        Vector.FILE_NAME,
+                                        Vector.VECTOR_TYPE
+                                )
+                )
+                .setSearchParams(ajaxParam);
+
+        if (ixportParam == null) {
+
+            JB jb = JB.init()
+                    .set(
+                            MeetingItem.ITEM_TYPE,
+                            MeetingItem.$VECTOR_NAME,
+                            MeetingItem.$VECTOR_FILE_NAME,
+                            MeetingItem.$VECTOR_TYPE
+                    );
+
+            String jSearch = this.meetingItemShareService.findAllJson(gb, jb);
+
+            return Ison.init(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success)
+                    .setStatus(TtIsonStatus.Ok)
+                    .setPropertySearch(jSearch)
+                    .toResponse();
+        }
+        gb.setIxportParams(ixportParam);
+        return Ixporter.init(MeetingItem.class)
+                .exportToFileInList(this.meetingItemShareService.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IncludeSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
+
+    }
+
+
 }

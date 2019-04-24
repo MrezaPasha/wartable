@@ -31,6 +31,12 @@
                 <i class="clip-plus-circle"></i>
             </button>
             <ul class="disabled-li margin-bottom xs-center-ul-4">
+                <li class="tooltips " data-original-title="<spring:message code="all.register.new"/>" data-placement="bottom">
+                    <a href="${_url}/create" class="btn btn-default btn-block btn-act">
+                        <i class="clip-add light"></i>
+                        <span class="title"></span>
+                    </a>
+                </li>
                 <li class="tooltips " data-original-title="<spring:message code="all.list"/>" data-placement="bottom">
                     <a href="${_url}/list" class="btn btn-default btn-block btn-act">
                         <i class="clip-list-2 light"></i>

@@ -1,3 +1,4 @@
+<%--/****DO-NoT-REMOVE-IT*#- ==============  START  ============== -#*/--%>
 <%--
     Document   : list
     Created on : Jun 24, 2017, 8:25:21 AM
@@ -11,17 +12,14 @@
     <div class="page-header">
         <div class="cred-header">
 
-            <h3 class="cred-title"><spring:message code="T.p.service.orgPosition.list"/></h3>
-            <a href="${_url}/create" class="btn btn-p-create btn-animated btn-animated-right">
-                <i class="clip-plus-circle light"></i>
-                <span class="title"><spring:message code="orgPosition.create"/></span>
-            </a>
+            <h3 class="cred-title"><spring:message code="T.p.service.meeting.vector.list"/></h3>
+            <span class="cred-name">[${meeting.name}]</span>
         </div>
     </div>
     <div class="row">
         <div class="c-search-container"
              i-search-opt-id="${searchId}"
-             i-search-opt-url="${_url}/list"
+             i-search-opt-url="${_url}/vector/list"
              i-search-opt-pageSize="10"
              i-search-opt-toggleColumns="true"
         >
@@ -65,16 +63,11 @@
                                     </c:forEach>
                                     <td class="center">
                                         <div class="r-button">
-                                            <a href="${_url}/edit/@{id}"
-                                               class="btn btn-sm btn-l-edit" data-placement="top"
-                                               title="<spring:message code="all.edit"/> ">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-                                            <a href="javascript:void(0)" class="btn btn-sm btn-bricky"
-                                               i-search-body-item-trash-id="@{id}"
-                                               i-search-body-item-trash-title="@{value}"
-                                               title="<spring:message code="all.delete"/> ">
-                                                <i class="fa fa-trash-o"></i>
+                                            <a
+                                                    href="${_url}/vector/details/@{id}"
+                                                    class="btn btn-sm btn-l-details" data-placement="top"
+                                                    title="<spring:message code="all.details"/> ">
+                                                <i class="fa fa-info"></i>
                                             </a>
                                         </div>
                                     </td>
@@ -113,3 +106,4 @@
         CustomJs.initAjaxSearch();
     });
 </script>
+<%--/****DO-NoT-REMOVE-IT*#- ==============  END  ============== -#*/--%>

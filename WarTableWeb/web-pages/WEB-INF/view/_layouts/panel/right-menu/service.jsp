@@ -61,6 +61,27 @@
                 </li>
                 <li>
                     <a href="javascript:void(0)">
+                        <i class="clip-users"></i>
+                        <span class="title"><spring:message code="rightmenu.organPosition"/></span><i class="icon-arrow"></i>
+                        <span class="selected"></span>
+                    </a>
+                    <ul class="sub-menu">
+                        <li data-menu-id="p_service_orgPosition_create">
+                            <a href="${cp}/panel/service/orgPosition/create">
+                                <i class="clip-add light"></i>
+                                <span class="title"><spring:message code="rightmenu.create"/></span>
+                            </a>
+                        </li>
+                        <li data-menu-id="|p_service_orgPosition_list|p_service_orgPosition_edit|">
+                            <a href="${cp}/panel/service/orgPosition/list">
+                                <i class="clip-list light"></i>
+                                <span class="title"><spring:message code="rightmenu.list"/></span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:void(0)">
                         <i class="clip-cube-2"></i>
                         <span class="title"><spring:message code="rightmenu.personModel"/></span><i class="icon-arrow"></i>
                         <span class="selected"></span>
@@ -159,7 +180,7 @@
                 <span class="selected"></span>
             </a>
             <ul class="sub-menu">
-                <li data-menu-id="|p_service_meeting_list|p_service_meeting_edit|p_service_meeting_details|p_service_meeting_talk_details|p_service_meeting_talk_list|p_service_meeting_setting_details|p_service_meeting_setting_list|">
+                <li data-menu-id="|p_service_meeting_list|p_service_meeting_edit|p_service_meeting_details|p_service_meeting_talk_details|p_service_meeting_talk_list|p_service_meeting_setting_details|p_service_meeting_setting_list|p_service_meeting_vector_list|p_service_meeting_vector_details|">
                     <a href="${cp}/panel/service/meeting/list">
                         <i class="clip-list light"></i>
                         <span class="title"><spring:message code="rightmenu.list"/></span>

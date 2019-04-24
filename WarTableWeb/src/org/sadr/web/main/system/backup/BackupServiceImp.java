@@ -4,6 +4,7 @@ import org.sadr._core.meta.generic.GenericServiceImpl;
 import org.sadr._core.utils.*;
 import org.sadr.web.config.WebConfigHandler;
 import org.sadr.web.main._core._type.TtTaskAccessLevel;
+import org.sadr.web.main._core.utils.CacheStatic;
 import org.sadr.web.main.archive._type.TtRepoDirectory;
 import org.sadr.web.main.archive.directory.Directory;
 import org.sadr.web.main.archive.directory.DirectoryService;
@@ -88,6 +89,7 @@ public class BackupServiceImp extends GenericServiceImpl<Backup, BackupDao> impl
                 out.close();
                 Files.delete(path);
             } catch (IOException e) {
+                CacheStatic.setDevelopingMode(false);
                 return null;
             }
         } else {
@@ -114,6 +116,7 @@ public class BackupServiceImp extends GenericServiceImpl<Backup, BackupDao> impl
                     stream.write(sign);
                 }
             } catch (IOException e) {
+                CacheStatic.setDevelopingMode(false);
                 e.printStackTrace();
             }
 
@@ -125,6 +128,7 @@ public class BackupServiceImp extends GenericServiceImpl<Backup, BackupDao> impl
                 Files.delete(fpath);
                 Files.delete(fpathSign);
             } catch (IOException e) {
+                CacheStatic.setDevelopingMode(false);
                 e.printStackTrace();
             }
 
