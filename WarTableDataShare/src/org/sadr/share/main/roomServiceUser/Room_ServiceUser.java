@@ -103,7 +103,7 @@ public class Room_ServiceUser extends GenericDataModel<Room_ServiceUser> impleme
     private TtUserRoleFlags permanentUserRoleFlag;
 
 
-    @OneToMany
+    @OneToMany(mappedBy = "onlineRoom")
     @PersianName("کاربران آنلاین اتاق")
     private Set<ServiceUser> serviceUsers;
 

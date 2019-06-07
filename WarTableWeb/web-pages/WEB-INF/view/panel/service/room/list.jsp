@@ -79,10 +79,10 @@
                                                 <i class="clip-map"></i>
                                             </a>
                                             <a
-                                                    href="${_url}/chat/list/@{id}"
+                                                    href="${_url}/chat/conversation/@{id}"
                                                     class="btn btn-sm btn-l-design" data-placement="top"
                                                     title="<spring:message code="T.p.service.room.chat.list"/> ">
-                                                <i class="clip-book"></i>
+                                                <i class="clip-bubbles-2"></i>
                                             </a>
                                             <a
                                                     href="${_url}/edit/@{id}"

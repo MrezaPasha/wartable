@@ -11,6 +11,7 @@ import org.sadr.share.main.room._types.TtRoomRecSetting;
 import org.sadr.share.main.roomModel.RoomModel;
 import org.sadr.share.main.roomPolls.RoomPolls;
 import org.sadr.share.main.roomServiceUser.Room_ServiceUser;
+import org.sadr.share.main.textChat.TextChat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -36,6 +37,7 @@ public class Room extends GenericDataModel<Room> implements Serializable {
     public static final String _MEETINGS = "meetings";
     public static final String _ROOM_MODELS = "roomModel";
     public static final String _POLLS = "polls";
+    public static final String _TEXT_CHATS= "textChats";
     public static final String REC_SETTING = "recSetting";
     public static final String ACCESS_SETTING = "recSetting";
     public static final String BUSY_TYPE = "busyType";
@@ -141,6 +143,11 @@ public class Room extends GenericDataModel<Room> implements Serializable {
     {
         return currentMeeting != null ? currentMeeting.getName() : "";
     }
+
+
+    @OneToMany(mappedBy = "room")
+    @PersianName("چت ها")
+    private Set<TextChat> textChats;
 
     // getter and setter
 
@@ -257,5 +264,14 @@ public class Room extends GenericDataModel<Room> implements Serializable {
 
     public void setBusyType(TtBusyType busyType) {
         this.busyType = busyType;
+    }
+
+
+    public Set<TextChat> getTextChats() {
+        return textChats;
+    }
+
+    public void setTextChats(Set<TextChat> textChats) {
+        this.textChats = textChats;
     }
 }

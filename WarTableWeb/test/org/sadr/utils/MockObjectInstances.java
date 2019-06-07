@@ -7,10 +7,7 @@ import org.sadr._core.utils.Digester;
 import org.sadr._core.utils.ParsCalendar;
 import org.sadr._core.utils._type.TtCalendarItem;
 import org.sadr._core.utils._type.TtUsernameType;
-import org.sadr.share.main._types.TtServiceUserState;
-import org.sadr.share.main._types.TtImportance;
-import org.sadr.share.main._types.TtMapCategory;
-import org.sadr.share.main._types.TtRoomType;
+import org.sadr.share.main._types.*;
 import org.sadr.share.main.baseConfig.BaseConfig;
 import org.sadr.share.main.baseConfig.BaseConfigShareService;
 import org.sadr.share.main.baseErrors.BaseErrors;
@@ -38,20 +35,33 @@ import org.sadr.share.main.meeting.Meeting;
 import org.sadr.share.main.meeting.MeetingShareService;
 import org.sadr.share.main.meeting._types.TtMeetingDeleted;
 import org.sadr.share.main.meeting._types.TtMeetingStatus;
+import org.sadr.share.main.meetingSetting.MeetingSetting;
+import org.sadr.share.main.meetingSetting.MeetingSettingShareService;
 import org.sadr.share.main.orgPosition.OrgPosition;
 import org.sadr.share.main.orgPosition.OrgPositionShareService;
 import org.sadr.share.main.personModel.PersonModel;
 import org.sadr.share.main.personModel.PersonModelShareService;
+import org.sadr.share.main.privateTalk.PrivateTalk;
+import org.sadr.share.main.privateTalk.PrivateTalkShareService;
+import org.sadr.share.main.privateTalk._types.TtPrivateTalkStatus;
 import org.sadr.share.main.room.Room;
 import org.sadr.share.main.room.RoomShareService;
 import org.sadr.share.main.room._types.TtRoomAccessSetting;
 import org.sadr.share.main.room._types.TtRoomRecSetting;
+import org.sadr.share.main.roomServiceUser.Room_ServiceUser;
+import org.sadr.share.main.roomServiceUser.Room_ServiceUserShareService;
+import org.sadr.share.main.roomServiceUser._types.TtRoomServiceUserEnablePrivateCommunication;
+import org.sadr.share.main.roomServiceUser._types.TtRoomServiceUserPresence;
 import org.sadr.share.main.serviceUser.ServiceUser;
 import org.sadr.share.main.serviceUser.ServiceUserShareService;
 import org.sadr.share.main.sessions.Sessions;
 import org.sadr.share.main.sessions.SessionsShareService;
 import org.sadr.share.main.startupNotice.startupNotice.StartupNotice;
 import org.sadr.share.main.startupNotice.startupNotice.StartupNoticeShareService;
+import org.sadr.share.main.textChat.TextChat;
+import org.sadr.share.main.textChat.TextChatShareService;
+import org.sadr.share.main.textChat._types.TtTextChatSendStatus;
+import org.sadr.share.main.textChat._types.TtTextChatType;
 import org.sadr.web.config.WebConfigHandler;
 import org.sadr.web.main._core.uiBag.UiBag;
 import org.sadr.web.main._core.uiBag.UiBagService;
@@ -81,7 +91,9 @@ import org.sadr.web.main.system.module.Module;
 import org.sadr.web.main.system.module.ModuleService;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MockObjectInstances {
 
@@ -437,6 +449,48 @@ public class MockObjectInstances {
         return null;
     }
 
+    //============================ Meeting
+
+    public void getPrivateTalk(Meeting meeting) {
+        PrivateTalkShareService service = WebConfigHandler.getWebApplicationContext().getBean(PrivateTalkShareService.class);
+
+        PrivateTalk privateTalk = new PrivateTalk();
+        Set<ServiceUser> set = new HashSet<>();
+        set.add(getRealServiceUser(1));
+        set.add(getRealServiceUser(2));
+        set.add(getRealServiceUser(3));
+        set.add(getRealServiceUser(4));
+        privateTalk.setJoinedServiceUsers(set);
+        privateTalk.setSize(122);
+        privateTalk.setMeeting(meeting);
+        privateTalk.setEndDateTime(ParsCalendar.getInstance().getShortDateTime());
+        privateTalk.setStartDateTime(ParsCalendar.getInstance().getShortDateTime());
+        privateTalk.setFileName("001.mp3");
+        privateTalk.setRequestUser(getRealServiceUser(4));
+        privateTalk.setServiceUsers(set);
+
+        service.save(privateTalk);
+    }
+
+    public void getPublicTalk(Meeting meeting) {
+        MeetingSettingShareService service = WebConfigHandler.getWebApplicationContext().getBean(MeetingSettingShareService.class);
+
+        MeetingSetting meetingSetting = new MeetingSetting();
+        Set<ServiceUser> set = new HashSet<>();
+        set.add(getRealServiceUser(1));
+        set.add(getRealServiceUser(2));
+        set.add(getRealServiceUser(3));
+        set.add(getRealServiceUser(4));
+        meetingSetting.setSoundRecFileName("002.mp3");
+        meetingSetting.setSoundRecFileSize(122);
+        meetingSetting.setMeeting(meeting);
+        meetingSetting.setEndDateTime(ParsCalendar.getInstance().getShortDateTime());
+        meetingSetting.setStartDateTime(ParsCalendar.getInstance().getShortDateTime());
+        meetingSetting.setDescription("توضیحات مربوطه ....");
+
+        service.save(meetingSetting);
+    }
+
     public Meeting getMeeting(boolean isRandom) {
         Meeting obj = new Meeting();
 
@@ -471,13 +525,12 @@ public class MockObjectInstances {
         if (list != null && !list.isEmpty()) {
             return list.get(0);
         } else {
-            service.save(getMeeting(true));
-            list = service.findAll(1);
-            if (list != null && !list.isEmpty()) {
-                return list.get(0);
-            }
+            Meeting meeting = getMeeting(true);
+            service.save(meeting);
+            getPrivateTalk(meeting);
+            getPublicTalk(meeting);
+            return meeting;
         }
-        return null;
     }
 //============================ OrgPosition
 
@@ -516,7 +569,7 @@ public class MockObjectInstances {
 
         int rand = 0;
         if (isRandom) {
-            rand =  CodeGenerator.code(5);
+            rand = CodeGenerator.code(5);
         }
 
         obj.setName("name_" + rand);
@@ -530,12 +583,13 @@ public class MockObjectInstances {
         obj.setUploaderUser(null);
         return obj;
     }
+
     public PersonModel getRealPersonModel() {
         PersonModelShareService service = WebConfigHandler.getWebApplicationContext().getBean(PersonModelShareService.class);
         List<PersonModel> list = service.findAll(1);
         if (list != null && !list.isEmpty()) {
             return list.get(0);
-        }else {
+        } else {
             service.save(getPersonModel(true));
             list = service.findAll(1);
             if (list != null && !list.isEmpty()) {
@@ -545,7 +599,28 @@ public class MockObjectInstances {
         return null;
     }
 
-//============================ Room
+    //============================ Room
+    private TextChat getTextChatPublic(Room room) {
+
+        TextChatShareService textChatShareService = WebConfigHandler.getWebApplicationContext().getBean(TextChatShareService.class);
+        TextChat textChat = new TextChat();
+        textChat.setChatType(TtTextChatType.Public);
+        textChat.setDeliverDateTime(ParsCalendar.getInstance().getShortDateTime());
+        textChat.setMessageBody("متن پیش فرض برای پیام خصوصی کاربر... اطلاعات تصادفی: " + CodeGenerator.code(20));
+        Set<ServiceUser> set = new HashSet<>();
+        set.add(getRealServiceUser(1));
+        set.add(getRealServiceUser(2));
+        set.add(getRealServiceUser(3));
+        set.add(getRealServiceUser(4));
+        textChat.setReceivers(set);
+        textChat.setRoom(room);
+        textChat.setSendStatus(TtTextChatSendStatus.Delivered);
+        textChat.setSender(getRealServiceUser());
+        textChat.setPrivateChatReceiver(getRealServiceUser(2));
+        textChatShareService.save(textChat);
+
+        return textChat;
+    }
 
     public Room getRoom(boolean isRandom) {
         Room obj = new Room();
@@ -574,20 +649,77 @@ public class MockObjectInstances {
 
     public Room getRealRoom() {
         RoomShareService service = WebConfigHandler.getWebApplicationContext().getBean(RoomShareService.class);
-        List<Room> list = service.findAll(1);
+        List<Room> list = service.findAll(1, Room._CURRENT_MEETING, Room._TEXT_CHATS);
         if (list != null && !list.isEmpty()) {
             return list.get(0);
         } else {
-            service.save(getRoom(true));
-            list = service.findAll(1);
-            if (list != null && !list.isEmpty()) {
-                return list.get(0);
-            }
+            Room room = getRoom(true);
+            service.save(room);
+            getTextChatPublic(room);
+            getTextChatPublic(room);
+            getTextChatPublic(room);
+            getTextChatPublic(room);
+            return room;
         }
-        return null;
     }
 
-//============================ ServiceUser
+    //============================ ServiceUser
+    private TextChat getTextChatPrivate(ServiceUser user, boolean isSender) {
+
+        TextChatShareService textChatShareService = WebConfigHandler.getWebApplicationContext().getBean(TextChatShareService.class);
+        TextChat textChat = new TextChat();
+        textChat.setChatType(TtTextChatType.Private);
+        textChat.setDeliverDateTime(ParsCalendar.getInstance().getShortDateTime());
+        textChat.setMessageBody("متن پیش فرض برای پیام خصوصی کاربر... اطلاعات تصادفی: " + CodeGenerator.code(20));
+        textChat.setPrivateChatReceiver(isSender ? getRealServiceUser() : user);
+        textChat.setRoom(getRealRoom());
+        textChat.setSendStatus(TtTextChatSendStatus.Delivered);
+        textChat.setSender(isSender ? user : getRealServiceUser());
+
+        textChatShareService.save(textChat);
+
+        return textChat;
+    }
+
+    private Room_ServiceUser getOnlineRoom() {
+        Room_ServiceUserShareService service = WebConfigHandler.getWebApplicationContext().getBean(Room_ServiceUserShareService.class);
+        Room_ServiceUser room_serviceUser = new Room_ServiceUser();
+        room_serviceUser.setTemporaryUserRoleFlag(TtUserRoleFlags.Admin);
+        room_serviceUser.setPresence(TtRoomServiceUserPresence.Online);
+        room_serviceUser.setPresence(TtRoomServiceUserPresence.Online);
+        room_serviceUser.setUserStatus(TtMemberStatus.Active);
+        room_serviceUser.setJoinDateTime(ParsCalendar.getInstance().getShortDateTime());
+        room_serviceUser.setRoom(getRealRoom());
+        room_serviceUser.setPermanentUserRoleFlag(TtUserRoleFlags.Admin);
+        room_serviceUser.setAcceptPrivateChat(TtRoomServiceUserEnablePrivateCommunication.Enable);
+        room_serviceUser.setAcceptPrivateTalk(TtRoomServiceUserEnablePrivateCommunication.Disable);
+        service.save(room_serviceUser);
+        return room_serviceUser;
+    }
+
+    private PrivateTalk getPrivateTalk(String fileName) {
+        PrivateTalkShareService service = WebConfigHandler.getWebApplicationContext().getBean(PrivateTalkShareService.class);
+        PrivateTalk privateTalk = new PrivateTalk();
+
+        privateTalk.setFileName(fileName);
+        privateTalk.setMeeting(getRealMeeting());
+        privateTalk.setStartDateTime(ParsCalendar.getInstance().getShortDateTime());
+        privateTalk.setSize(1212);
+        privateTalk.setStatus(TtPrivateTalkStatus.Finished);
+        privateTalk.setEndDateTime(ParsCalendar.getInstance().getShortDateTime());
+
+        Set<ServiceUser> set = new HashSet<>();
+        set.add(getRealServiceUser(1));
+        set.add(getRealServiceUser(2));
+        set.add(getRealServiceUser(3));
+        set.add(getRealServiceUser(4));
+        set.add(getRealServiceUser(5));
+
+        privateTalk.setJoinedServiceUsers(set);
+
+        service.save(privateTalk);
+        return privateTalk;
+    }
 
     public ServiceUser getServiceUser(boolean isRandom) {
         ServiceUser obj = new ServiceUser();
@@ -617,14 +749,19 @@ public class MockObjectInstances {
         obj.setTextChats(null);
         obj.setOrgPosition(getRealOrgPosition());
         obj.setGrade(getRealGrade());
+
         return obj;
     }
 
     public ServiceUser getRealServiceUser() {
+        return getRealServiceUser(0);
+    }
+
+    public ServiceUser getRealServiceUser(int i) {
         ServiceUserShareService service = WebConfigHandler.getWebApplicationContext().getBean(ServiceUserShareService.class);
-        List<ServiceUser> list = service.findAll(1, ServiceUser._GRADE, ServiceUser._ORG_POSITION,ServiceUser._USER_MODEL);
-        if (list != null && !list.isEmpty()) {
-            ServiceUser obj = list.get(0);
+        List<ServiceUser> list = service.findAll(i + 1, ServiceUser._GRADE, ServiceUser._ORG_POSITION, ServiceUser._USER_MODEL);
+        if (list != null && list.size() > i) {
+            ServiceUser obj = list.get(i);
             boolean isO = false;
             if (obj.getGrade() == null) {
                 obj.setGrade(getRealGrade());
@@ -640,12 +777,62 @@ public class MockObjectInstances {
             return obj;
         } else {
             service.save(getServiceUser(true));
-            list = service.findAll(1);
-            if (list != null && !list.isEmpty()) {
-                return list.get(0);
+            list = service.findAll(i + 1);
+            if (list != null && list.size() > i) {
+                return list.get(i);
             }
         }
         return null;
+    }
+
+
+    public ServiceUser getRealServiceUserWithDependency() {
+        ServiceUserShareService service = WebConfigHandler.getWebApplicationContext().getBean(ServiceUserShareService.class);
+        List<ServiceUser> list = service.findAll(1, ServiceUser._GRADE, ServiceUser._ORG_POSITION, ServiceUser._USER_MODEL, ServiceUser._TEXT_CHATS);
+        if (list != null && !list.isEmpty() && list.get(0).getTextChats() != null && !list.get(0).getTextChats().isEmpty()) {
+            ServiceUser obj = list.get(0);
+            boolean isO = false;
+            if (obj.getGrade() == null) {
+                obj.setGrade(getRealGrade());
+                isO = true;
+            }
+            if (obj.getOrgPosition() == null) {
+                obj.setOrgPosition(getRealOrgPosition());
+                isO = true;
+            }
+            if (isO) {
+                service.update(obj);
+            }
+            return obj;
+        } else {
+            ServiceUser obj = getServiceUser(true);
+
+            ///
+            //
+            obj.setGrade(getRealGrade());
+            //
+            obj.setOrgPosition(getRealOrgPosition());
+            //
+            obj.setOnlineRoom(getOnlineRoom());
+            /////
+            Set<PrivateTalk> ptSet = new HashSet<>();
+            ptSet.add(getPrivateTalk("001.mp3"));
+            ptSet.add(getPrivateTalk("002.mp3"));
+            ptSet.add(getPrivateTalk("003.mp3"));
+            obj.setPrivateTalks(ptSet);
+
+            service.save(obj);
+
+            getTextChatPrivate(obj, false);
+            getTextChatPrivate(obj, true);
+            getTextChatPrivate(obj, false);
+            getTextChatPrivate(obj, true);
+            getTextChatPrivate(obj, true);
+            getTextChatPrivate(obj, true);
+            getTextChatPrivate(obj, false);
+
+            return obj;
+        }
     }
 
 //============================ Sessions
@@ -1147,7 +1334,7 @@ public class MockObjectInstances {
 
         int rand = 0;
         if (isRandom) {
-            rand =  CodeGenerator.code(5);
+            rand = CodeGenerator.code(5);
         }
 
         obj.setTitle("title_" + rand);
@@ -1158,12 +1345,13 @@ public class MockObjectInstances {
         obj.setReceivers(null);
         return obj;
     }
+
     public StartupNotice getRealStartupNotice() {
         StartupNoticeShareService service = WebConfigHandler.getWebApplicationContext().getBean(StartupNoticeShareService.class);
         List<StartupNotice> list = service.findAll(1);
         if (list != null && !list.isEmpty()) {
             return list.get(0);
-        }else {
+        } else {
             service.save(getStartupNotice(true));
             list = service.findAll(1);
             if (list != null && !list.isEmpty()) {

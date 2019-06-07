@@ -6,15 +6,16 @@ import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.meta.generic.GB;
 import org.sadr._core.meta.generic.GenericControllerImpl;
 import org.sadr._core.meta.generic.JB;
-import org.sadr._core.utils.JsonBuilder;
-import org.sadr._core.utils.OutLog;
-import org.sadr._core.utils.RePa;
-import org.sadr._core.utils.Searchee;
+import org.sadr._core.utils.*;
 import org.sadr._core.utils._type.TtSearcheeStrategy;
 import org.sadr.share.main.Room_Map.Room_Map;
+import org.sadr.share.main._utils.ShareUtils;
+import org.sadr.share.main.grade.Grade;
 import org.sadr.share.main.item.vector.Vector;
+import org.sadr.share.main.item.vector.VectorShareService;
 import org.sadr.share.main.meetingItem.MeetingItem;
 import org.sadr.share.main.meetingItem.MeetingItemShareService;
+import org.sadr.share.main.meetingItem._types.TtMeetingItemDeleted;
 import org.sadr.share.main.meetingSetting.MeetingSetting;
 import org.sadr.share.main.meetingSetting.MeetingSettingShareService;
 import org.sadr.share.main.privateTalk.PrivateTalk;
@@ -23,11 +24,14 @@ import org.sadr.share.main.room.Room;
 import org.sadr.share.main.room.RoomShareService;
 import org.sadr.share.main.roomServiceUser.Room_ServiceUser;
 import org.sadr.web.main._core._type.TtTile___;
+import org.sadr.web.main._core.propertor.PropertorInWeb;
+import org.sadr.web.main._core.propertor._type.TtPropertorInWebList;
 import org.sadr.web.main._core.tools._type.TtIxportRowIndex;
 import org.sadr.web.main._core.tools._type.TtIxportSubStrategy;
 import org.sadr.web.main._core.tools._type.TtIxportTtStrategy;
 import org.sadr.web.main._core.tools._type.TtIxporterDownloadMode;
 import org.sadr.web.main._core.tools.ixporter.Ixporter;
+import org.sadr.web.main._core.tools.uploader.Uploader;
 import org.sadr.web.main._core.utils.Ison;
 import org.sadr.web.main._core.utils.Notice2;
 import org.sadr.web.main._core.utils.Referer;
@@ -40,6 +44,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -70,6 +75,12 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
     private PrivateTalkShareService privateTalkShareService;
     private MeetingSettingShareService meetingSettingShareService;
     private MeetingItemShareService meetingItemShareService;
+    private VectorShareService vectorShareService;
+
+    @Autowired
+    public void setVectorShareService(VectorShareService vectorShareService) {
+        this.vectorShareService = vectorShareService;
+    }
 
     @Autowired
     public void setMeetingItemShareService(MeetingItemShareService meetingItemShareService) {
@@ -117,7 +128,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
         return Referer.redirect(_PANEL_URL + "/edit/" + fObj.getIdi(), TtTaskActionSubType.New_Data, TtTaskActionStatus.Success, notice2s);
     }*/
     //=========================== edit
-    @PersianName("ویرایش")
+    @PersianName("جلسه - ویرایش")
     @RequestMapping(value = _PANEL_URL + "/edit/{uid}")
     public ModelAndView pEdit(Model model, @PathVariable("uid") long uid,
                               RedirectAttributes redirectAttributes) {
@@ -189,7 +200,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
     }
 
     //=========================== details
-    @PersianName("جزئیات")
+    @PersianName("جلسه - جزئیات")
     @RequestMapping(value = _PANEL_URL + "/details/{id}")
     public ModelAndView pDetails(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
 
@@ -208,7 +219,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
     }
 
     //=========================== list
-    @PersianName("لیست")
+    @PersianName("جلسه - لیست")
     @RequestMapping(value = _PANEL_URL + "/list")
     public ModelAndView pList(Model model) {
 
@@ -284,7 +295,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
 
     //#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#  PRIVATE TALK
 
-    @PersianName("فایل صوت تماس خصوصی")
+    @PersianName("تماس خصوصی - پخش فایل صوتی")
     @RequestMapping(_PANEL_URL + "/talk/sound/{id}")
     @ResponseBody
     public void fTalkDownloadSourceById(
@@ -312,7 +323,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
     }
 
     //=========================== details private talk
-    @PersianName("جزئیات تماس خصوصی")
+    @PersianName("تماس خصوصی - مشاهده جزئیات")
     @RequestMapping(value = _PANEL_URL + "/talk/details/{uid}")
     public ModelAndView pTalkDetails(Model model, @PathVariable("uid") long uid,
                                      RedirectAttributes redirectAttributes) {
@@ -339,7 +350,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
     }
 
     //=========================== list talk
-    @PersianName("لیست تماس های خصوصی")
+    @PersianName("تماس خصوصی - لیست")
     @RequestMapping(value = _PANEL_URL + "/talk/list/{id}")
     public ModelAndView pTalkList(Model model, @PathVariable("id") int id, RedirectAttributes redirectAttributes) {
 
@@ -424,7 +435,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
 
     //#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#  MEETING SETTING
 
-    @PersianName("فایل صوت مکالمات")
+    @PersianName("مکالمات - پخش فایل صوتی")
     @RequestMapping(_PANEL_URL + "/setting/sound/{id}")
     @ResponseBody
     public void fSettingDownloadSourceById(
@@ -452,7 +463,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
     }
 
     //=========================== details meeting setting
-    @PersianName("جزئیات مکالمات")
+    @PersianName("مکالمات - مشاهده جزئیات")
     @RequestMapping(value = _PANEL_URL + "/setting/details/{uid}")
     public ModelAndView pSettingDetails(Model model, @PathVariable("uid") long uid,
                                         RedirectAttributes redirectAttributes) {
@@ -474,7 +485,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
     }
 
     //=========================== list setting
-    @PersianName("لیست تماس های خصوصی")
+    @PersianName("مکالمات - لیست")
     @RequestMapping(value = _PANEL_URL + "/setting/list/{id}")
     public ModelAndView pSettingList(Model model, @PathVariable("id") int id, RedirectAttributes redirectAttributes) {
 
@@ -561,11 +572,29 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
 
     //=========================== list area
 
-    @PersianName("جزئیات")
+    @PersianName("ناحیه - جزئیات")
     @RequestMapping(value = _PANEL_URL + "/vector/details/{id}")
     public ModelAndView pVectorDetails(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
 
-        MeetingItem dbObj = this.meetingItemShareService.findById(id, MeetingItem._VECTOR, MeetingItem._MEETING);
+        MeetingItem dbObj = this.meetingItemShareService.findById(id, RePa.p__(MeetingItem._VECTOR, Vector._UPLOADER_USER), RePa.p__(MeetingItem._MEETING, Meeting._ROOM));
+        if (dbObj == null) {
+            Notice2[] noteIds = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.meetingItem.not.found", JsonBuilder.toJson("meetingItemId", "" + id), TtNotice.Warning));
+            return Referer.redirect(
+                    _PANEL_URL + "/list",
+                    TtTaskActionSubType.Edit_Data,
+                    TtTaskActionStatus.Failure,
+                    noteIds);
+        }
+
+        model.addAttribute(dbObj);
+        return TtTile___.p_service_meeting_vector_details.___getDisModel(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
+    }
+
+    @PersianName("ناحیه - افزودن")
+    @RequestMapping(value = _PANEL_URL + "/vector/add/{id}")
+    public ModelAndView pVectorAdd(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
+
+        Meeting dbObj = this.service.findById(id);
         if (dbObj == null) {
             Notice2[] noteIds = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.meeting.not.found", JsonBuilder.toJson("meetingId", "" + id), TtNotice.Warning));
             return Referer.redirect(
@@ -576,10 +605,70 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
         }
 
         model.addAttribute(dbObj);
-        return TtTile___.p_service_meeting_vector_details.___getDisModel(_PANEL_URL + "/details", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
+        model.addAttribute("vector", new Vector());
+        return TtTile___.p_service_meeting_vector_add.___getDisModel(_PANEL_URL + "/vector/add", TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
     }
 
-    @PersianName("لیست ناحیه های جغرافیایی")
+    @RequestMapping(value = _PANEL_URL + "/vector/add", method = RequestMethod.POST)
+    public ModelAndView pVectorAdd(
+            @ModelAttribute("meeting")
+            @Valid Meeting fObj,
+            BindingResult suBindingResult,
+            HttpServletRequest request,
+            @RequestParam(value = "attachment", required = false) MultipartFile attachment,
+            RedirectAttributes redirectAttributes) {
+
+
+        if (attachment == null || attachment.getSize() == 0) {
+            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.meeting.vector.attachment.null", TtNotice.Danger)));
+            return Referer.redirectObject(request, redirectAttributes, fObj);
+        }
+
+        if (!attachment.getOriginalFilename().endsWith(".vector")) {
+            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.meeting.vector.attachment.invalid.format", TtNotice.Danger)));
+            return Referer.redirectObject(request, redirectAttributes, fObj);
+        }
+
+        if (attachment.getSize() > 1024 * 1024 * PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize)) {
+            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.meeting.vector.upload.max.size.exceed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
+            return Referer.redirectObject(request, redirectAttributes, fObj);
+        }
+
+
+        Meeting meeting = this.service.findById(fObj.getId());
+
+        if (meeting == null) {
+            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.meeting.not.found", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
+            return Referer.redirectObject(request, redirectAttributes, fObj);
+        }
+
+        org.sadr.web.main.archive.file.file.File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath_Base));
+
+        if (upload == null) {
+            Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.meeting.vector.upload.failed", TtNotice.Danger)));
+            return Referer.redirectObject(request, redirectAttributes, fObj);
+        }
+
+
+        MeetingItem meetingItem = ShareUtils.UploadVector(upload.getSourceFile(), PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath_Vector));
+
+        if (meetingItem != null && meetingItem.getVector() != null) {
+            vectorShareService.save(meetingItem.getVector());
+            meetingItem.setMeeting(meeting);
+            meetingItemShareService.save(meetingItem);
+        }
+
+        Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.meeting.vector.add.success", TtNotice.Success)));
+
+        return Referer.redirect(
+                _PANEL_URL + "/vector/list/" + meeting.getId(),
+                TtTaskActionSubType.Edit_Data,
+                TtTaskActionStatus.Success,
+                notice2s);
+    }
+
+
+    @PersianName("ناحیه - لیست ناحیه های جلسه")
     @RequestMapping(value = _PANEL_URL + "/vector/list/{id}")
     public ModelAndView pVectorList(Model model, @PathVariable("id") int id, RedirectAttributes redirectAttributes) {
 
@@ -630,7 +719,8 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
 
         GB gb = GB.init(MeetingItem.class)
                 .set(
-                        MeetingItem.ITEM_TYPE
+                        MeetingItem.ITEM_TYPE,
+                        MeetingItem.CREATE_DATE_TIME
                 ).setGbs(
                         GB.init(Vector.class, MeetingItem._VECTOR)
                                 .set(
@@ -645,6 +735,7 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
 
             JB jb = JB.init()
                     .set(
+                            MeetingItem.CREATE_DATE_TIME,
                             MeetingItem.ITEM_TYPE,
                             MeetingItem.$VECTOR_NAME,
                             MeetingItem.$VECTOR_FILE_NAME,
@@ -664,5 +755,28 @@ public class MeetingShareController extends GenericControllerImpl<Meeting, Meeti
 
     }
 
+    //=========================== Trash
+    @PersianName("ناحیه - حذف")
+    @RequestMapping(value = _PANEL_URL + "/vector/trash/{id}")
+    public @ResponseBody
+    ResponseEntity<String> pVectorTrash(@PathVariable("id") long id) {
 
+        MeetingItem dbObj = this.meetingItemShareService.findById(id, MeetingItem._VECTOR);
+        if (dbObj == null) {
+            return Ison.init(TtTaskActionSubType.Delete_From_DB, TtTaskActionStatus.Failure)
+                    .setStatus(TtIsonStatus.Nok)
+                    .setMessages(new Notice2("N.vector.not.found", JsonBuilder.toJson("meetingItemId", "" + id)))
+                    .toResponse();
+        }
+        if (dbObj.getVector() != null) {
+            this.vectorShareService.trash(dbObj.getVector().getIdi());
+        }
+        this.meetingItemShareService.trash(dbObj.getIdi());
+
+
+        return Ison.init(TtTaskActionSubType.Delete_From_DB, TtTaskActionStatus.Success)
+                .setStatus(TtIsonStatus.Ok)
+                .setMessages(new Notice2("N1.all.trash.success", TtNotice.Success, dbObj.getVector().getName()))
+                .toResponse();
+    }
 }

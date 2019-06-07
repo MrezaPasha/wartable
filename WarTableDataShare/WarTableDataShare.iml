@@ -11,5 +11,6 @@
     <orderEntry type="module" module-name="WarTableCore" exported="" />
     <orderEntry type="library" exported="" name="_lib-share" level="project" />
     <orderEntry type="library" name="_libs" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>

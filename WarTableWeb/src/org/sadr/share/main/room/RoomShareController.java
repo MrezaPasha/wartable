@@ -1,7 +1,6 @@
 package org.sadr.share.main.room;
 
 import org.hibernate.criterion.Restrictions;
-import org.jvnet.hk2.annotations.Service;
 import org.sadr._core._type.TtDataType;
 import org.sadr._core._type.TtRestrictionOperator;
 import org.sadr._core.meta.annotation.PersianName;
@@ -23,8 +22,8 @@ import org.sadr.share.main.roomServiceUser.Room_ServiceUserShareService;
 import org.sadr.share.main.serviceUser.ServiceUser;
 import org.sadr.share.main.serviceUser.ServiceUserShareService;
 import org.sadr.share.main.textChat.TextChat;
-import org.sadr.share.main.textChat.TextChatService;
 import org.sadr.share.main.textChat.TextChatShareService;
+import org.sadr.share.main.textChat._types.TtTextChatType;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.tools._type.TtIxportRowIndex;
 import org.sadr.web.main._core.tools._type.TtIxportSubStrategy;
@@ -49,7 +48,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import javax.xml.soap.Text;
 import java.io.IOException;
 import java.util.List;
 
@@ -100,7 +98,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
     }
 
     //=========================== create
-    @PersianName("ثبت")
+    @PersianName("اتاق - ثبت")
     @RequestMapping(_PANEL_URL + "/create")
     public ModelAndView pCreate(Model model) {
         Room u = (Room) model.asMap().get("room");
@@ -128,7 +126,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
     }
 
     //=========================== edit
-    @PersianName("ویرایش")
+    @PersianName("اتاق - ویرایش")
     @RequestMapping(value = _PANEL_URL + "/edit/{uid}")
     public ModelAndView pEdit(Model model, @PathVariable("uid") long uid,
                               RedirectAttributes redirectAttributes) {
@@ -211,7 +209,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
     }
 
     //===========================  list
-    @PersianName("لیست")
+    @PersianName("اتاق - لیست")
     @RequestMapping(value = _PANEL_URL + "/list")
     public ModelAndView pList(Model model) {
 
@@ -292,7 +290,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
     }
 
     //=========================== Trash
-    @PersianName("حذف")
+    @PersianName("اتاق - حذف")
     @RequestMapping(value = _PANEL_URL + "/trash/{id}")
     public @ResponseBody
     ResponseEntity<String> pTrash(@PathVariable("id") long id) {
@@ -316,7 +314,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
     //#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#  ROOM_MAP
 
     //=========================== create map
-    @PersianName("افزودن نقشه به اتاق")
+    @PersianName("نقشه - افزودن به اتاق")
     @RequestMapping(_PANEL_URL + "/map/create/{id}")
     public ModelAndView pMapCreate(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
 
@@ -380,7 +378,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
     }
 
     //=========================== edit map
-    @PersianName("ویرایش نقشه اتاق")
+    @PersianName("نقشه - ویرایش")
     @RequestMapping(value = _PANEL_URL + "/map/edit/{uid}")
     public ModelAndView pMapEdit(Model model, @PathVariable("uid") long uid,
                                  RedirectAttributes redirectAttributes) {
@@ -493,7 +491,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
     }
 
     //=========================== list map
-    @PersianName("لیست نقشه های اتاق")
+    @PersianName("نقشه - لیست")
     @RequestMapping(value = _PANEL_URL + "/map/list/{id}")
     public ModelAndView pMapList(Model model, @PathVariable("id") int id, RedirectAttributes redirectAttributes) {
 
@@ -572,7 +570,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
     }
 
     //=========================== Trash map
-    @PersianName("حذف نقشه از اتاق")
+    @PersianName("نقشه - حذف")
     @RequestMapping(value = _PANEL_URL + "/map/trash/{id}")
     public @ResponseBody
     ResponseEntity<String> pMapTrash(@PathVariable("id") long id) {
@@ -598,7 +596,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
 
     //#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#  ROOM_SERVICE_USER
     //=========================== create user
-    @PersianName("افزودن کاربر به اتاق")
+    @PersianName("کاربر - افزودن به اتاق")
     @RequestMapping(_PANEL_URL + "/user/create/{id}")
     public ModelAndView pUserCreate(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
 
@@ -679,7 +677,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
 
 
     //=========================== edit user
-    @PersianName("ویرایش کاربر اتاق")
+    @PersianName("کاربر - ویرایش")
     @RequestMapping(value = _PANEL_URL + "/user/edit/{uid}")
     public ModelAndView pUserEdit(Model model, @PathVariable("uid") long uid,
                                   RedirectAttributes redirectAttributes) {
@@ -814,7 +812,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
     }
 
     //=========================== details user
-    @PersianName("جزئیات کاربر در اتاق")
+    @PersianName("کاربر - جزئیات")
     @RequestMapping(value = _PANEL_URL + "/user/details/{id}")
     public ModelAndView pUserDetails(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
 
@@ -833,7 +831,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
     }
 
     //=========================== list user
-    @PersianName("لیست کاربران اتاق")
+    @PersianName("کاربر - لیست")
     @RequestMapping(value = _PANEL_URL + "/user/list/{id}")
     public ModelAndView pUserList(Model model, @PathVariable("id") int id, RedirectAttributes redirectAttributes) {
 
@@ -930,7 +928,7 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
     }
 
     //=========================== Trash user
-    @PersianName("حذف کاربر از اتاق")
+    @PersianName("کاربر - حذف از اتاق")
     @RequestMapping(value = _PANEL_URL + "/user/trash/{id}")
     public @ResponseBody
     ResponseEntity<String> pUserTrash(@PathVariable("id") long id) {
@@ -954,13 +952,13 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
 
     //#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#  CHAT
 //=========================== details chat
-    @PersianName("جزئیات چت")
+    @PersianName("چت - مشاهده جزئیات")
     @RequestMapping(value = _PANEL_URL + "/chat/details/{uid}")
     public ModelAndView pChatDetails(Model model, @PathVariable("uid") long uid,
-                                  RedirectAttributes redirectAttributes) {
+                                     RedirectAttributes redirectAttributes) {
 
 
-        TextChat dbObj = this.textChatShareService.findById(uid, TextChat._ROOM,TextChat._SENDER,TextChat._RECEIVERS);
+        TextChat dbObj = this.textChatShareService.findById(uid, TextChat._ROOM, TextChat._SENDER, TextChat._RECEIVERS);
 
         if (dbObj == null) {
             Notice2[] noteIds = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.chat.not.found", JsonBuilder.toJson("chatId", "" + uid), TtNotice.Warning));
@@ -975,86 +973,25 @@ public class RoomShareController extends GenericControllerImpl<Room, RoomShareSe
         return TtTile___.p_service_room_chat_details.___getDisModel(TtTaskActionSubType.Edit_Data, TtTaskActionStatus.Success);
     }
 
-    //=========================== list chat
-    @PersianName("لیست چت های اتاق")
-    @RequestMapping(value = _PANEL_URL + "/chat/list/{id}")
-    public ModelAndView pChatList(Model model, @PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+    @PersianName("چت - مشاهده گفتگو")
+    @RequestMapping(value = _PANEL_URL + "/chat/conversation/{id}")
+    public ModelAndView pChatConversation(Model model, @PathVariable("id") long id,
+                                          RedirectAttributes redirectAttributes) {
 
         Room room = this.service.findById(id);
         if (room == null) {
             Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.room.not.found", TtNotice.Warning)));
-            return Referer.redirect("/panel/room/list", TtTaskActionSubType.Take_Report, TtTaskActionStatus.Failure, notice2s);
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Take_Report, TtTaskActionStatus.Failure, notice2s);
         }
 
-        Searchee.init(TextChat.class, model)
-                .setAttribute(
-                        TtDataType.Long,
-                        TtRestrictionOperator.Equal,
-                        TtSearcheeStrategy.HiddenAutoFill,
-                        id,
-                        TextChat._ROOM,
-                        Searchee.field(Room.ID, Room.class)
-
-                );
-
-        GB.searchTableColumns(model,
-                TextChat.class,
-                GB.col(TextChat.ID),
-                GB.col(TextChat.CHAT_TYPE),
-                GB.col(TextChat.DELIVER_DATE_TIME),
-                GB.col(TextChat.SEND_DATE_TIME),
-                GB.col(TextChat.SEND_STATUS),
-                GB.col(TextChat.$SENDER_FUUL_NAME)
-        );
-
+        List<TextChat> clist = textChatShareService.findAllBy(Restrictions.and(
+                Restrictions.eq(TextChat._ROOM, room),
+                Restrictions.eq(TextChat.CHAT_TYPE, TtTextChatType.Public)
+        ), TextChat._SENDER, TextChat._RECEIVERS);
+        model.addAttribute("clist", clist);
         model.addAttribute(room);
 
-        return TtTile___.p_service_room_chat_list.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
+        return TtTile___.p_service_room_chat_conversation.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
     }
 
-    @RequestMapping(value = _PANEL_URL + "/chat/list", method = RequestMethod.POST)
-    public @ResponseBody
-    ResponseEntity<String> pChatList(@RequestParam(value = "ap", required = false) String ajaxParam,
-                                    @RequestParam(value = "ixp", required = false) String ixportParam,
-                                    HttpServletResponse response) throws IOException {
-
-        GB gb = GB.init(TextChat.class)
-                .set(
-                        TextChat.CHAT_TYPE,
-                        TextChat.DELIVER_DATE_TIME,
-                        TextChat.SEND_DATE_TIME,
-                        TextChat.SEND_STATUS
-                )
-                .setGbs(
-                        GB.init(ServiceUser.class, TextChat._SENDER)
-                                .set(
-                                        ServiceUser.NAME,
-                                        ServiceUser.FAMILY
-                                )
-                )
-                .setSearchParams(ajaxParam);
-
-        if (ixportParam == null) {
-
-            JB jb = JB.init()
-                    .set(
-                            TextChat.CHAT_TYPE,
-                            TextChat.DELIVER_DATE_TIME,
-                            TextChat.SEND_DATE_TIME,
-                            TextChat.SEND_STATUS,
-                            TextChat.$SENDER_FUUL_NAME
-                    );
-
-            String jSearch = this.textChatShareService.findAllJson(gb, jb);
-
-            return Ison.init(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success)
-                    .setStatus(TtIsonStatus.Ok)
-                    .setPropertySearch(jSearch)
-                    .toResponse();
-        }
-        gb.setIxportParams(ixportParam);
-        return Ixporter.init(Room_Map.class)
-                .exportToFileInList(this.textChatShareService.findAll(gb), response, gb, TtIxportTtStrategy.TitleThenKeyMode, TtIxportSubStrategy.IncludeSubs, TtIxportRowIndex.On, TtIxporterDownloadMode.FileControllerAddress, ixportParam);
-
-    }
 }

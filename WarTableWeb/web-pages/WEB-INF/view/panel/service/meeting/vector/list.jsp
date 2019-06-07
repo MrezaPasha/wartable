@@ -11,9 +11,12 @@
 <div class="container c-list-container">
     <div class="page-header">
         <div class="cred-header">
-
             <h3 class="cred-title"><spring:message code="T.p.service.meeting.vector.list"/></h3>
             <span class="cred-name">[${meeting.name}]</span>
+            <a href="${_url}/vector/add/${meeting.id}" class="btn btn-p-create btn-animated btn-animated-right">
+                <i class="clip-add light"></i>
+                <span class="title"><spring:message code="T.p.service.meeting.vector.add"/></span>
+            </a>
         </div>
     </div>
     <div class="row">
@@ -68,6 +71,13 @@
                                                     class="btn btn-sm btn-l-details" data-placement="top"
                                                     title="<spring:message code="all.details"/> ">
                                                 <i class="fa fa-info"></i>
+                                            </a>
+                                            <a href="javascript:void(0)" class="btn btn-sm btn-bricky"
+                                               i-search-body-item-trash-id="@{id}"
+                                               i-search-body-item-trash-title="@{value}"
+                                               i-search-body-item-trash-url="../trash"
+                                               title="<spring:message code="all.delete"/> ">
+                                                <i class="fa fa-trash-o"></i>
                                             </a>
                                         </div>
                                     </td>

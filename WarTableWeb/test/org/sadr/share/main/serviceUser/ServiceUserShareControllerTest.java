@@ -337,6 +337,20 @@ public class ServiceUserShareControllerTest extends AbstractContextControllerTes
                 .andExpect(status().isFound())
                 .andExpect(flash().attributeExists("notice", "serviceUser"))
         ;
+
+
+        //----------------------- Success Edit
+        this.mockMvc
+                .perform(
+                        MockObjectBuilder
+                                .postForm(_PANEL_URL + "/edit",  MockObjectInstances.getInstance().getRealServiceUserWithDependency())
+                                .session(session)
+                )
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrlPattern(_PANEL_URL + "/edit/*"))
+                .andExpect(flash().attributeExists("notice"))
+        ;
     }
     //............................. pEditTest_post_submit  #
 
@@ -477,13 +491,13 @@ public class ServiceUserShareControllerTest extends AbstractContextControllerTes
     //............................. pActiveRoomTest_accessTo  #
 
 
- //#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=# pExitFromOnlineRoomTest  #
+    //#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=#=##=# pExitFromOnlineRoomTest  #
     //============================= pExitFromOnlineRoomTest_accessTo  #
-@Test
+    @Test
     public void pExitFromOnlineRoomTest_accessTo() throws Exception {
         //--- EMPTY_TEST 
 
     }
-   //............................. pExitFromOnlineRoomTest_accessTo  #
+    //............................. pExitFromOnlineRoomTest_accessTo  #
 
 }

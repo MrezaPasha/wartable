@@ -18,12 +18,6 @@ public class BrokerUtils {
     {
         try
         {
-            //List<ServiceConfig> serviceConfigs = serviceConfigServiceImp.findAll();
-            //ServiceConfig serviceConfig = serviceConfigs.get(0);
-            //String brokerIP = serviceConfig.getServerIP();
-            //String brokerUsername = serviceConfig.getServerLoginUsername();
-            //String brokerPassword = serviceConfig.getServerLoginPassword();
-            //int brokerPort = serviceConfig.getServerPort();
             Map configMap = new HashMap();
             BaseConfigServiceImp baseConfigServiceImp = (BaseConfigServiceImp) IOCContainer.GetBeans(BaseConfigServiceImp.class);
             List<BaseConfig> baseConfigs = baseConfigServiceImp.findAll();

@@ -190,6 +190,7 @@ public class ServiceUser extends GenericDataModel<ServiceUser> implements Serial
                     @JoinColumn(name = "serviceUser_id", nullable = false)},
             inverseJoinColumns = {
                     @JoinColumn(name = "textChat_id")})
+
     @PersianName("پیام ها")
     private Set<TextChat> textChats;
 
@@ -199,6 +200,7 @@ public class ServiceUser extends GenericDataModel<ServiceUser> implements Serial
                     @JoinColumn(name = "serviceUser_id", nullable = false)},
             inverseJoinColumns = {
                     @JoinColumn(name = "privateTalk_id")})
+
     @PersianName("تماس ها")
     private Set<PrivateTalk> privateTalks;
 

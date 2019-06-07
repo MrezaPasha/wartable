@@ -108,7 +108,7 @@ public class ObjectShareController extends GenericControllerImpl<Object, ObjectS
                 return Referer.redirectObject(request, redirectAttributes, fObj);
             }
 
-            File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadMapPath));
+            File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath_Base));
 
             if (upload == null) {
                 Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.model.upload.failed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));

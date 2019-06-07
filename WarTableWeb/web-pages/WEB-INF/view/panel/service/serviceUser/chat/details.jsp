@@ -4,12 +4,12 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <div class="container" style="min-height: 300px;">
     <h3 class="cred-header">
-        <span class="cred-title"><spring:message code="T.p.service.room.chat.details"/></span>
-        <span class="cred-name">[${textChat.room.name}]</span>
+        <span class="cred-title"><spring:message code="T.p.service.serviceUser.chat.details"/></span>
+        <span class="cred-name">[${serviceUser.name}]</span>
 
     </h3>
     <div class="well well-act">
-        <a href="${_url}/chat/conversation/${textChat.room.id}" class="btn btn-p-back btn-sm btn-default btn-animated btn-animated-right float-left">
+        <a href="${_url}/chat/conversation/${serviceUser.id}" class="btn btn-p-back btn-sm btn-default btn-animated btn-animated-right float-left">
             <spring:message code="all.back"/>
             <i class="fa fa-reply"></i>
         </a>
@@ -53,12 +53,8 @@
                             <td>${textChat.senderFullName}</td>
                         </tr>
                         <tr>
-                            <th><spring:message code="textChat.receivers"/></th>
-                            <td>
-                               <c:forEach items="${textChat.receivers}" var="myvar">
-                                   <span class="chat-user-item">${myvar.fullName}</span>
-                               </c:forEach>
-                            </td>
+                            <th><spring:message code="textChat.privateChatReceiver"/></th>
+                            <td>${textChat.privateChatReceiver.fullName}</td>
                         </tr>
                         </tbody>
                     </table>

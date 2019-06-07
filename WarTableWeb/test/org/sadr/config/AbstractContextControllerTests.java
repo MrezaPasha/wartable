@@ -52,6 +52,8 @@ public class AbstractContextControllerTests {
 
     protected User signinAsLogManager() {
         User user = this.userService.authenticateEAndLogin(MockObjectInstances._LOGMANAGER_USER_NAME, Digester.digestSHA1(MockObjectInstances._LOGMANAGER_PASSWORD), session);
+        user.setStatus(TtUserStatus.Active);
+        user.setIsNeedToChangePassword(false);
         return user;
     }
 

@@ -22,6 +22,9 @@ import org.sadr.share.main.roomServiceUser.Room_ServiceUser;
 import org.sadr.share.main.roomServiceUser.Room_ServiceUserShareService;
 import org.sadr.share.main.sessions.Sessions;
 import org.sadr.share.main.sessions.SessionsShareService;
+import org.sadr.share.main.textChat.TextChat;
+import org.sadr.share.main.textChat.TextChatShareService;
+import org.sadr.share.main.textChat._types.TtTextChatType;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.propertor.PropertorInWeb;
 import org.sadr.web.main._core.propertor._type.TtPropertorInWebList;
@@ -53,6 +56,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author masoud
@@ -74,6 +78,12 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
     private SessionsShareService sessionsShareService;
     private Room_ServiceUserShareService room_serviceUserShareService;
     private PersonModelShareService personModelShareService;
+    private TextChatShareService textChatShareService;
+
+    @Autowired
+    public void setTextChatShareService(TextChatShareService textChatShareService) {
+        this.textChatShareService = textChatShareService;
+    }
 
     @Autowired
     public void setPersonModelShareService(PersonModelShareService personModelShareService) {
@@ -172,7 +182,7 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                     return Referer.redirectObject(request, redirectAttributes, fObj);
                 }
 
-                File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadMapPath));
+                File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath_Base));
                 //
                 if (upload != null) {
                     PersonModel model = new PersonModel();
@@ -317,7 +327,7 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                         Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N1.serviceUser.upload.max.size.exceed", TtNotice.Danger, PropertorInWeb.getInstance().getPropertyInt(TtPropertorInWebList.LoadThresholdMaxUploadSize) + "")));
                         return Referer.redirectObject(request, redirectAttributes, fObj);
                     }
-                    File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadMapPath));
+                    File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath_Base));
                     if (upload != null) {
                         PersonModel model = new PersonModel();
                         model.setFileName(upload.getAbsolutePathName());
@@ -784,7 +794,6 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
     }
 
     //=========================== Trash
-
     @PersianName("حذف")
     @RequestMapping(value = _PANEL_URL + "/trash/{id}")
     public @ResponseBody
@@ -808,5 +817,65 @@ public class ServiceUserShareController extends GenericControllerImpl<ServiceUse
                 .setMessages(new Notice2("N1.all.trash.success", TtNotice.Success, name))
                 .toResponse();
     }
+
+    //#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#  CHAT
+    //=========================== details chat
+    @PersianName("چت - مشاهده جزئیات")
+    @RequestMapping(value = _PANEL_URL + "/chat/details/{uid}/{cid}")
+    public ModelAndView pChatDetails(Model model,
+                                     @PathVariable("uid") long uid,
+                                     @PathVariable("cid") long cid,
+                                     RedirectAttributes redirectAttributes) {
+
+        TextChat dbObj = this.textChatShareService.findById(cid, TextChat._ROOM, TextChat._SENDER, TextChat._PRIVATE_CHAT_RECEIVER);
+
+        if (dbObj == null) {
+            Notice2[] noteIds = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.chat.not.found", JsonBuilder.toJson("chatId", "" + uid), TtNotice.Warning));
+            return Referer.redirect(
+                    _PANEL_URL + "/list",
+                    TtTaskActionSubType.Take_Report,
+                    TtTaskActionStatus.Failure,
+                    noteIds);
+        }
+
+        ServiceUser user = this.service.findById(uid);
+        if (user == null) {
+            Notice2[] noteIds = Notice2.initRedirectAttr(redirectAttributes, new Notice2("N.serviceUser.not.found", JsonBuilder.toJson("serviceUserId", "" + uid), TtNotice.Warning));
+            return Referer.redirect(
+                    _PANEL_URL + "/list",
+                    TtTaskActionSubType.Take_Report,
+                    TtTaskActionStatus.Failure,
+                    noteIds);
+        }
+
+        model.addAttribute(user);
+        model.addAttribute(dbObj);
+        return TtTile___.p_service_serviceUser_chat_details.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
+    }
+
+    @PersianName("چت - مشاهده گفتگو")
+    @RequestMapping(value = _PANEL_URL + "/chat/conversation/{id}")
+    public ModelAndView pChatConversation(Model model, @PathVariable("id") long id,
+                                          RedirectAttributes redirectAttributes) {
+
+        ServiceUser user = this.service.findById(id);
+        if (user == null) {
+            Notice2[] notice2s = Notice2.initRedirectAttr(redirectAttributes, Notice2.addNotices(new Notice2("N.serviceUser.not.found", TtNotice.Warning)));
+            return Referer.redirect(_PANEL_URL + "/list", TtTaskActionSubType.Take_Report, TtTaskActionStatus.Failure, notice2s);
+        }
+
+        List<TextChat> clist = textChatShareService.findAllBy(Restrictions.and(
+                Restrictions.or(
+                        Restrictions.eq(TextChat._SENDER, user),
+                        Restrictions.eq(TextChat._PRIVATE_CHAT_RECEIVER, user)
+                ),
+                Restrictions.eq(TextChat.CHAT_TYPE, TtTextChatType.Private)
+        ), TextChat._SENDER, TextChat._PRIVATE_CHAT_RECEIVER);
+        model.addAttribute("clist", clist);
+        model.addAttribute(user);
+
+        return TtTile___.p_service_serviceUser_chat_conversation.___getDisModel(TtTaskActionSubType.Take_Report, TtTaskActionStatus.Success);
+    }
+
 
 }

@@ -71,6 +71,12 @@
                                     <td class="center">
                                         <div class="r-button">
                                             <a
+                                                    href="${_url}/chat/conversation/@{id}"
+                                                    class="btn btn-sm btn-l-design" data-placement="top"
+                                                    title="<spring:message code="T.p.service.room.chat.list"/> ">
+                                                <i class="clip-bubbles-2"></i>
+                                            </a>
+                                            <a
                                                     href="${_url}/edit/@{id}"
                                                     class="btn btn-sm btn-l-edit" data-placement="top"
                                                     title="<spring:message code="all.edit"/> ">

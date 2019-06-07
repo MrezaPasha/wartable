@@ -54,5 +54,6 @@
     <orderEntry type="library" name="_libs" level="project" />
     <orderEntry type="library" name="tomcat-juli" level="project" />
     <orderEntry type="library" name="lib_tomcat" level="application" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>

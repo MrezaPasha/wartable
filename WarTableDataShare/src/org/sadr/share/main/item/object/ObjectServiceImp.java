@@ -486,11 +486,6 @@ public class ObjectServiceImp extends GenericServiceImpl<Object, ObjectDao> impl
         try {
             String sessionId = (String) rpcRequest.getParams().get("SessionId");
             List<MeetingItem> meetingItems = new ArrayList<>();
-            /*double doubleObjectInstanceId = Double.parseDouble((String) rpcRequest.getParams().get("ObjectInstanceId").toString());
-            Double b = new Double(doubleObjectInstanceId);
-            Integer objectInstanceId = b.intValue();*/
-
-
             List<Double> objectInstanceIds = (List<Double>) rpcRequest.getParams().get("ObjectInstanceIds");
             List<Double> posxs = (List<Double>) rpcRequest.getParams().get("PosXs");
             List<Double> posys = (List<Double>) rpcRequest.getParams().get("PosYs");
@@ -499,24 +494,14 @@ public class ObjectServiceImp extends GenericServiceImpl<Object, ObjectDao> impl
             List<Double> pitchs = (List<Double>) rpcRequest.getParams().get("Pitchs");
             List<Double> rolls = (List<Double>) rpcRequest.getParams().get("Rolls");
             List<Double> scales = (List<Double>) rpcRequest.getParams().get("Scales");
-
-
-
-
-            /*double posx = Double.parseDouble((String) rpcRequest.getParams().get("PosX").toString());
-            double posy = Double.parseDouble((String) rpcRequest.getParams().get("PosY").toString());
-            double posz = Double.parseDouble((String) rpcRequest.getParams().get("PosZ").toString());
-            double yaw = Double.parseDouble((String) rpcRequest.getParams().get("Yaw").toString());
-            double pitch = Double.parseDouble((String) rpcRequest.getParams().get("Pitch").toString());
-            double roll = Double.parseDouble((String) rpcRequest.getParams().get("Roll").toString());
-            double scale = Double.parseDouble((String) rpcRequest.getParams().get("Scale").toString());*/
-
             Sessions sessions = sessionsServiceImp.findBy(Restrictions.eq(Sessions.SESSION_ID, sessionId), Sessions._SERVICE_USER);
-            MeetingItem meetingItem = meetingItemServiceImp.findBy(Restrictions.eq(MeetingItem.ID, objectInstanceIds.get(0).intValue()), RePa.p__(MeetingItem._MEETING, Meeting._CURRENT_ROOM_MAP, Room_Map._ROOM));
+            MeetingItem meetingItem = meetingItemServiceImp.findBy(Restrictions.eq(MeetingItem.ID, objectInstanceIds.get(0).intValue()),
+                    RePa.p__(MeetingItem._MEETING, Meeting._CURRENT_ROOM_MAP, Room_Map._ROOM));
             if (sessions != null && meetingItem != null) {
                 if (true) {
                     for (int INDEX = 0; INDEX < objectInstanceIds.size(); INDEX++) {
-                        MeetingItem changeItem = meetingItemServiceImp.findBy(Restrictions.and(Restrictions.eq(MeetingItem.ID, objectInstanceIds.get(INDEX).intValue()), Restrictions.eq(MeetingItem.ITEM_TYPE, TtItemType.Object)));
+                        MeetingItem changeItem = meetingItemServiceImp.findBy(Restrictions.and(Restrictions.eq(MeetingItem.ID, objectInstanceIds.get(INDEX).intValue()),
+                                Restrictions.eq(MeetingItem.ITEM_TYPE, TtItemType.Object)));
                         if (changeItem != null) {
                             changeItem.setPosX(posxs.get(INDEX));
                             changeItem.setPosY(posys.get(INDEX));
@@ -530,8 +515,10 @@ public class ObjectServiceImp extends GenericServiceImpl<Object, ObjectDao> impl
 
                     }
                     List<Integer> broadcastFlags = new State().setStateBytes(true, TtState.SESS_UPDATE_MAPOBJECTS);
-                    List<MeetingItem> changeMeetingItems = meetingItemServiceImp.findAllBy(Restrictions.and(Restrictions.eq(MeetingItem._MEETING, meetingItem.getMeeting()), Restrictions.eq(MeetingItem.ITEM_TYPE, TtItemType.Object)), MeetingItem._OBJECT, MeetingItem._INSERTER_USER);
-                    String broadcastMessage = BroadcastResponse.generateBroadcastResponse(TtGlobalId.Update, TtErrors.NoError, broadcastFlags, generateListMapObjectChangesResponse(changeMeetingItems, TtErrors.NoError));
+                    List<MeetingItem> changeMeetingItems = meetingItemServiceImp.findAllBy(Restrictions.and(Restrictions.eq(MeetingItem._MEETING, meetingItem.getMeeting()),
+                            Restrictions.eq(MeetingItem.ITEM_TYPE, TtItemType.Object)), MeetingItem._OBJECT, MeetingItem._INSERTER_USER);
+                    String broadcastMessage = BroadcastResponse.generateBroadcastResponse(TtGlobalId.Update, TtErrors.NoError, broadcastFlags,
+                            generateListMapObjectChangesResponse(changeMeetingItems, TtErrors.NoError));
                     BrokerUtils.broadcastMessage(broadcastMessage, meetingItem.getMeeting().getCurrentRoomMap().getRoom().getName());
                     rpcResponse = generateModifyMapObjectsResponse(TtErrors.NoError);
                 } else {

@@ -7,12 +7,17 @@ import org.sadr._core.utils.ParsCalendar;
 import org.sadr.share.main.item.object.Object;
 import org.sadr.share.main.item.object._types.TtObjectArea;
 import org.sadr.share.main.item.object.model.ModelJsonObject;
+import org.sadr.share.main.item.vector.Vector;
+import org.sadr.share.main.item.vector.model.VectorJ;
 import org.sadr.share.main.layer._type.TtLayerStatus;
 import org.sadr.share.main.layer._type.TtLayerType;
 import org.sadr.share.main.layer.model.Info;
 import org.sadr.share.main.layer.model.Layer;
 import org.sadr.share.main.log.models.logger.BL.LoggerBL;
 import org.sadr.share.main.map.Map;
+import org.sadr.share.main.meetingItem.MeetingItem;
+import org.sadr.share.main.meetingItem._types.TtItemType;
+import org.sadr.share.main.meetingItem._types.TtMeetingItemDeleted;
 import org.sadr.share.main.serviceUser.ServiceUser;
 
 import java.io.*;
@@ -20,6 +25,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -265,6 +271,48 @@ public class ShareUtils {
 
 
     public static String getTalkFileAddress(String fileName) {
-        return "D:/_proji_sadr/ftp/voice/"+fileName;
+        return "D:/_proji_sadr/ftp/voice/" + fileName;
     }
+
+    public static MeetingItem UploadVector(File file, String dest) {
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+        File newFile = new File(dest + File.separator + uuid + (file.getName().lastIndexOf(".") != -1 ? file.getName().substring(file.getName().lastIndexOf(".")) : ""));
+
+        file.renameTo(newFile);
+
+        dest = dest + File.separator + uuid;
+        unZipIt(newFile.getPath(), dest);
+
+        MeetingItem mi = null;
+        try {
+            Vector v;
+            BufferedReader bufferedReader;
+            bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(dest + File.separator + JSON_FILE), "UTF-8"));
+            VectorJ vectorJ = new Gson().fromJson(bufferedReader, VectorJ.class);
+            v = new Vector();
+
+            v.setName(vectorJ.getName());
+            v.setFileName(newFile.getName());
+            v.setBounds(vectorJ.getBounds());
+            v.setDescription(vectorJ.getDescription());
+            v.setSize(getFileSize(newFile.getPath()));
+            v.setUploadDateTime(ParsCalendar.getInstance().getShortDateTime());
+            v.setVectorType(vectorJ.getVectorType());
+
+            mi = new MeetingItem();
+
+            mi.setVector(v);
+            mi.setItemType(TtItemType.VECTOR);
+            mi.setDeleted(TtMeetingItemDeleted.Undeleted);
+            mi.setOrder(0);
+
+
+        } catch (UnsupportedEncodingException | FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+        return mi;
+    }
+
 }

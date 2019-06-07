@@ -1,6 +1,7 @@
 package org.sadr.share.main.meeting;
 
 import org.sadr.share.config.ShareConfig;
+import org.sadr.share.main.item.vector.VectorShareConfig;
 import org.sadr.share.main.meetingItem.MeetingItemShareConfig;
 import org.sadr.share.main.meetingSetting.MeetingSettingShareConfig;
 import org.sadr.share.main.privateTalk.PrivateTalkConfig;
@@ -34,6 +35,7 @@ public class MeetingShareConfig extends ShareConfig {
         uc.setPrivateTalkShareService(new PrivateTalkShareConfig().privateTalkShareServiceImp());
         uc.setMeetingSettingShareService(new MeetingSettingShareConfig().meetingSettingShareServiceImp());
         uc.setMeetingItemShareService(new MeetingItemShareConfig().meetingItemShareServiceImp());
+        uc.setVectorShareService(new VectorShareConfig().vectorShareServiceImp());
         return uc;
     }
 }

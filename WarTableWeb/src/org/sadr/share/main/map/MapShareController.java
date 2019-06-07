@@ -126,7 +126,7 @@ public class MapShareController extends GenericControllerImpl<Map, MapShareServi
                 return Referer.redirectObject(request, redirectAttributes, fObj);
             }
 
-            File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadMapPath));
+            File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath_Base));
             //
 
             Map map = ShareUtils.uploadMap(upload.getOrginalName());

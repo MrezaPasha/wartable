@@ -32,7 +32,7 @@ public class MeetingItem extends GenericDataModel<MeetingItem> implements Serial
         public static final String _MRML = "mrml";
     */
     public static final String _MEETING = "meeting";
-    public static final String _OBJECT =  "object";
+    public static final String _OBJECT = "object";
     public static final String _MEDIA = "media";
     public static final String _WEATHER = "weather";
     public static final String _ENTITY = "entity";
@@ -40,7 +40,7 @@ public class MeetingItem extends GenericDataModel<MeetingItem> implements Serial
     public static final String _SVG = "svg";
     public static final String _VECTOR = "vector";
     public static final String ITEM_TYPE = "itemType";
-    public static final String POSX ="posX";
+    public static final String POSX = "posX";
     public static final String POSY = "posY";
     public static final String POSZ = "posZ";
     public static final String ROLL = "roll";
@@ -51,6 +51,9 @@ public class MeetingItem extends GenericDataModel<MeetingItem> implements Serial
     public static final String COMMENT = "comment";
     public static final String DELETED = "deleted";
     public static final String ORDER = "order";
+    public static final String $VECTOR_NAME = "vectorName";
+    public static final String $VECTOR_FILE_NAME= "vectorFileName";
+    public static final String $VECTOR_TYPE= "vectorType";
 /*
     public static final String _MEETING_ITEM_LAYER = "meetingItemLayer";
 */
@@ -74,18 +77,6 @@ public class MeetingItem extends GenericDataModel<MeetingItem> implements Serial
     // static fields end
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     @PersianName("کاربر بارگذار کننده")
     private ServiceUser inserterUser;
@@ -105,31 +96,31 @@ public class MeetingItem extends GenericDataModel<MeetingItem> implements Serial
     private Meeting meeting;
 
 
-    @ManyToOne(fetch = FetchType.LAZY )
+    @ManyToOne(fetch = FetchType.LAZY)
     @PersianName("اشیای میز")
     private Object object;
 
-    @ManyToOne(fetch = FetchType.LAZY )
+    @ManyToOne(fetch = FetchType.LAZY)
     @PersianName("مدیای میز")
     private Media media;
 
-    @ManyToOne(fetch = FetchType.LAZY )
+    @ManyToOne(fetch = FetchType.LAZY)
     @PersianName("آب و هوای میز")
     private Weather weather;
 
-    @ManyToOne(fetch = FetchType.LAZY )
+    @ManyToOne(fetch = FetchType.LAZY)
     @PersianName("مسیرهای میز")
     private Entity entity;
 
-    @OneToOne(fetch = FetchType.LAZY )
+    @OneToOne(fetch = FetchType.LAZY)
     @PersianName("موقعیت های میز")
     private Position position;
 
-    @ManyToOne(fetch = FetchType.LAZY )
+    @ManyToOne(fetch = FetchType.LAZY)
     @PersianName("SVG")
     private Svg svg;
 
-    @ManyToOne(fetch = FetchType.LAZY )
+    @ManyToOne(fetch = FetchType.LAZY)
     @PersianName("بردار")
     private Vector vector;
 
@@ -177,7 +168,20 @@ public class MeetingItem extends GenericDataModel<MeetingItem> implements Serial
     private MeetingItemLayer meetingItemLayer;*/
 
 
+    @PersianName("نام")
+    public String getVectorName() {
+        return vector != null ? vector.getName() : "";
+    }
 
+    @PersianName("آدرس فایل")
+    public String getVectorFileName() {
+        return vector != null ? vector.getFileName() : "";
+    }
+
+    @PersianName("نوع")
+    public String getVectorType() {
+        return vector != null ? vector.getVectorType() : "";
+    }
 
 
     // MEYHODS

@@ -6,6 +6,9 @@ import org.sadr._core._type.TtProjectPath;
 import org.sadr._core.meta.annotation.PersianName;
 import org.sadr._core.utils.*;
 import org.sadr._core.utils._type.TtPasswordType;
+import org.sadr.share.main.roomServiceUser.Room_ServiceUserShareService;
+import org.sadr.share.main.serviceUser.ServiceUserShareConfig;
+import org.sadr.share.main.serviceUser.ServiceUserShareService;
 import org.sadr.web.main._core._type.TtTile___;
 import org.sadr.web.main._core.meta.annotation.StandaloneController;
 import org.sadr.web.main._core.meta.annotation.SuperAdminTask;
@@ -246,7 +249,7 @@ public class SettingController {
     ///=////////////////////////////////////////////////////////////// SETTING
     @PersianName("پیشخوان تنظیمات")
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ModelAndView pSetting(final RedirectAttributes redirectAttributes) {
+    public ModelAndView pSetting() {
         return TtTile___.p_setting_index.___getDisModel();
     }
 
@@ -275,7 +278,7 @@ public class SettingController {
     @SuperAdminTask
     @PersianName("پیشخوان راه انداز")
     @RequestMapping(value = "/init", method = RequestMethod.GET)
-    public ModelAndView pInit(Model model, final RedirectAttributes redirectAttributes) {
+    public ModelAndView pInit(Model model) {
         model.addAttribute("list", getInitMethods(SettingController.class.getMethods()));
         return TtTile___.p_setting_init.___getDisModel();
     }

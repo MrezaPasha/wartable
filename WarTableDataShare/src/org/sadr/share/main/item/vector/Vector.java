@@ -71,6 +71,8 @@ public class Vector extends GenericDataModel<Vector> implements Serializable {
     @PersianName("نوع بردار ")
     private String vectorType;
 
+    @PersianName("عرض لایه")
+    private String bounds;
 
     @PersianName("شفافیت")
     private Double opacity;
@@ -153,5 +155,13 @@ public class Vector extends GenericDataModel<Vector> implements Serializable {
 
     public void setVectorType(String vectorType) {
         this.vectorType = vectorType;
+    }
+
+    public String getBounds() {
+        return bounds;
+    }
+
+    public void setBounds(String bounds) {
+        this.bounds = bounds;
     }
 }

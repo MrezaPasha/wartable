@@ -71,8 +71,10 @@ public enum TtPropertorInWebList {
 //    IrrorAlertEmailReceiverAddresses("N.propertor.irror.email.receiver.addresses", "reciever01@sadr.com,reciever02@sadr.com", TtPropertorType.String, TtPropertorInWebSection.IrrorAlertEmailReceiver, false), ///
 
     ///==================== service
-    ServiceUploadMapPath("N.propertor.service.upload.map.path", "/ftp/upload", TtPropertorType.String, TtPropertorInWebSection.ServiceUpload, false), ///
-//    ServiceUploadObjectPath("N.propertor.service.upload.object.path", "/ftp/objects", TtPropertorType.String, TtPropertorInWebSection.ServiceUpload, false), ///
+    ServiceUploadPath_Base("N.propertor.service.upload.path.base", "D:/warTable/ftp", TtPropertorType.String, TtPropertorInWebSection.ServiceUpload, false), ///
+    ServiceUploadPath_Object("N.propertor.service.upload.path.object", "D:/warTable/ftp/objects", TtPropertorType.String, TtPropertorInWebSection.ServiceUpload, false), ///
+    ServiceUploadPath_Map("N.propertor.service.upload.path.map", "D:/warTable/ftp/map", TtPropertorType.String, TtPropertorInWebSection.ServiceUpload, false), ///
+    ServiceUploadPath_Vector("N.propertor.service.upload.path.vector", "D:/warTable/ftp/vector", TtPropertorType.String, TtPropertorInWebSection.ServiceUpload, false), ///
     ServiceUserDefaultModelId("N.propertor.service.user.default.model.id", 1, TtPropertorType.Integer, TtPropertorInWebSection.ServiceUser, false), ///
 
     ;

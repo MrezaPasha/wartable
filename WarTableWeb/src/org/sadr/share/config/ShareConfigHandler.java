@@ -23,6 +23,7 @@ import org.sadr.share.main.item.object.ObjectShareConfig;
 import org.sadr.share.main.item.position.Position;
 import org.sadr.share.main.item.svg.Svg;
 import org.sadr.share.main.item.vector.Vector;
+import org.sadr.share.main.item.vector.VectorShareConfig;
 import org.sadr.share.main.item.weather.Weather;
 import org.sadr.share.main.layer.Layer;
 import org.sadr.share.main.layer.LayerShareConfig;
@@ -70,7 +71,6 @@ import org.sadr.share.main.textChat.TextChatShareConfig;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * @author MSD
@@ -214,6 +214,7 @@ public class ShareConfigHandler {
         addConfigClass(StartupNoticeShareConfig.class);
         addConfigClass(StartupNoticeItemShareConfig.class);
         addConfigClass(MeetingItemShareConfig.class);
+        addConfigClass(VectorShareConfig.class);
 
     }
 

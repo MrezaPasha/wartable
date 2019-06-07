@@ -31,13 +31,9 @@ public class Dispatch {
         {
             switch (protocol.getMethod()) {
                 case Login:
-                    //  ServiceUserServiceImp serviceUserServiceImp = (ServiceUserServiceImp)IOCContainer.GetBeans(ServiceUserServiceImp.class);
                     Seed.initBaseConfigs();
                     Seed.initBaseErrors();
-
                     ServiceUserServiceImp serviceUserServiceImp = (ServiceUserServiceImp) IOCContainer.GetBeans(ServiceUserServiceImp.class);
-                    //ServiceUserServiceImp serviceUserServiceImp = new ServiceUserServiceImp();
-                    //RpcResponse rpcResponse = new RpcHandler().login(protocol);
                     RpcResponse rpcResponse = serviceUserServiceImp.loginServiceUser(protocol);
                     if (rpcResponse != null) {
                         finalResponse = Utils.RpcResponseObjToJson(rpcResponse);

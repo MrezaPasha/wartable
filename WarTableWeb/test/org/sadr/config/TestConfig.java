@@ -1,5 +1,6 @@
 package org.sadr.config;
 
+import org.sadr._core.utils.Cryptor;
 import org.sadr._core.utils.Environment;
 import org.sadr._core.utils.OutLog;
 import org.sadr.share.config.ShareConfigHandler;
@@ -17,6 +18,10 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
  */
 @Configuration
 public class TestConfig {
+
+    public static void main(String[] args) {
+        System.out.println(Cryptor.encrypt("P@ssw0rds"));
+    }
 
     @Autowired
     protected WebApplicationContext webApplicationContext;

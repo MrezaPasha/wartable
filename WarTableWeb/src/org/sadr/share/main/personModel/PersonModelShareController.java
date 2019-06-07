@@ -100,7 +100,7 @@ public class PersonModelShareController extends GenericControllerImpl<PersonMode
                 return Referer.redirectObject(request, redirectAttributes, fObj);
             }
 
-            File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadMapPath));
+            File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath_Base));
             //
             fObj.setFileName(upload.getDirectoryRelativePath() + upload.getOrginalName());
 //            fObj.setName(upload.getName());
@@ -202,7 +202,7 @@ public class PersonModelShareController extends GenericControllerImpl<PersonMode
                     return Referer.redirectObject(request, redirectAttributes, fObj);
                 }
 
-                File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadMapPath));
+                File upload = Uploader.getInstance().uploadOnTheFly(attachment, PropertorInWeb.getInstance().getProperty(TtPropertorInWebList.ServiceUploadPath_Base));
 
                 dbObj.setFileName(upload.getOrginalName());
                 dbObj.setSize(upload.getSize());
